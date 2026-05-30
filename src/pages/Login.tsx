@@ -11,12 +11,11 @@ export const Login = () => {
     const [error, setError] = useState<string | null>(null); // Tipado básico de TS
     const [isLoading, setIsLoading] = useState(false);
 
-    const navigate = useNavigate(); // <--- 2. Tienes que inicializar la herramienta aquí
+    const navigate = useNavigate();
 
     // ==========================================
     // BLOQUE 2: LAS ACCIONES (Lógica)
     // ==========================================
-    // <--- 3. Le decimos a TypeScript que 'e' es un evento de formulario
     const handleIngresar = async (e: React.FormEvent) => { 
         e.preventDefault(); 
         
@@ -78,6 +77,17 @@ export const Login = () => {
                     style={{ width: '100%', padding: '10px', backgroundColor: '#0066cc', color: 'white', border: 'none' }}
                 >
                     {isLoading ? 'Verificando...' : 'Entrar'}
+                </button>
+                <hr style={{ margin: '15px 0', border: 'none', borderTop: '1px solid #ddd' }} />
+                
+              
+                
+                <button 
+                    type="button" 
+                    onClick={() => navigate('/registrar')}
+                    style={{ width: '100%', padding: '10px', backgroundColor: '#6c757d', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                >
+                    Crear usuario
                 </button>
             </form>
         </div>
