@@ -19,9 +19,19 @@
     padding: 20px 0;
 }
 
+.sidebar-category {
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin: 20px 25px 5px 25px; /* Margen para separarlo de los botones de arriba */
+}
+
 .nav-link {
+    font-size: 14px;
     padding: 15px 25px;
-    color: var(--color-text-secondary); /* Gris oscuro para las opciones inactivas */
+    color: var(--color-text); /* Gris oscuro para las opciones inactivas */
     text-decoration: none;
     transition: var(--transition);
     border-left: 4px solid transparent; /* Borde invisible por defecto */
