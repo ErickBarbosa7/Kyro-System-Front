@@ -34,7 +34,7 @@ const sections = [
   {
     label: 'Inventario',
     links: [
-      { to: '/inventario',  Icon: PackageSearch, label: 'Stock y movimientos' },
+      { to: '/stock',  Icon: PackageSearch, label: 'Stock y movimientos' },
     ],
   },
   {
