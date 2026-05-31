@@ -1,0 +1,33 @@
+
+/* Este es el fondo de toda la pantalla */
+body {
+    background-color: var(--color-background); /* Un gris muy clarito o beige */
+    margin: 0;
+}
+/* Contenedor principal: Ahora apila de arriba hacia abajo (Columna) */
+.kyro-app-layout {
+    display: flex;
+    flex-direction: column; 
+    height: 100vh;
+    padding: 20px;
+    gap: 20px; 
+    box-sizing: border-box;
+    background-color: var(--color-background);
+}
+
+/* El nuevo contenedor que pone Sidebar y Dashboard lado a lado */
+.kyro-content-wrapper {
+    display: flex;
+    flex: 1; /* Toma todo el alto que sobra debajo de la Navbar */
+    gap: 20px;
+    overflow: hidden; /* Evita que crezca de más y rompa la pantalla */
+}
+
+.kyro-main-content {
+    flex: 1; /* Toma todo el ancho a la derecha de la Sidebar */
+    background-color: var(--color-surface);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: var(--shadow-sm);
+    overflow-y: auto;
+}

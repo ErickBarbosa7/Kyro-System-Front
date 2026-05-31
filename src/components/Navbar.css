@@ -1,26 +1,31 @@
-
 .navbar {
-    height: 60px;
+    height: 65px; /* Un poco más alto para que respire */
     background-color: var(--color-surface); /* Blanco puro */
-    border-bottom: 1px solid var(--color-border);
+    /* border-bottom: 1px solid var(--color-border); <-- ¡Lo eliminamos! */
+    border-radius: 20px; /* <-- MAGIA FLOTANTE */
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 30px;
-    box-shadow: var(--shadow-sm); /* Tu sombra suave */
+    padding: 0 25px;
+    box-shadow: var(--shadow-sm); 
 }
 
 .btn-logout {
-    background-color: var(--color-danger); /* El rojo de tu paleta */
+    background-color: var(--color-danger); /* El rojo/tinto */
     color: white;
     border: none;
-    padding: 8px 15px;
-    border-radius: var(--radius); /* Tus bordes redondeados */
+    padding: 8px 16px;
+    border-radius: 10px; /* Un borde un poco más sutil para el botón */
     font-family: var(--font-main);
+    font-weight: 500;
     cursor: pointer;
     transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Espacio para ponerle un icono */
 }
 
 .btn-logout:hover {
-    opacity: 0.8;
+    opacity: 0.85;
+    transform: scale(0.98); /* Pequeño efecto al hacer clic */
 }
