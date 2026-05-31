@@ -1,6 +1,7 @@
 /* src/styles/variables.css */
 
 :root {
+   --font-main: "Cascadia Code", monospace;
   /* Colores principales */
   --color-primary: #800020;
   --color-primary-hover: #6A001A;
@@ -26,4 +27,16 @@
   --radius: 12px;
   --transition: 0.3s ease;
   --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
+
+  body, 
+button, 
+input, 
+textarea, 
+select {
+  font-family: var(--font-main);
+}
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600; 
+  margin-top: 0;
+}
 }

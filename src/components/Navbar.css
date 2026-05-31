@@ -1,0 +1,26 @@
+
+.navbar {
+    height: 60px;
+    background-color: var(--color-surface); /* Blanco puro */
+    border-bottom: 1px solid var(--color-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 30px;
+    box-shadow: var(--shadow-sm); /* Tu sombra suave */
+}
+
+.btn-logout {
+    background-color: var(--color-danger); /* El rojo de tu paleta */
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: var(--radius); /* Tus bordes redondeados */
+    font-family: var(--font-main);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-logout:hover {
+    opacity: 0.8;
+}

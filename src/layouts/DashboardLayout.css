@@ -1,0 +1,23 @@
+:global(body) {
+    margin: 0;
+    padding: 0;
+    background-color: var(--color-background); /* Usamos tu gris súper clarito */
+    font-family: var(--font-main); /* Usamos Cascadia Code */
+    color: var(--color-text); /* Texto oscuro por defecto */
+}
+
+.layout-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+.main-content {
+    flex: 1; 
+    display: flex;
+    flex-direction: column;
+}
+
+.content-area {
+    padding: 30px;
+    overflow-y: auto;
+}
