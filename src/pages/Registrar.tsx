@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { registrarUsuario } from '../services/auth.service'; 
-// EL TRUCO: Importamos el mismo CSS del Login para heredar exactamente el mismo diseño
+import toast from 'react-hot-toast'; 
 import './Login.css'; 
 
 export const Registrar = () => {
@@ -11,7 +11,7 @@ export const Registrar = () => {
     const [nombre, setNombre] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [error, setError] = useState<string | null>(null);
+    // const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
 
     const navigate = useNavigate();
@@ -23,14 +23,18 @@ export const Registrar = () => {
         e.preventDefault(); 
         
         setIsLoading(true);
-        setError(null);
 
         try {
             await registrarUsuario({ nombre, email, password });
+            
+            // 2. Avisamos que todo salió bien antes de mandarlo al login
+            toast.success('¡Cuenta creada exitosamente!');
+            
             navigate('/login'); 
             
         } catch (err: any) {
-            setError(err.response?.data?.error || "Error al conectar con el servidor");
+            // 3. Capturamos el error con toast
+            toast.error(err.response?.data?.error || "Error al conectar con el servidor");
         } finally {
             setIsLoading(false);
         }
@@ -41,7 +45,6 @@ export const Registrar = () => {
     // ==========================================
     return (
         <div className="login-page">
-            {/* Panel Izquierdo (Visual) */}
             <div className="login-sidebar">
                 <div className="sidebar-content">
                     <h2>Lleva tu gestión al siguiente nivel</h2>
@@ -49,7 +52,6 @@ export const Registrar = () => {
                 </div>
             </div>
 
-            {/* Panel Derecho (Formulario) */}
             <div className="login-container">
                 <div className="login-box">
                     <div className="login-header">
@@ -58,11 +60,7 @@ export const Registrar = () => {
                         <p>Completa los campos para registrarte en el sistema</p>
                     </div>
 
-                    {error && (
-                        <div className="error-alert">
-                            {error}
-                        </div>
-                    )}
+                    {/*  El bloque div de "error-alert" */}
 
                     <form onSubmit={handleRegistro} className="login-form">
                         
@@ -107,7 +105,6 @@ export const Registrar = () => {
                             {isLoading ? 'Registrando...' : 'Registrarse'}
                         </button>
                         
-                        {/* Botón para volver a la pantalla de Login */}
                         <div className="register-prompt">
                             <span>¿Ya tienes una cuenta? </span>
                             <button 

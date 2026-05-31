@@ -28,6 +28,13 @@
   --transition: 0.3s ease;
   --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
 
+  *,
+*::before,
+*::after {
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
   body, 
 button, 
 input, 
@@ -35,7 +42,7 @@ textarea,
 select {
   font-family: var(--font-main);
 }
-h1, h2, h3, h4, h5, h6 {
+h1, h2, h3, h4, h5, h6, p {
   font-weight: 600; 
   margin-top: 0;
 }

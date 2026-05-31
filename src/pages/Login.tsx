@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../services/auth.service';
-import './Login.css'; // Asegúrate de importar el archivo de estilos
+import toast from 'react-hot-toast'; 
+import './Login.css';
 
 export const Login = () => {
     // ==========================================
@@ -9,7 +10,7 @@ export const Login = () => {
     // ==========================================
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [error, setError] = useState<string | null>(null); // Tipado básico de TS
+    // const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
 
     const navigate = useNavigate();
@@ -21,16 +22,18 @@ export const Login = () => {
         e.preventDefault(); 
         
         setIsLoading(true);
-        setError(null);
 
         try {
             const respuesta = await login({ email, password });
-            console.log("¡Bienvenido al sistema!", respuesta.usuario.nombre);
+            
+            // 2. Usamos toast.success en lugar del console.log
+            toast.success(`¡Bienvenido al sistema, ${respuesta.usuario.nombre}!`);
             
             navigate('/dashboard');
             
         } catch (err: any) {
-            setError(err.response?.data?.error || "Error al conectar con el servidor");
+            // 3. Usamos toast.error para mostrar el fallo flotante
+            toast.error(err.response?.data?.error || "Error al conectar con el servidor");
         } finally {
             setIsLoading(false);
         }
@@ -41,7 +44,6 @@ export const Login = () => {
     // ==========================================
     return (
         <div className="login-page">
-            {/* Panel Izquierdo (Visual) */}
             <div className="login-sidebar">
                 <div className="sidebar-content">
                     <h2>Mejora la calidad de tus procesos</h2>
@@ -49,7 +51,6 @@ export const Login = () => {
                 </div>
             </div>
 
-            {/* Panel Derecho (Formulario) */}
             <div className="login-container">
                 <div className="login-box">
                     <div className="login-header">
@@ -58,11 +59,7 @@ export const Login = () => {
                         <p>Ingresa tus credenciales para continuar</p>
                     </div>
 
-                    {error && (
-                        <div className="error-alert">
-                            {error}
-                        </div>
-                    )}
+                    {/* El bloque div de "error-alert" que estaba aquí */}
 
                     <form onSubmit={handleIngresar} className="login-form">
                         <div className="form-field">
