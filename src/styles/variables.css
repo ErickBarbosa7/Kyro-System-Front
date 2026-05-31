@@ -1,0 +1,29 @@
+/* src/styles/variables.css */
+
+:root {
+  /* Colores principales */
+  --color-primary: #800020;
+  --color-primary-hover: #6A001A;
+  --color-accent: #C5A059;
+
+  /* Fondos */
+  --color-background: #FBFBFB;
+  --color-surface: #FFFFFF;
+
+  /* Texto */
+  --color-text: #2B2B2B;
+  --color-text-secondary: #6B7280;
+
+  /* Estados */
+  --color-success: #3C7A57;
+  --color-warning: #D18B2C;
+  --color-danger: #C0392B;
+
+  /* Bordes */
+  --color-border: #E7E7E7;
+
+  /* Extras */
+  --radius: 12px;
+  --transition: 0.3s ease;
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
+}
