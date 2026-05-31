@@ -9,9 +9,9 @@ export const Registrar = () => {
     // BLOQUE 1: LA MEMORIA (Estados)
     // ==========================================
     const [nombre, setNombre] = useState('');
+    const [apellido, setApellido] = useState(''); 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    // const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
 
     const navigate = useNavigate();
@@ -25,15 +25,13 @@ export const Registrar = () => {
         setIsLoading(true);
 
         try {
-            await registrarUsuario({ nombre, email, password });
+            await registrarUsuario({ nombre, apellido, email, password });
             
-            // 2. Avisamos que todo salió bien antes de mandarlo al login
             toast.success('¡Cuenta creada exitosamente!');
             
             navigate('/login'); 
             
         } catch (err: any) {
-            // 3. Capturamos el error con toast
             toast.error(err.response?.data?.error || "Error al conectar con el servidor");
         } finally {
             setIsLoading(false);
@@ -60,18 +58,29 @@ export const Registrar = () => {
                         <p>Completa los campos para registrarte en el sistema</p>
                     </div>
 
-                    {/*  El bloque div de "error-alert" */}
-
                     <form onSubmit={handleRegistro} className="login-form">
                         
+                        {/* 3. Input de Nombre (modificado) */}
                         <div className="form-field">
-                            <label>Nombre Completo:</label>
+                            <label>Nombre:</label>
                             <input 
                                 type="text" 
                                 value={nombre} 
                                 onChange={(e) => setNombre(e.target.value)} 
                                 required 
-                                placeholder="Ingresa tu nombre completo"
+                                placeholder="Ingresa tu nombre"
+                            />
+                        </div>
+
+                        {/* 4. Nuevo Input de Apellido */}
+                        <div className="form-field">
+                            <label>Apellido:</label>
+                            <input 
+                                type="text" 
+                                value={apellido} 
+                                onChange={(e) => setApellido(e.target.value)} 
+                                required 
+                                placeholder="Ingresa tu apellido"
                             />
                         </div>
 
