@@ -14,7 +14,7 @@ export const login = async (credenciales: { email: string; password?: string }) 
 
 // POST: Registrar un nuevo usuario
 export const registrarUsuario = async (datosUsuario: any) => {
-    const { data } = await kyroApi.post('/auth/register', datosUsuario);
+    const { data } = await kyroApi.post('/auth/registro', datosUsuario);
     return data;
 };
 

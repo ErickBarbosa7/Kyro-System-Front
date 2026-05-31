@@ -1,22 +1,16 @@
 /* Layout Principal (Pantalla Dividida) */
-.login-page {
+.registro-page {
   display: flex;
   min-height: 100vh;
   font-family: 'Inter', system-ui, sans-serif;
   background-color: var(--color-background);
 }
 
-/* Panel Izquierdo (Imagen) */
-.login-sidebar {
-  display: none; /* Se oculta en dispositivos móviles */
+/* Panel Izquierdo */
+.registro-sidebar {
+  display: none; /* Se oculta en móviles */
   flex: 1;
-  
-  /* Imagen de fondo original limpia, sin filtros de color */
-  background-image: url('../assets/kyro_1.jpeg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  
+  background-color: var(--color-primary);
   color: var(--color-surface);
   padding: 3rem;
   position: relative;
@@ -34,21 +28,17 @@
   font-size: 2.5rem;
   margin-bottom: 1rem;
   line-height: 1.2;
-  /* Sombra oscura ligera para que el texto resalte sobre partes claras de la foto */
-  text-shadow: 0px 2px 10px rgba(0, 0, 0, 0.8);
 }
 
 .sidebar-content p {
   font-size: 1rem;
-  opacity: 0.95;
+  opacity: 0.8;
   line-height: 1.5;
-  /* Sombra oscura ligera para que el texto resalte sobre partes claras de la foto */
-  text-shadow: 0px 2px 10px rgba(0, 0, 0, 0.8);
 }
 
-/* Mostrar panel izquierdo en pantallas más grandes (Tablets/PCs) */
+/* Mostrar panel izquierdo en pantallas más grandes */
 @media (min-width: 900px) {
-  .login-sidebar {
+  .registro-sidebar {
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
@@ -56,7 +46,7 @@
 }
 
 /* Contenedor Derecho (Formulario) */
-.login-container {
+.registro-container {
   flex: 1;
   display: flex;
   align-items: center;
@@ -64,13 +54,13 @@
   padding: 2rem;
 }
 
-.login-box {
+.registro-box {
   width: 100%;
   max-width: 400px;
 }
 
 /* Cabecera del Formulario */
-.login-header {
+.registro-header {
   text-align: center;
   margin-bottom: 2.5rem;
 }
@@ -89,13 +79,13 @@
   margin: 0 auto 1.5rem auto;
 }
 
-.login-header h2 {
+.registro-header h2 {
   color: var(--color-text);
   font-size: 1.8rem;
   margin: 0 0 0.5rem 0;
 }
 
-.login-header p {
+.registro-header p {
   color: var(--color-text-secondary);
   font-size: 0.95rem;
   margin: 0;
@@ -114,7 +104,7 @@
 }
 
 /* Formulario e Inputs */
-.login-form {
+.registro-form {
   display: flex;
   flex-direction: column;
   gap: 1.2rem;
@@ -174,23 +164,7 @@
   cursor: not-allowed;
 }
 
-/* Enlaces Extra (Recuperar Contraseña y Cambio de Pantalla) */
-.forgot-password {
-  text-align: right;
-  margin-top: 0.3rem;
-}
-
-.forgot-password a {
-  font-size: 0.85rem;
-  color: var(--color-primary);
-  text-decoration: none;
-  font-weight: 500;
-}
-
-.forgot-password a:hover {
-  text-decoration: underline;
-}
-
+/* Enlaces Extra (Registro / Login) */
 .register-prompt {
   text-align: center;
   margin-top: 1.5rem;
@@ -210,10 +184,4 @@
 
 .register-link-button:hover {
   text-decoration: underline;
-}
-
-hr.divider {
-  border: none;
-  border-top: 1px solid var(--color-border);
-  margin: 1.5rem 0;
 }

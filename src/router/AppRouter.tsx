@@ -1,8 +1,10 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Login } from '../pages/Login';
 import { Dashboard } from '../pages/Dashboard';
-import { DashboardLayout } from '../layouts/DashboardLayout'; // Importamos el Layout
 
+import { DashboardLayout } from '../layouts/DashboardLayout'; 
+
+import { Registrar } from '../pages/Registrar';
 export const AppRouter = () => {
     return (
         <Routes>
@@ -12,6 +14,13 @@ export const AppRouter = () => {
                 <Route path="/dashboard" element={<Dashboard />} />                
             </Route>
             
+
+           <Route path="/registrar" element={<Registrar />} />
+
+
+            
+            {/* Ruta comodín */}
+
             <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
     );
