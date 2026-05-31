@@ -1,17 +1,16 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { registrarUsuario } from '../services/auth.service'; 
+import { login } from '../../services/auth.service';
 import toast from 'react-hot-toast'; 
-import './Login.css'; 
+import './Login.css';
 
-export const Registrar = () => {
+export const Login = () => {
     // ==========================================
     // BLOQUE 1: LA MEMORIA (Estados)
     // ==========================================
-    const [nombre, setNombre] = useState('');
-    const [apellido, setApellido] = useState(''); 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    // const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
 
     const navigate = useNavigate();
@@ -19,19 +18,21 @@ export const Registrar = () => {
     // ==========================================
     // BLOQUE 2: LAS ACCIONES (Lógica)
     // ==========================================
-    const handleRegistro = async (e: React.FormEvent) => { 
+    const handleIngresar = async (e: React.FormEvent) => { 
         e.preventDefault(); 
         
         setIsLoading(true);
 
         try {
-            await registrarUsuario({ nombre, apellido, email, password });
+            const respuesta = await login({ email, password });
             
-            toast.success('¡Cuenta creada exitosamente!');
+            // 2. Usamos toast.success en lugar del console.log
+            toast.success(`¡Bienvenido al sistema, ${respuesta.usuario.nombre}!`);
             
-            navigate('/login'); 
+            navigate('/dashboard');
             
         } catch (err: any) {
+            // 3. Usamos toast.error para mostrar el fallo flotante
             toast.error(err.response?.data?.error || "Error al conectar con el servidor");
         } finally {
             setIsLoading(false);
@@ -45,8 +46,8 @@ export const Registrar = () => {
         <div className="login-page">
             <div className="login-sidebar">
                 <div className="sidebar-content">
-                    <h2>Lleva tu gestión al siguiente nivel</h2>
-                    <p>Únete a nuestra plataforma y experimenta un control total, optimizado e inteligente.</p>
+                    <h2>Mejora la calidad de tus procesos</h2>
+                    <p>Un sistema balanceado e inteligente llenará tu trabajo de eficiencia y tranquilidad.</p>
                 </div>
             </div>
 
@@ -54,36 +55,13 @@ export const Registrar = () => {
                 <div className="login-box">
                     <div className="login-header">
                         <div className="logo-placeholder">K</div>
-                        <h2>Crear una Cuenta</h2>
-                        <p>Completa los campos para registrarte en el sistema</p>
+                        <h2>¡Hola de nuevo!</h2>
+                        <p>Ingresa tus credenciales para continuar</p>
                     </div>
 
-                    <form onSubmit={handleRegistro} className="login-form">
-                        
-                        {/* 3. Input de Nombre (modificado) */}
-                        <div className="form-field">
-                            <label>Nombre:</label>
-                            <input 
-                                type="text" 
-                                value={nombre} 
-                                onChange={(e) => setNombre(e.target.value)} 
-                                required 
-                                placeholder="Ingresa tu nombre"
-                            />
-                        </div>
+                    {/* El bloque div de "error-alert" que estaba aquí */}
 
-                        {/* 4. Nuevo Input de Apellido */}
-                        <div className="form-field">
-                            <label>Apellido:</label>
-                            <input 
-                                type="text" 
-                                value={apellido} 
-                                onChange={(e) => setApellido(e.target.value)} 
-                                required 
-                                placeholder="Ingresa tu apellido"
-                            />
-                        </div>
-
+                    <form onSubmit={handleIngresar} className="login-form">
                         <div className="form-field">
                             <label>Correo Electrónico:</label>
                             <input 
@@ -111,17 +89,17 @@ export const Registrar = () => {
                             disabled={isLoading}
                             className="submit-button"
                         >
-                            {isLoading ? 'Registrando...' : 'Registrarse'}
+                            {isLoading ? 'Verificando...' : 'Iniciar Sesión'}
                         </button>
                         
                         <div className="register-prompt">
-                            <span>¿Ya tienes una cuenta? </span>
+                            <span>¿Aún no tienes una cuenta? </span>
                             <button 
                                 type="button" 
-                                onClick={() => navigate('/login')}
+                                onClick={() => navigate('/registrar')}
                                 className="register-link-button"
                             >
-                                Inicia Sesión
+                                Regístrate
                             </button>
                         </div>
                     </form>

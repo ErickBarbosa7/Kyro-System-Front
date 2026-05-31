@@ -12,7 +12,7 @@
   flex: 1;
   
   /* Imagen de fondo original limpia, sin filtros de color */
-  background-image: url('../assets/kyro_1.jpeg');
+  background-image: url('../../assets/kyro_1.jpeg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
