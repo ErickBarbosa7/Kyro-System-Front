@@ -1,8 +1,4 @@
-import kyroApi from '../api/kyroApi'; // Asegúrate de que apunte a tu instancia de Axios
-
-// ==========================================
-// INTERFACES (Tipado Estricto)
-// ==========================================
+import kyroApi from '../api/kyroApi';
 
 // Interfaz completa para leer los datos (Lo que devuelve el GET)
 export interface Material {
@@ -29,7 +25,6 @@ export interface Material {
 }
 
 // Interfaz para el formulario (Lo que enviamos en el POST/PUT)
-// Omitimos campos como 'id' o 'costoUnitario' porque el backend se encarga de ellos.
 export interface MaterialFormData {
     nombre: string;
     categoriaId: string;
@@ -43,58 +38,42 @@ export interface MaterialFormData {
     stockMaximo?: number;
 }
 
-// ==========================================
-// FUNCIONES DE RED (CRUD)
-// ==========================================
 
-/**
- * Obtiene la lista de materiales.
- * Nota: Si en el futuro ajustas tu backend para soportar soft-delete como en
- * Proveedores, puedes pasar el estado ('activos', 'inactivos', 'todos') por parámetro.
- */
+// Metodo para obtener todos los materiales, con opción de filtrar por estado (activos/inactivos)
 export const obtenerMateriales = async (estado: string = 'activos'): Promise<Material[]> => {
     const { data } = await kyroApi.get('/materiales', { params: { estado } });
     return data;
 };
 
-/**
- * Obtiene un material específico por su ID.
- */
+// Obtiene un material específico por su ID.
+ 
 export const obtenerMaterialPorId = async (id: string): Promise<Material> => {
     const { data } = await kyroApi.get(`/materiales/${id}`);
     return data;
 };
 
-/**
- * Crea un nuevo material.
- * El backend se encarga de calcular costoUnitario y stockDisponible.
- */
+// Crea un nuevo material.
+
 export const crearMaterial = async (materialData: MaterialFormData): Promise<Material> => {
     const { data } = await kyroApi.post('/materiales', materialData);
     return data;
 };
 
-/**
- * Actualiza un material existente.
- */
+// Actualiza un material existente.
+ 
 export const actualizarMaterial = async (id: string, materialData: Partial<MaterialFormData>): Promise<Material> => {
     const { data } = await kyroApi.put(`/materiales/${id}`, materialData);
     return data;
 };
 
-/**
- * Elimina un material (Soft-Delete: pasa activo a false).
- */
+// Elimina un material (Soft-Delete: pasa activo a false).
+ 
 export const eliminarMaterial = async (id: string): Promise<{ mensaje: string }> => {
     const { data } = await kyroApi.delete(`/materiales/${id}`);
     return data;
 };
 
-/**
- * Reactiva un material eliminado.
- * Nota: Tu backend actual necesitaría soportar este endpoint,
- * puedes hacerlo reutilizando el PUT de actualizar enviando { activo: true }.
- */
+// Reactiva un material eliminado.
 export const reactivarMaterial = async (id: string): Promise<Material> => {
     const { data } = await kyroApi.put(`/materiales/${id}`, { activo: true });
     return data;

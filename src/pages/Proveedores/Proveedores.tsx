@@ -9,8 +9,8 @@ import {
     reactivarProveedor,
     type ProveedorData 
 } from '../../services/proveedores.service';
-import { SearchBar } from '../../components/ui/SearchBar';
-import { FilterSelect } from '../../components/ui/FilterSelect';
+import { SearchBar } from '../../components/ui/SearchBar/SearchBar';
+import { FilterSelect } from '../../components/ui/FilterSelect/FilterSelect';
 import { ConfirmModal } from '../../components/ConfirmModal';
 import { formatPhone, formatPhoneInput } from '../../utils/formatters';
 import './Proveedores.css';

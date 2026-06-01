@@ -1,0 +1,181 @@
+/* ========================================== */
+/* DROPDOWN CONTENEDOR PRINCIPAL              */
+/* ========================================== */
+.custom-dropdown {
+    position: relative;
+    width: 100%;
+}
+
+/* ========================================== */
+/* DISPARADOR (El "input" falso)              */
+/* ========================================== */
+.dropdown-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    font-size: 14px;
+    background-color: var(--color-surface);
+    color: var(--color-text);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+    box-sizing: border-box;
+}
+
+.dropdown-trigger:focus,
+.dropdown-trigger[aria-expanded="true"] {
+    border-color: var(--color-primary);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
+}
+
+.dropdown-placeholder {
+    color: var(--color-text-secondary);
+}
+
+/* ========================================== */
+/* MENÚ DESPLEGABLE FLOTANTE                  */
+/* ========================================== */
+.dropdown-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    min-width: 100%;
+    max-width: 300px;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    z-index: 1000;
+    max-height: 250px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 6px;
+    animation: fadeInMenu 0.15s ease-out;
+    display: flex;
+    flex-direction: column;
+}
+
+@keyframes fadeInMenu {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ========================================== */
+/* ITEMS (OPCIONES INDIVIDUALES)              */
+/* ========================================== */
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.15s;
+    color: var(--color-text);
+    min-height: 40px;
+    gap: 8px; /* Da un pequeño espacio entre el texto y los botones */
+}
+
+.dropdown-item-text {
+    font-size: 14px;
+    white-space: nowrap; 
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1; /* Toma el espacio disponible... */
+    min-width: 0; /* ...pero respeta los límites sin empujar a los botones */
+}
+
+.dropdown-item:hover {
+    background-color: var(--color-background);
+}
+
+.dropdown-item.selected {
+    background-color: var(--color-primary-light);
+    color: var(--color-primary);
+    font-weight: 500;
+}
+
+/* ========================================== */
+/* ACCIONES HOVER (EDITAR / ELIMINAR)         */
+/* ========================================== */
+.item-actions {
+    display: flex;
+    gap: 4px;
+    opacity: 0; /* Ocultos por defecto */
+    transition: opacity 0.15s;
+    flex-shrink: 0; /* Evita que el texto apachurre o esconda los botones */
+}
+
+.dropdown-item:hover .item-actions {
+    opacity: 1; /* Se muestran al pasar el mouse por encima de la opción */
+}
+
+.item-btn {
+    background: transparent;
+    border: none;
+    padding: 4px;
+    border-radius: 6px;
+    cursor: pointer;
+    color: var(--color-text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+}
+
+.item-btn.edit:hover { background-color: #e0f2fe; color: #0284c7; }
+.item-btn.delete:hover { background-color: #fee2e2; color: #dc2626; }
+
+/* ========================================== */
+/* SECCIÓN INFERIOR DE BOTONES FIJOS          */
+/* ========================================== */
+.dropdown-divider {
+    height: 1px;
+    background-color: var(--color-border);
+    margin: 4px 0;
+    flex-shrink: 0;
+}
+
+.dropdown-action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    width: 100%;
+    padding: 10px 12px;
+    border: none;
+    background: transparent;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.15s, color 0.15s;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* Estilo para Añadir Nuevo */
+.dropdown-action-btn.add {
+    color: var(--color-primary);
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.dropdown-action-btn.add:hover {
+    background-color: var(--color-primary-light);
+}
+
+/* Estilo para Recuperar / Papelera */
+.dropdown-action-btn.recover {
+    color: var(--color-text-secondary);
+    font-size: 13px;
+}
+
+.dropdown-action-btn.recover:hover {
+    background-color: var(--color-background);
+    color: var(--color-text);
+}
