@@ -1,0 +1,30 @@
+.filter-group-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap; /* Para que en pantallas pequeñas se acomoden abajo */
+}
+
+.filter-item {
+    min-width: 160px;
+}
+
+.btn-clear-filters {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    border: 1px solid var(--color-border);
+    background-color: var(--color-surface);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-clear-filters:hover {
+    background-color: #fee2e2;
+    border-color: #dc2626;
+    color: #dc2626;
+}

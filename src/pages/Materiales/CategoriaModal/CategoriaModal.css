@@ -1,0 +1,6 @@
+
+.categoria-modal-custom-textarea {
+    /* Ejemplo: Si quisieras que el textarea de categoría sea diferente al resto */
+    min-height: 80px;
+    resize: none; 
+}

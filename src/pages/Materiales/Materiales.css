@@ -21,7 +21,7 @@
 }
 
 .kyro-table.materials-table tbody tr {
-    transition: background-color 0.2s ease;
+    transition: background-color 0.2s ease, opacity 0.2s ease; /* Añadida transición de opacidad */
 }
 
 .kyro-table.materials-table tbody tr:hover {
@@ -39,6 +39,32 @@
     gap: 10px;
     margin: 0;
     padding: 0;
+}
+
+/* ========================================== */
+/* ESTILOS PARA ELEMENTOS EN PAPELERA         */
+/* ========================================== */
+
+.kyro-table.materials-table tbody tr.row-inactiva {
+    opacity: 0.55;
+    background-color: #f8fafc;
+}
+
+.kyro-table.materials-table tbody tr.row-inactiva:hover {
+    opacity: 0.85;
+}
+
+.badge-eliminado {
+    align-self: flex-start;
+    background-color: #fee2e2;
+    color: #dc2626;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 4px;
 }
 
 /* ========================================== */
@@ -65,49 +91,6 @@
     border-radius: 6px;
     letter-spacing: 0.05em;
     border: 1px solid #e2e8f0;
-}
-
-/* ========================================== */
-/* GRUPO DE BOTONES PARA SELECTORES (CRUD)    */
-/* ========================================== */
-.input-group-actions {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.input-group-actions .kyro-select {
-    flex: 1;
-}
-
-.btn-action-group {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: var(--color-surface);
-    border: 1px solid var(--color-border);
-    color: var(--color-text-secondary);
-    border-radius: 8px;
-    width: 40px;
-    height: 40px; 
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.btn-action-group.add:hover { 
-    background-color: var(--color-primary-light);
-    border-color: var(--color-primary); 
-    color: var(--color-primary); 
-}
-.btn-action-group.edit:hover { 
-    background-color: #e0f2fe;
-    border-color: #0284c7; 
-    color: #0284c7; 
-}
-.btn-action-group.delete:hover { 
-    background-color: #fee2e2;
-    border-color: #dc2626; 
-    color: #dc2626; 
 }
 
 /* ========================================== */
@@ -203,16 +186,13 @@
     display: flex;
     gap: 16px;
     margin-bottom: 16px;
-    /* Al quitar el flex-wrap forzamos a que siempre se queden en la misma línea */
     width: 100%; 
 }
 
 .form-group {
     display: flex;
     flex-direction: column;
-    /* flex: 1 obliga a que todos los inputs midan EXACTAMENTE lo mismo (33.3%) */
     flex: 1; 
-    /* CRÍTICO: min-width en 0 evita que el texto largo del label estire la caja */
     min-width: 0; 
 }
 
@@ -221,13 +201,60 @@
     font-weight: 600;
     color: var(--color-text-secondary);
     margin-bottom: 6px;
-    /* Si el texto es muy largo para la columna, le pone "..." en lugar de romper el diseño */
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-/* Todos los inputs del sistema con tu tamaño preferido */
+/* ========================================== */
+/* DISTRIBUCIÓN HEADER DEL MODAL (IMAGEN + DATOS) */
+/* ========================================== */
+
+.form-header-layout {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 16px;
+    width: 100%;
+}
+
+.image-upload-wrapper {
+    flex-shrink: 0; /* Evita que los inputs aplasten el cuadro de la foto */
+}
+.toolbar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 20px;
+    flex-wrap: wrap; /* Permite que colapse en pantallas pequeñas */
+}
+
+.search-wrapper {
+    flex: 1;
+    min-width: 250px;
+    max-width: 400px; /* Evita que la barra de búsqueda sea gigante */
+}
+
+/* Hacemos la dropzone más grande usando la clase 'large' */
+.image-dropzone.large {
+    width: 150px;
+    height: 150px;
+}
+
+/* La columna de la derecha que agrupa Nombre y Categoría */
+.header-fields-col {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Separa los inputs verticalmente */
+    flex: 1; /* Ocupa todo el espacio sobrante a la derecha */
+    gap: 12px;
+}
+
+/* Quitar margen inferior a los form-groups dentro de esta columna para usar el 'gap' */
+.header-fields-col .form-group {
+    margin-bottom: 0;
+}
+
 .form-group input,
 .form-group textarea,
 .form-group select,

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ChevronDown, Plus, Pencil, Trash2, RefreshCcw } from 'lucide-react';
+import { ChevronDown, Plus, Pencil, Trash2, Trash } from 'lucide-react';
 import './ActionDropdown.css';
 
 interface Option {
@@ -153,7 +153,7 @@ export const ActionDropdown: React.FC<ActionDropdownProps> = ({
                                 onRecover();
                             }}
                         >
-                            <RefreshCcw size={14} strokeWidth={2.5} />
+                            <Trash size={16} strokeWidth={2.5} />
                             {recoverLabel}
                         </button>
                     )}
