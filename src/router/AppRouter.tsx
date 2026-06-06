@@ -11,7 +11,7 @@ import { Piezas } from '../pages/Piezas/Piezas';
 import { Costeo } from '../pages/Costeo/Costeo';
 import { Stock } from '../pages/Stock/Stock';
 import { GastosOperativos } from '../pages/GastosOperativos/GastosOperativos';
-import { Margenes } from '../pages/Margenes/Margenes';
+import { ConfiguracionMargenes } from '../pages/ConfiguracionMargenes/ConfiguracionMargenes';
 
 import { Registrar } from '../pages/auth/Registrar';
 export const AppRouter = () => {
@@ -41,7 +41,7 @@ export const AppRouter = () => {
                 
                 {/* Finanazas */}
                 <Route path="/gastos" element={<GastosOperativos />} />
-                <Route path="/margenes" element={<Margenes />} />
+                <Route path="/margenes" element={<ConfiguracionMargenes />} />
             </Route>
           
             <Route path="*" element={<Navigate to="/login" replace />} />
