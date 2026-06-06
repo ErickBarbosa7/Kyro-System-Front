@@ -4,8 +4,6 @@ import { registrarUsuario } from '../../services/auth.service';
 import toast from 'react-hot-toast'; 
 import { Player } from '@lottiefiles/react-lottie-player';
 
-// Importamos las mismas animaciones del Login
-import animacionFondoBling from '../../assets/bling.json'; 
 import animacionFondoPlane from '../../assets/plane.json'; 
 import animacionRobot from '../../assets/robot.json'; // Ajusta la ruta si es diferente
 import animacionWelcome from '../../assets/welcome.json'; 
