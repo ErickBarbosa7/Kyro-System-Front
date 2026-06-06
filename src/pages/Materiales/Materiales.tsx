@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { toast } from 'react-hot-toast';
-import { Plus, Pencil, Trash2, Box, Image as ImageIcon, AlertTriangle, RefreshCcw } from 'lucide-react';
+import { Plus, Pencil, Trash2, Box, Image as ImageIcon, AlertTriangle, RefreshCcw, FileText } from 'lucide-react';
 import { SearchBar } from '../../components/ui/SearchBar/SearchBar';
-import { FilterSelect } from '../../components/ui/FilterSelect/FilterSelect';
 import { ConfirmModal } from '../../components/ConfirmModal';
 import { ActionDropdown } from '../../components/ui/ActionDropdown/ActionDropdown';
 import { Modal } from '../../components/ui/Modal/Modal'; 
-import { FilterGroup, type FilterConfig } from '../../components/ui/FilterGroup/FilterGroup';
+import { FilterGroup } from '../../components/ui/FilterGroup/FilterGroup';
+import { DataTable, type ColumnConfig } from '../../components/ui/DataTable/DataTable';
+import { generarPDFMateriales } from '../../utils/reportes';
 
 // COMPONENTES EXTERNOS
 import { CategoriaModal } from './CategoriaModal/CategoriaModal';
@@ -15,10 +16,23 @@ import { UnidadMedidaModal } from './UnidadMedidaModal/UnidadMedidaModal';
 // SERVICIOS
 import { reactivarCategoria, obtenerCategorias, eliminarCategoria, type CategoriaMaterial } from '../../services/categorias-materiales.service'; 
 import { obtenerUnidades, eliminarUnidad, reactivarUnidad } from '../../services/unidades-medida.service';
-import { obtenerMateriales, crearMaterial, actualizarMaterial, eliminarMaterial, reactivarMaterial, type Material, type MaterialFormData } from '../../services/materiales.service';
+import { obtenerMateriales, crearMaterial, actualizarMaterial, eliminarMaterial, reactivarMaterial, type Material } from '../../services/materiales.service';
 import { obtenerProveedores } from '../../services/proveedores.service';
 
 import './Materiales.css';
+
+// Definimos la estructura del estado del formulario para que sea compatible con inputs vacíos y strings de FormData
+interface FormState {
+    nombre: string;
+    categoriaId: string;
+    proveedorId: string;
+    unidadMedidaId: string;
+    precioCompra: string | number;
+    cantidadComprada: string | number;
+    stockMinimo: string | number;
+    stockMaximo: string | number;
+    imagenUrl: string;
+}
 
 export const Materiales = () => {
     // === ESTADOS ===
@@ -29,18 +43,29 @@ export const Materiales = () => {
     const [isLoading, setIsLoading] = useState(true);
 
     const [searchTerm, setSearchTerm] = useState('');
-    const [filtroEstado, setFiltroEstado] = useState('activos');
+    
+    // Estado unificado de filtros
     const [filtros, setFiltros] = useState({
-        estado: 'activos', // Este viaja al backend
-        categoriaId: '',   // Este filtra en memoria (frontend)
-        proveedorId: ''    // Este filtra en memoria (frontend)
+        estado: 'activos', 
+        categoriaId: '',   
+        proveedorId: ''    
     });
+
+    // Estados específicos para la carga de imágenes en Cloudinary
+    const [imageFile, setImageFile] = useState<File | null>(null);
+    const [imagePreview, setImagePreview] = useState<string>('');
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
     // Modal Materiales
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingId, setEditingId] = useState<string | null>(null);
-    const [formData, setFormData] = useState<MaterialFormData>({
+    const [formData, setFormData] = useState<FormState>({
         nombre: '', categoriaId: '', proveedorId: '', unidadMedidaId: '', 
-        precioCompra: 0, cantidadComprada: 0, stockMinimo: 0, stockMaximo: 0, imagenUrl: '',
+        precioCompra: '', 
+        cantidadComprada: '', 
+        stockMinimo: 0, 
+        stockMaximo: '', 
+        imagenUrl: '',
     });
 
     // Modales Secundarios (Categorías y Unidades)
@@ -64,13 +89,13 @@ export const Materiales = () => {
     // === EFECTOS ===
     useEffect(() => {
         cargarDatos();
-    }, [filtroEstado]);
+    }, [filtros.estado]);
 
     const cargarDatos = async () => {
         setIsLoading(true);
         try {
             const [materialesData, proveedoresData, categoriasData, unidadesData] = await Promise.all([
-                obtenerMateriales(filtroEstado),
+                obtenerMateriales(filtros.estado),
                 obtenerProveedores('activos'),
                 obtenerCategorias('activas'),
                 obtenerUnidades('activas')
@@ -86,26 +111,48 @@ export const Materiales = () => {
         }
     };
 
+    // --- LÓGICA DE SELECCIÓN DE IMAGEN ---
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setImageFile(file);
+            setImagePreview(URL.createObjectURL(file)); 
+        }
+    };
+
     // --- LÓGICA DE MATERIALES ---
     const handleMaterialSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!formData.nombre.trim()) return toast.error('El nombre es obligatorio');
         if (!formData.categoriaId) return toast.error('Debes seleccionar una categoría');
         if (!formData.unidadMedidaId) return toast.error('La unidad es obligatoria');
-        if (formData.precioCompra <= 0) return toast.error('El precio debe ser mayor a 0');
-        if (!editingId && formData.cantidadComprada <= 0) return toast.error('Ingresa una cantidad inicial');
+        if (Number(formData.precioCompra) <= 0) return toast.error('El precio debe ser mayor a 0');
+        if (!editingId && Number(formData.cantidadComprada) <= 0) return toast.error('Ingresa una cantidad inicial');
 
         const loadingToast = toast.loading(editingId ? 'Actualizando...' : 'Guardando...');
         try {
-            const datosLimpios = { ...formData };
-            if (!datosLimpios.proveedorId) delete datosLimpios.proveedorId;
-            if (!datosLimpios.stockMaximo) delete datosLimpios.stockMaximo;
+            const dataToSend = new FormData();
+            dataToSend.append('nombre', formData.nombre);
+            dataToSend.append('categoriaId', formData.categoriaId);
+            dataToSend.append('unidadMedidaId', formData.unidadMedidaId);
+            dataToSend.append('precioCompra', String(formData.precioCompra));
+            dataToSend.append('cantidadComprada', String(formData.cantidadComprada));
+            dataToSend.append('stockMinimo', String(formData.stockMinimo));
+            dataToSend.append('stockMaximo', formData.stockMaximo !== '' ? String(formData.stockMaximo) : '');
+            
+            if (formData.proveedorId) {
+                dataToSend.append('proveedorId', formData.proveedorId);
+            }
+
+            if (imageFile) {
+                dataToSend.append('imagen', imageFile);
+            }
 
             if (editingId) {
-                await actualizarMaterial(editingId, datosLimpios);
+                await actualizarMaterial(editingId, dataToSend);
                 toast.success('Material actualizado', { id: loadingToast });
             } else {
-                await crearMaterial(datosLimpios);
+                await crearMaterial(dataToSend);
                 toast.success('Material registrado', { id: loadingToast });
             }
             cerrarModal();
@@ -125,15 +172,16 @@ export const Materiales = () => {
                 unidadMedidaId: material.unidadMedidaId, 
                 precioCompra: material.precioCompra, 
                 cantidadComprada: material.cantidadComprada,
-                stockMinimo: material.stockMinimo, 
-                stockMaximo: material.stockMaximo || 0,
+                // Usamos ?? para atrapar tanto null como undefined
+                stockMinimo: material.stockMinimo ?? 0, 
+                stockMaximo: material.stockMaximo ?? '', 
                 imagenUrl: material.imagenUrl || '',
             });
         } else {
             setEditingId(null);
             setFormData({
                 nombre: '', categoriaId: '', proveedorId: '', unidadMedidaId: '',
-                precioCompra: 0, cantidadComprada: 0, stockMinimo: 0, stockMaximo: 0, imagenUrl: '',
+                precioCompra: '', cantidadComprada: '', stockMinimo: 0, stockMaximo: '', imagenUrl: '',
             });
         }
         setIsModalOpen(true);
@@ -142,11 +190,13 @@ export const Materiales = () => {
     const cerrarModal = () => {
         setIsModalOpen(false);
         setEditingId(null);
+        setImageFile(null);
+        setImagePreview('');
     };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value, type } = e.target;
-        const parsedValue = type === 'number' ? (value === '' ? 0 : Number(value)) : value;
+        const parsedValue = type === 'number' ? (value === '' ? '' : Number(value)) : value;
         setFormData(prev => ({ ...prev, [name]: parsedValue }));
     };
 
@@ -161,7 +211,7 @@ export const Materiales = () => {
         setIsCategoriaModalOpen(true);
     };
 
-    const abrirPapeleraCategorias = async () => {
+    const abrirPapereraCategorias = async () => {
         const loadingToast = toast.loading('Buscando eliminadas...');
         try {
             const inactivas = await obtenerCategorias('inactivas');
@@ -216,7 +266,7 @@ export const Materiales = () => {
         }
     };
 
-    // --- LÓGICA DE ELIMINACIÓN Y REACTIVACIÓN (GENERAL) ---
+    // --- LÓGICA DE ELIMINACIÓN Y REACTIVACIÓN ---
     const handleDeleteClick = (id: string, nombre: string, tipo: 'material' | 'categoria' | 'unidad') => {
         setItemAEliminar({ id, nombre, tipo });
         setIsConfirmOpen(true);
@@ -258,42 +308,147 @@ export const Materiales = () => {
         }
     };
 
+    // --- FILTRADO EN MEMORIA ---
     const materialesFiltrados = materiales.filter(mat => {
-        // 1. Filtro de búsqueda por texto
         const busqueda = searchTerm.toLowerCase();
         const matchSearch = mat.nombre.toLowerCase().includes(busqueda) || 
                             (mat.proveedor?.nombre && mat.proveedor.nombre.toLowerCase().includes(busqueda));
         
-        // 2. Filtro de Categoría
         const matchCategoria = filtros.categoriaId === '' || mat.categoriaId === filtros.categoriaId;
-        
-        // 3. Filtro de Proveedor
         const matchProveedor = filtros.proveedorId === '' || mat.proveedorId === filtros.proveedorId;
 
-        // Solo devuelve el material si cumple TODAS las condiciones
         return matchSearch && matchCategoria && matchProveedor;
     });
 
+    // --- CONFIGURACIÓN DE COLUMNAS PARA DATATABLE ---
+    const columns: ColumnConfig<Material>[] = useMemo(() => [
+        {
+            key: 'imagenUrl',
+            label: 'Img',
+            width: '90px',
+            align: 'center',
+            render: (mat: Material) => (
+                <div className="material-thumb">
+                    {mat.imagenUrl ? (
+                        <img
+                            src={mat.imagenUrl} alt={mat.nombre}
+                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                            onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                        />
+                    ) : (
+                        <ImageIcon size={24} color="#94a3b8" />
+                    )}
+                </div>
+            )
+        },
+        {
+            key: 'nombre',
+            label: 'Material',
+            width: '180px',
+            sortable: true,
+            render: (mat: Material) => (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    <span className="truncate-text font-medium">{mat.nombre}</span>
+                    {mat.activo === false && <span className="badge-eliminado">Eliminado</span>}
+                </div>
+            )
+        },
+        {
+            key: 'proveedor',
+            label: 'Proveedor',
+            width: '220px',
+            sortable: true,
+            getSortValue: (mat: Material) => mat.proveedor?.nombre || '',
+            render: (mat: Material) => (
+                <span className="truncate-text text-muted" title={mat.proveedor?.nombre || 'Sin Proveedor'}>
+                    {mat.proveedor?.nombre || 'Sin Proveedor'}
+                </span>
+            )
+        },
+        {
+            key: 'precioCompra',
+            label: 'Precio',
+            width: '110px',
+            sortable: true,
+            render: (mat: Material) => <span className="font-price">${Number(mat.precioCompra).toFixed(2)}</span>
+        },
+        {
+            key: 'unidadMedida',
+            label: 'Unidad',
+            width: '110px',
+            sortable: true,
+            getSortValue: (mat: Material) => mat.unidadMedida?.nombre || '',
+            render: (mat: Material) => <span className="badge-unidad">{mat.unidadMedida?.nombre || 'N/A'}</span>
+        },
+        {
+            key: 'stockDisponible',
+            label: 'Stock',
+            width: '120px',
+            align: 'center',
+            sortable: true,
+            render: (mat: Material) => (
+                <div className={`stock-indicator ${mat.stockDisponible <= mat.stockMinimo ? 'low-stock' : 'good-stock'}`}>
+                    {mat.stockDisponible <= mat.stockMinimo && <AlertTriangle size={14} />}
+                    <span>{mat.stockDisponible}</span>
+                </div>
+            )
+        },
+        {
+            key: 'acciones',
+            label: 'Acciones',
+            width: '120px',
+            align: 'center',
+            render: (mat: Material) => (
+                <div className="actions-cell">
+                    <button className="btn-icon edit" onClick={() => abrirModal(mat)} title="Editar">
+                        <Pencil size={18} />
+                    </button>
+                    {mat.activo === false ? (
+                        <button className="btn-icon reactivate" style={{ color: '#16a34a' }} onClick={() => handleReactivar(mat.id)} title="Reactivar">
+                            <RefreshCcw size={18} />
+                        </button>
+                    ) : (
+                        <button className="btn-icon delete" onClick={() => handleDeleteClick(mat.id, mat.nombre, 'material')} title="Eliminar">
+                            <Trash2 size={18} />
+                        </button>
+                    )}
+                </div>
+            )
+        }
+    ], [categorias, proveedores, unidades]);
+
     return (
         <div className="module-container">
-            
-            {/* 1. CABECERA PRINCIPAL (Limpia, sin duplicados) */}
+            {/* 1. CABECERA PRINCIPAL */}
             <div className="module-header">
-                <div className="module-title">
-                    <Box size={28} color="var(--color-primary)" />
-                    <h2>Catálogo de Materiales</h2>
-                </div>
-                <button className="btn-primary" onClick={() => abrirModal()}>
-                    <Plus size={20} /> Nuevo Material
-                </button>
-            </div>
+    <div className="module-title">
+        <Box size={28} color="var(--color-primary)" />
+        <h2>Catálogo de Materiales</h2>
+    </div>
+    
+    {/* Contenedor para alinear los botones a la derecha */}
+    <div style={{ display: 'flex', gap: '12px' }}>
+        <button 
+            className="btn-secondary" 
+            style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+            onClick={() => generarPDFMateriales(materialesFiltrados, filtros.estado)}
+            title="Exportar la vista actual a formato PDF"
+        >
+            <FileText size={20} /> Exportar PDF
+        </button>
+
+        <button className="btn-primary" onClick={() => abrirModal()}>
+            <Plus size={20} /> Nuevo Material
+        </button>
+    </div>
+</div>
 
             {/* 2. DESCRIPCIÓN */}
             <div className="module-description">
                 <p>Gestiona tu inventario de piedras, cadenas y fornituras. Controla precios y niveles de stock.</p>
             </div>
 
-            {/* 3. BARRA DE HERRAMIENTAS (Búsqueda a la izq, Filtros a la der) */}
+            {/* 3. BARRA DE HERRAMIENTAS UNIFICADA */}
             <div className="toolbar-container">
                 <div className="search-wrapper">
                     <SearchBar placeholder="Buscar material..." value={searchTerm} onChange={setSearchTerm} />
@@ -310,6 +465,7 @@ export const Materiales = () => {
                         {
                             name: 'estado',
                             placeholder: 'Ver Activos',
+                            hideEmptyOption: true,
                             options: [
                                 { id: 'activos', nombre: 'Ver Activos' },
                                 { id: 'inactivos', nombre: 'Papelera' },
@@ -330,85 +486,19 @@ export const Materiales = () => {
                 />
             </div>
 
-
-            {/* TABLA PRINCIPAL */}
+            {/* 4. CONTENEDOR DE LA TABLA */}
             <div className="table-container">
                 {isLoading ? (
                     <div className="loading-state">Cargando materiales...</div>
-                ) : materiales.length === 0 ? (
-                    <div className="empty-state">No hay materiales registrados.</div>
-                ) : materialesFiltrados.length === 0 ? (
-                    <div className="empty-state">No se encontraron resultados para "{searchTerm}"</div>
                 ) : (
-                    <table className="kyro-table materials-table">
-                        <thead>
-                            <tr>
-                                <th style={{ width: '90px', textAlign: 'center' }}>Img</th>
-                                <th style={{ width: '180px' }}>Material</th>
-                                <th style={{ width: '220px' }}>Proveedor</th>
-                                <th style={{ width: '110px' }}>Precio</th>
-                                <th style={{ width: '110px' }}>Unidad</th>
-                                <th style={{ width: '120px', textAlign: 'center' }}>Stock</th>
-                                <th style={{ width: '120px', textAlign: 'center' }}>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {materialesFiltrados.map((mat) => (
-                                <tr key={mat.id} className={mat.activo === false ? 'row-inactiva' : ''}>
-                                    <td className="text-center">
-                                        <div className="material-thumb">
-                                            {mat.imagenUrl ? (
-                                                <img
-                                                    src={mat.imagenUrl} alt={mat.nombre}
-                                                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                                                    onError={(e) => { e.currentTarget.style.display = 'none'; }}
-                                                />
-                                            ) : (
-                                                <ImageIcon size={24} color="#94a3b8" />
-                                            )}
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                                            <span className="truncate-text font-medium">{mat.nombre}</span>
-                                            {mat.activo === false && <span className="badge-eliminado">Eliminado</span>}
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <span className="truncate-text text-muted" title={mat.proveedor?.nombre || 'Sin Proveedor'}>
-                                            {mat.proveedor?.nombre || 'Sin Proveedor'}
-                                        </span>
-                                    </td>
-                                    <td className="font-price">${Number(mat.precioCompra).toFixed(2)}</td>
-                                    
-                                    <td><span className="badge-unidad">{mat.unidadMedida?.nombre || 'N/A'}</span></td>
-                                    
-                                    <td align="center">
-                                        <div className={`stock-indicator ${mat.stockDisponible <= mat.stockMinimo ? 'low-stock' : 'good-stock'}`}>
-                                            {mat.stockDisponible <= mat.stockMinimo && <AlertTriangle size={14} />}
-                                            <span>{mat.stockDisponible}</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div className="actions-cell">
-                                            <button className="btn-icon edit" onClick={() => abrirModal(mat)} title="Editar">
-                                                <Pencil size={18} />
-                                            </button>
-                                            {mat.activo === false ? (
-                                                <button className="btn-icon reactivate" style={{ color: '#16a34a' }} onClick={() => handleReactivar(mat.id)} title="Reactivar">
-                                                    <RefreshCcw size={18} />
-                                                </button>
-                                            ) : (
-                                                <button className="btn-icon delete" onClick={() => handleDeleteClick(mat.id, mat.nombre, 'material')} title="Eliminar">
-                                                    <Trash2 size={18} />
-                                                </button>
-                                            )}
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                    <DataTable
+                        data={materialesFiltrados}
+                        columns={columns}
+                        className="materials-table"
+                        emptyMessage={searchTerm ? `No se encontraron resultados para "${searchTerm}"` : "No hay materiales registrados."}
+                        rowClassName={(mat) => (mat.activo === false ? 'row-inactiva' : '')}
+                        defaultSort={{ key: 'nombre', direction: 'desc' }}
+                    />
                 )}
             </div>
 
@@ -422,16 +512,34 @@ export const Materiales = () => {
             >
                 <form onSubmit={handleMaterialSubmit} className="modal-form">
                     <div className="form-header-layout">
-                        
-                        {/* 1. Imagen a la Izquierda (un poco más grande) */}
                         <div className="image-upload-wrapper">
-                            <div className="image-dropzone large">
-                                <ImageIcon size={36} color="#94a3b8" />
-                                <p>Clic para foto</p>
+                            <div 
+                                className="image-dropzone large"
+                                onClick={() => fileInputRef.current?.click()}
+                                title="Seleccionar imagen del material"
+                            >
+                                {imagePreview || formData.imagenUrl ? (
+                                    <img
+                                        src={imagePreview || formData.imagenUrl} 
+                                        alt="Previsualización"
+                                        style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '14px' }}
+                                    />
+                                ) : (
+                                    <>
+                                        <ImageIcon size={36} color="#94a3b8" />
+                                        <p>Clic para foto</p>
+                                    </>
+                                )}
                             </div>
+                            <input 
+                                type="file"
+                                ref={fileInputRef}
+                                accept="image/*"
+                                style={{ display: 'none' }}
+                                onChange={handleImageChange}
+                            />
                         </div>
 
-                        {/* 2. Columna Derecha (Nombre arriba, Categoría abajo) */}
                         <div className="header-fields-col">
                             <div className="form-group">
                                 <label>Nombre del Material *</label>
@@ -457,7 +565,7 @@ export const Materiales = () => {
                                         onAdd={() => abrirCategoriaModal()}
                                         onEdit={(id) => abrirCategoriaModal(id)}
                                         onDelete={(id, nombre) => handleDeleteClick(id, nombre, 'categoria')}
-                                        onRecover={() => abrirPapeleraCategorias()}
+                                        onRecover={() => abrirPapereraCategorias()}
                                         recoverLabel="Papelera"
                                     />
                                 </div>
@@ -508,7 +616,7 @@ export const Materiales = () => {
                             <input
                                 type="number"
                                 name="precioCompra"
-                                value={formData.precioCompra || ''}
+                                value={formData.precioCompra}
                                 onChange={handleInputChange}
                                 step="0.01"
                                 min="0"
@@ -523,7 +631,7 @@ export const Materiales = () => {
                             <input
                                 type="number"
                                 name="cantidadComprada"
-                                value={formData.cantidadComprada || ''}
+                                value={formData.cantidadComprada}
                                 onChange={handleInputChange}
                                 step="0.01"
                                 min="0"
@@ -536,11 +644,11 @@ export const Materiales = () => {
                     <div className="form-row">
                         <div className="form-group">
                             <label>Stock Mínimo (Alerta)</label>
-                            <input type="number" name="stockMinimo" value={formData.stockMinimo || ''} onChange={handleInputChange} min="0" placeholder='Opcional'/>
+                            <input type="number" name="stockMinimo" value={formData.stockMinimo} onChange={handleInputChange} min="0" placeholder='Opcional'/>
                         </div>
                         <div className="form-group">
                             <label>Stock Máximo</label>
-                            <input type="number" name="stockMaximo" value={formData.stockMaximo || ''} onChange={handleInputChange} min="0" placeholder="Opcional"/>
+                            <input type="number" name="stockMaximo" value={formData.stockMaximo} onChange={handleInputChange} min="0" placeholder="Opcional (Sin límite)"/>
                         </div>
                     </div>
 

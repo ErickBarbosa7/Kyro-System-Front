@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { toast } from 'react-hot-toast';
-import { Plus, Pencil, Trash2, Package, X, ChevronDown, ChevronUp, RefreshCcw, Copy} from 'lucide-react';
+import { Plus, Pencil, Trash2, Package, X, ChevronDown, ChevronUp, RefreshCcw, Copy } from 'lucide-react';
 import { 
     obtenerProveedores, 
     crearProveedor, 
@@ -10,8 +10,9 @@ import {
     type ProveedorData 
 } from '../../services/proveedores.service';
 import { SearchBar } from '../../components/ui/SearchBar/SearchBar';
-import { FilterSelect } from '../../components/ui/FilterSelect/FilterSelect';
 import { ConfirmModal } from '../../components/ConfirmModal';
+import { FilterGroup, type FilterConfig } from '../../components/ui/FilterGroup/FilterGroup';
+import { DataTable, type ColumnConfig } from '../../components/ui/DataTable/DataTable';
 import { formatPhone, formatPhoneInput } from '../../utils/formatters';
 import './Proveedores.css';
 
@@ -24,18 +25,13 @@ export const Proveedores = () => {
     const [proveedores, setProveedores] = useState<Proveedor[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     
-    // Controles de Búsqueda y Filtro
+    // Controles de Búsqueda y Filtros Unificados
     const [searchTerm, setSearchTerm] = useState('');
-    const [filtroEstado, setFiltroEstado] = useState('activos');
+    const [filtros, setFiltros] = useState({
+        estado: 'activos'
+    });
     const [expandedRowId, setExpandedRowId] = useState<string | null>(null);
-    const copiarTexto = async (texto: string, mensaje: string) => {
-    try {
-        await navigator.clipboard.writeText(texto);
-        toast.success(mensaje);
-    } catch {
-        toast.error('No se pudo copiar');
-    }
-};
+
     // Estados del Modal (Formulario)
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingId, setEditingId] = useState<string | null>(null);
@@ -57,28 +53,27 @@ export const Proveedores = () => {
     useEffect(() => {
         cargarProveedores();
         setExpandedRowId(null); 
-    }, [filtroEstado]);
-
-    // === LÓGICA DE FILTRADO ===
-    const proveedoresFiltrados = proveedores.filter(prov => {
-        const busqueda = searchTerm.toLowerCase();
-        return (
-            prov.nombre.toLowerCase().includes(busqueda) ||
-            (prov.emails && prov.emails.some(email => email.toLowerCase().includes(busqueda))) ||
-            (prov.telefonos && prov.telefonos.some(tel => tel.includes(busqueda))) 
-        );
-    });
+    }, [filtros.estado]);
 
     // === FUNCIONES DE RED ===
     const cargarProveedores = async () => {
         setIsLoading(true);
         try {
-            const data = await obtenerProveedores(filtroEstado);
+            const data = await obtenerProveedores(filtros.estado);
             setProveedores(data);
         } catch (error) {
             toast.error('Error al cargar los proveedores');
         } finally {
             setIsLoading(false);
+        }
+    };
+
+    const copiarTexto = async (texto: string, mensaje: string) => {
+        try {
+            await navigator.clipboard.writeText(texto);
+            toast.success(mensaje);
+        } catch {
+            toast.error('No se pudo copiar');
         }
     };
 
@@ -90,7 +85,6 @@ export const Proveedores = () => {
             return;
         }
 
-        // Limpiamos los arreglos antes de enviar a Prisma
         const datosLimpios = {
             ...formData,
             telefonos: formData.telefonos?.filter(tel => tel.trim() !== ''),
@@ -146,36 +140,18 @@ export const Proveedores = () => {
         }
     };
 
-    // === MANEJADORES DE INTERFAZ ===
+    // === MANEJADORES DE INTERFAZ Y ARREGLOS ===
     const toggleRow = (id: string) => setExpandedRowId(expandedRowId === id ? null : id);
 
-    // Manejador para inputs de texto simples
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
+        const { name, value } = e.target;
+        setFormData(prev => {
+            if (name === 'telefono') return { ...prev, telefonos: [formatPhoneInput(value)] };
+            if (name === 'email') return { ...prev, emails: [value] };
+            return { ...prev, [name]: value };
+        });
+    };
 
-    setFormData(prev => {
-        if (name === 'telefono') {
-            return {
-                ...prev,
-                telefonos: [formatPhoneInput(value)]
-            };
-        }
-
-        if (name === 'email') {
-            return {
-                ...prev,
-                emails: [value]
-            };
-        }
-
-        return {
-            ...prev,
-            [name]: value
-        };
-    });
-};
-
-    // === MANEJADORES DE ARREGLOS DINÁMICOS ===
     const handleArrayChange = (index: number, field: 'telefonos' | 'emails', value: string) => {
         setFormData(prev => {
             const newArray = [...(prev[field] || [])];
@@ -195,7 +171,6 @@ export const Proveedores = () => {
         }));
     };
 
-    // === CONTROLES DEL MODAL ===
     const abrirModal = (proveedor?: Proveedor) => {
         if (proveedor) {
             setEditingId(proveedor.id);
@@ -223,6 +198,166 @@ export const Proveedores = () => {
         setEditingId(null);
     };
 
+    // === FILTRADO EN MEMORIA ===
+    const proveedoresFiltrados = proveedores.filter(prov => {
+        const busqueda = searchTerm.toLowerCase();
+        return (
+            prov.nombre.toLowerCase().includes(busqueda) ||
+            (prov.emails && prov.emails.some(email => email.toLowerCase().includes(busqueda))) ||
+            (prov.telefonos && prov.telefonos.some(tel => tel.includes(busqueda))) 
+        );
+    });
+
+    // === CONFIGURACIÓN DE COLUMNAS PARA DATATABLE ===
+    const columns: ColumnConfig<Proveedor>[] = useMemo(() => [
+        {
+            key: 'expand',
+            label: '',
+            width: '50px',
+            align: 'center',
+            render: (prov: Proveedor) => (
+                <button className="btn-icon expand" onClick={() => toggleRow(prov.id)} title="Ver detalles">
+                    {expandedRowId === prov.id ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                </button>
+            )
+        },
+        {
+            key: 'nombre',
+            label: 'Nombre',
+            sortable: true,
+            render: (prov: Proveedor) => (
+                <span className="font-medium">
+                    {prov.nombre}
+                    {prov.activo === false && <span className="badge-inactivo">Inactivo</span>}
+                </span>
+            )
+        },
+        {
+            key: 'telefono',
+            label: 'Teléfono',
+            sortable: true,
+            getSortValue: (prov: Proveedor) => prov.telefonos?.[0] || '',
+            render: (prov: Proveedor) => (
+                <div className="copy-field">
+                    <span>{prov.telefonos?.[0] ? formatPhone(prov.telefonos[0]) : '-'}</span>
+                    {prov.telefonos?.[0] && (
+                        <button className="copy-btn" onClick={() => copiarTexto(prov.telefonos![0], 'Teléfono copiado')} title="Copiar teléfono">
+                            <Copy size={14} />
+                        </button>
+                    )}
+                    {prov.telefonos && prov.telefonos.length > 1 && (
+                        <span className="badge-count">+{prov.telefonos.length - 1}</span>
+                    )}
+                </div>
+            )
+        },
+        {
+            key: 'email',
+            label: 'Email',
+            sortable: true,
+            getSortValue: (prov: Proveedor) => prov.emails?.[0] || '',
+            render: (prov: Proveedor) => (
+                <div className="copy-field">
+                    <span>{prov.emails?.[0] || '-'}</span>
+                    {prov.emails?.[0] && (
+                        <button className="copy-btn" onClick={() => copiarTexto(prov.emails![0], 'Correo copiado')} title="Copiar correo">
+                            <Copy size={14} />
+                        </button>
+                    )}
+                    {prov.emails && prov.emails.length > 1 && (
+                        <span className="badge-count">+{prov.emails.length - 1}</span>
+                    )}
+                </div>
+            )
+        },
+        {
+            key: 'acciones',
+            label: 'Acciones',
+            align: 'center',
+            width: '120px',
+            render: (prov: Proveedor) => (
+                <div className="actions-cell">
+                    <button className="btn-icon edit" onClick={() => abrirModal(prov)} title="Editar">
+                        <Pencil size={18} />
+                    </button>
+                    {prov.activo === false ? (
+                        <button className="btn-icon reactivate" onClick={() => handleReactivar(prov.id)} title="Reactivar">
+                            <RefreshCcw size={18} />
+                        </button>
+                    ) : (
+                        <button className="btn-icon delete" onClick={() => handleDeleteClick(prov.id, prov.nombre)} title="Eliminar">
+                            <Trash2 size={18} />
+                        </button>
+                    )}
+                </div>
+            )
+        }
+    ], [expandedRowId]);
+
+    // === RENDERIZADO DE LA FILA DE DETALLE EXPANDIBLE ===
+    const renderDetailRow = (prov: Proveedor) => {
+        if (expandedRowId !== prov.id) return null;
+        return (
+            <tr className="expanded-detail-row">
+                <td colSpan={5}>
+                    <div className="expanded-content">
+                        <div className="detail-column">
+                            <span className="detail-label">Teléfonos</span>
+                            {prov.telefonos && prov.telefonos.length > 0 ? (
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                                    {prov.telefonos.map((tel, i) => (
+                                        <div key={i} className="copy-field">
+                                            <span className="detail-value">{formatPhone(tel)}</span>
+                                            <button className="copy-btn" onClick={() => copiarTexto(tel, 'Teléfono copiado')}>
+                                                <Copy size={13} />
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : <span className="detail-value">No registrado</span>}
+                        </div>
+
+                        <div className="detail-column">
+                            <span className="detail-label">Correos</span>
+                            {prov.emails && prov.emails.length > 0 ? (
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                                    {prov.emails.map((email, i) => (
+                                        <div key={i} className="copy-field">
+                                            <span className="detail-value">{email}</span>
+                                            <button className="copy-btn" onClick={() => copiarTexto(email, 'Correo copiado')}>
+                                                <Copy size={13} />
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : <span className="detail-value">No registrado</span>}
+                        </div>
+
+                        <div className="detail-column">
+                            <span className="detail-label">Domicilio</span>
+                            <span className="detail-value">{prov.domicilio || 'No registrado'}</span>
+                        </div>
+                        
+                        <div className="detail-column">
+                            <span className="detail-label">Web / Redes</span>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                                {prov.paginaWeb ? (
+                                    <a href={prov.paginaWeb} target="_blank" rel="noreferrer" className="detail-link">Sitio Web</a>
+                                ) : <span className="detail-value">Sin Web</span>}
+                                <span className="detail-value">{prov.redesSociales || 'Sin redes sociales'}</span>
+                            </div>
+                        </div>
+
+                        <div className="detail-column full-width">
+                            <span className="detail-label">Observaciones</span>
+                            <span className="detail-value">{prov.observaciones || 'Sin observaciones adicionales.'}</span>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        );
+    };
+
     return (
         <div className="module-container">
             {/* CABECERA */}
@@ -231,214 +366,60 @@ export const Proveedores = () => {
                     <Package size={28} color="var(--color-primary)" />
                     <h2>Catálogo de Proveedores</h2>
                 </div>
-                
-                <div className="header-actions">
+                <button className="btn-primary" onClick={() => abrirModal()}>
+                    <Plus size={20} /> Nuevo Proveedor
+                </button>
+            </div>
+            
+            <div className="module-description">
+                <p>Administra la información de tus proveedores y mantén organizado el registro de contactos y materiales.</p>
+            </div>
+
+            {/* BARRA DE HERRAMIENTAS UNIFICADA (Idéntica a Materiales) */}
+            <div className="toolbar-container">
+                <div className="search-wrapper">
                     <SearchBar 
                         placeholder="Buscar proveedor..." 
                         value={searchTerm} 
                         onChange={setSearchTerm} 
                     />
-                    <FilterSelect 
-                        value={filtroEstado}
-                        onChange={setFiltroEstado}
-                        options={[
-                            { value: 'activos', label: 'Ver Activos' },
-                            { value: 'inactivos', label: 'Papelera (Inactivos)' },
-                            { value: 'todos', label: 'Ver Todos' }
-                        ]}
-                    />
-                    <button className="btn-primary" onClick={() => abrirModal()}>
-                        <Plus size={20} />
-                        Nuevo Proveedor
-                    </button>
                 </div>
-            </div>
-            <div className="module-description">
-                <p>Administra la información de tus proveedores y mantén organizado el registro de contactos y materiales.</p>
+                <FilterGroup 
+                    values={filtros}
+                    onChange={(name, value) => setFiltros(prev => ({ ...prev, [name]: value }))}
+                    onClear={() => {
+                        setFiltros({ estado: 'activos' });
+                        setSearchTerm('');
+                    }}
+                    filters={[
+                        {
+                            name: 'estado',
+                            placeholder: 'Ver Activos',
+                            hideEmptyOption: true,
+                            options: [
+                                { id: 'activos', nombre: 'Ver Activos' },
+                                { id: 'inactivos', nombre: 'Papelera (Inactivos)' },
+                                { id: 'todos', nombre: 'Ver Todos' }
+                            ]
+                        }
+                    ]}
+                />
             </div>
 
             {/* TABLA PRINCIPAL */}
             <div className="table-container">
                 {isLoading ? (
                     <div className="loading-state">Cargando proveedores...</div>
-                ) : proveedores.length === 0 ? (
-                    <div className="empty-state">No hay proveedores en esta categoría.</div>
-                ) : proveedoresFiltrados.length === 0 ? (
-                    <div className="empty-state">No se encontraron resultados para "{searchTerm}"</div>
                 ) : (
-                    <table className="kyro-table">
-                        <thead>
-                            <tr>
-                                <th style={{ width: '50px' }}></th>
-                                <th>Nombre</th>
-                                <th>Teléfono</th>
-                                <th>Email</th>
-                                <th className="text-center">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {proveedoresFiltrados.map((prov) => (
-                                <React.Fragment key={prov.id}>
-                                    {/* FILA PRINCIPAL */}
-                                    <tr className={expandedRowId === prov.id ? 'active-row' : ''}>
-                                        <td className="text-center">
-                                            <button className="btn-icon expand" onClick={() => toggleRow(prov.id)} title="Ver detalles">
-                                                {expandedRowId === prov.id ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
-                                            </button>
-                                        </td>
-                                        <td className="font-medium">
-                                            {prov.nombre}
-                                            {prov.activo === false && (
-                                                <span className="badge-inactivo">Inactivo</span>
-                                            )}
-                                        </td>
-                                        <td>
-                                            <div className="copy-field">
-                                                <span>
-                                                    {prov.telefonos?.[0] ? formatPhone(prov.telefonos[0]) : '-'}
-                                                </span>
-
-                                                {prov.telefonos?.[0] && (
-                                                    <button
-                                                        className="copy-btn"
-                                                        onClick={() =>
-                                                            copiarTexto(
-                                                                prov.telefonos![0],
-                                                                'Teléfono copiado'
-                                                            )
-                                                        }
-                                                        title="Copiar teléfono"
-                                                    >
-                                                        <Copy size={14} />
-                                                    </button>
-                                                )}
-
-                                                {prov.telefonos && prov.telefonos.length > 1 && (
-                                                    <span className="badge-count">
-                                                        +{prov.telefonos.length - 1}
-                                                    </span>
-                                                )}
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div className="copy-field">
-                                                <span>{prov.emails?.[0] || '-'}</span>
-
-                                                {prov.emails?.[0] && (
-                                                    <button
-                                                        className="copy-btn"
-                                                        onClick={() =>
-                                                            copiarTexto(
-                                                                prov.emails![0],
-                                                                'Correo copiado'
-                                                            )
-                                                        }
-                                                        title="Copiar correo"
-                                                    >
-                                                        <Copy size={14} />
-                                                    </button>
-                                                )}
-
-                                                {prov.emails && prov.emails.length > 1 && (
-                                                    <span className="badge-count">
-                                                        +{prov.emails.length - 1}
-                                                    </span>
-                                                )}
-                                            </div>
-                                        </td>
-                                        <td className="actions-cell">
-                                            <button className="btn-icon edit" onClick={() => abrirModal(prov)} title="Editar">
-                                                <Pencil size={18} />
-                                            </button>
-                                            
-                                            {prov.activo === false ? (
-                                                <button className="btn-icon reactivate" onClick={() => handleReactivar(prov.id)} title="Reactivar">
-                                                    <RefreshCcw size={18} />
-                                                </button>
-                                            ) : (
-                                                <button className="btn-icon delete" onClick={() => handleDeleteClick(prov.id, prov.nombre)} title="Eliminar">
-                                                    <Trash2 size={18} />
-                                                </button>
-                                            )}
-                                        </td>
-                                    </tr>
-
-                                    {/* FILA EXPANDIDA */}
-                                    {expandedRowId === prov.id && (
-                                        <tr className="expanded-detail-row">
-                                            <td colSpan={5}>
-                                                <div className="expanded-content">
-                                                    <div className="detail-column">
-                                                        <span className="detail-label">Teléfonos</span>
-                                                        {prov.telefonos && prov.telefonos.length > 0 ? (
-                                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                                                                {prov.telefonos.map((tel, i) => (
-                                                                    <div key={i} className="copy-field">
-                                                                        <span className="detail-value">
-                                                                            {formatPhone(tel)}
-                                                                        </span>
-
-                                                                        <button
-                                                                            className="copy-btn"
-                                                                            onClick={() => copiarTexto(tel, 'Teléfono copiado')}
-                                                                        >
-                                                                            <Copy size={13} />
-                                                                        </button>
-                                                                    </div>
-                                                                ))}
-                                                            </div>
-                                                        ) : <span className="detail-value">No registrado</span>}
-                                                    </div>
-
-                                                    <div className="detail-column">
-                                                        <span className="detail-label">Correos</span>
-                                                        {prov.emails && prov.emails.length > 0 ? (
-                                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                                                                {prov.emails.map((email, i) => (
-                                                                    <div key={i} className="copy-field">
-                                                                        <span className="detail-value">
-                                                                            {email}
-                                                                        </span>
-
-                                                                        <button
-                                                                            className="copy-btn"
-                                                                            onClick={() => copiarTexto(email, 'Correo copiado')}
-                                                                        >
-                                                                            <Copy size={13} />
-                                                                        </button>
-                                                                    </div>
-                                                                ))}
-                                                            </div>
-                                                        ) : <span className="detail-value">No registrado</span>}
-                                                    </div>
-
-                                                    <div className="detail-column">
-                                                        <span className="detail-label">Domicilio</span>
-                                                        <span className="detail-value">{prov.domicilio || 'No registrado'}</span>
-                                                    </div>
-                                                    
-                                                    <div className="detail-column">
-                                                        <span className="detail-label">Web / Redes</span>
-                                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                                                            {prov.paginaWeb ? (
-                                                                <a href={prov.paginaWeb} target="_blank" rel="noreferrer" className="detail-link">Sitio Web</a>
-                                                            ) : <span className="detail-value">Sin Web</span>}
-                                                            <span className="detail-value">{prov.redesSociales || 'Sin redes sociales'}</span>
-                                                        </div>
-                                                    </div>
-
-                                                    <div className="detail-column full-width">
-                                                        <span className="detail-label">Observaciones</span>
-                                                        <span className="detail-value">{prov.observaciones || 'Sin observaciones adicionales.'}</span>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    )}
-                                </React.Fragment>
-                            ))}
-                        </tbody>
-                    </table>
+                    <DataTable
+                        data={proveedoresFiltrados}
+                        columns={columns}
+                        className="providers-table"
+                        emptyMessage={searchTerm ? `No se encontraron resultados para "${searchTerm}"` : "No hay proveedores en esta categoría."}
+                        rowClassName={(prov) => (prov.activo === false ? 'row-inactiva' : '')}
+                        renderDetailRow={renderDetailRow} 
+                        defaultSort={{ key: 'nombre', direction: 'asc' }}
+                    />
                 )}
             </div>
 
@@ -465,7 +446,6 @@ export const Proveedores = () => {
                             </div>
 
                             <div className="form-row">
-                                {/* ARREGLO DINÁMICO DE TELÉFONOS */}
                                 <div className="form-group">
                                     <label>Teléfonos de Contacto</label>
                                     {formData.telefonos?.map((tel, index) => (
@@ -474,7 +454,7 @@ export const Proveedores = () => {
                                                 type="tel"
                                                 value={tel}
                                                 onChange={(e) => handleArrayChange(index, 'telefonos', e.target.value)}
-                                                placeholder={index === 0 ? "+52 415 120 2020 " : "Telefono Adicional"}
+                                                placeholder={index === 0 ? "+52 415 120 2020 " : "Teléfono Adicional"}
                                             />
                                             {formData.telefonos!.length > 1 && (
                                                 <button type="button" className="btn-icon delete" onClick={() => removeArrayItem(index, 'telefonos')}>
@@ -490,7 +470,6 @@ export const Proveedores = () => {
                                     )}
                                 </div>
 
-                                {/* ARREGLO DINÁMICO DE CORREOS */}
                                 <div className="form-group">
                                     <label>Correos Electrónicos</label>
                                     {formData.emails?.map((email, index) => (

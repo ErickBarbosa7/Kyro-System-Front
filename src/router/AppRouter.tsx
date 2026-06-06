@@ -10,7 +10,7 @@ import { Materiales } from '../pages/Materiales/Materiales';
 import { Piezas } from '../pages/Piezas/Piezas';
 import { Costeo } from '../pages/Costeo/Costeo';
 import { Stock } from '../pages/Stock/Stock';
-import { Gastos } from '../pages/Gastos/Gastos';
+import { GastosOperativos } from '../pages/GastosOperativos/GastosOperativos';
 import { Margenes } from '../pages/Margenes/Margenes';
 
 import { Registrar } from '../pages/auth/Registrar';
@@ -40,7 +40,7 @@ export const AppRouter = () => {
                 <Route path="/stock" element={<Stock />} />
                 
                 {/* Finanazas */}
-                <Route path="/gastos" element={<Gastos />} />
+                <Route path="/gastos" element={<GastosOperativos />} />
                 <Route path="/margenes" element={<Margenes />} />
             </Route>
           

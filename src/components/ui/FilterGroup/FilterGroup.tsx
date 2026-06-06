@@ -4,10 +4,11 @@ import { FilterX } from 'lucide-react';
 import './FilterGroup.css';
 
 export interface FilterConfig {
-    name: string;           // El nombre en tu estado (ej. 'categoriaId')
-    placeholder: string;    // El texto por defecto (ej. 'Todas las Categorías')
-    options: { id: string; nombre: string }[]; // La lista de opciones
-    width?: string;         // Ancho opcional (ej. '180px')
+    name: string;           
+    placeholder: string;    
+    options: { id: string; nombre: string }[]; 
+    width?: string;         
+    hideEmptyOption?: boolean; // 👈 NUEVO: Bandera para no inyectar la opción vacía
 }
 
 interface FilterGroupProps {
@@ -19,27 +20,28 @@ interface FilterGroupProps {
 
 export const FilterGroup: React.FC<FilterGroupProps> = ({ filters, values, onChange, onClear }) => {
     
-    // Verificamos si hay algún filtro activo (diferente de vacío y diferente de 'activos')
-    // para decidir si mostramos el botón de limpiar.
+    // Verificamos si hay algún filtro activo
     const hasActiveFilters = Object.entries(values).some(([key, val]) => {
-        if (key === 'estado') return val !== 'activos'; // 'activos' es el valor por defecto de estado
+        if (key === 'estado') return val !== 'activos'; 
         return val !== '';
     });
 
     return (
         <div className="filter-group-container">
             {filters.map(filter => {
-                // Inyectamos la opción "Todos" al principio del dropdown
-                const optionsWithAll = [
-                    { id: '', nombre: filter.placeholder },
-                    ...filter.options
-                ];
+                // 👈 NUEVO: Solo inyectamos la opción "Todos" si NO se nos pide ocultarla
+                const opcionesFinales = filter.hideEmptyOption 
+                    ? filter.options 
+                    : [
+                        { id: '', nombre: filter.placeholder },
+                        ...filter.options
+                      ];
 
                 return (
                     <div key={filter.name} className="filter-item" style={{ width: filter.width || '180px' }}>
                         <ActionDropdown
                             value={values[filter.name] || ''}
-                            options={optionsWithAll}
+                            options={opcionesFinales}
                             onChange={(val) => onChange(filter.name, val)}
                             placeholder={filter.placeholder}
                         />
@@ -47,7 +49,6 @@ export const FilterGroup: React.FC<FilterGroupProps> = ({ filters, values, onCha
                 );
             })}
 
-            {/* Botón para limpiar filtros, solo aparece si hay filtros aplicados */}
             {hasActiveFilters && (
                 <button 
                     className="btn-clear-filters" 

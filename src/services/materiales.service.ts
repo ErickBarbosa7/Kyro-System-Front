@@ -46,7 +46,7 @@ export interface MaterialFormData {
     precioCompra: number;
     cantidadComprada: number;
     stockMinimo: number;
-    stockMaximo?: number;
+    stockMaximo?: number | null;
 }
 
 
@@ -62,18 +62,29 @@ export const obtenerMaterialPorId = async (id: string): Promise<Material> => {
     return data;
 };
 
-// Crea un nuevo material.
+/* Crea un nuevo material.
 export const crearMaterial = async (materialData: MaterialFormData): Promise<Material> => {
     const { data } = await kyroApi.post('/materiales', materialData);
     return data;
+};*/
+export const crearMaterial = async (materialData: FormData): Promise<Material> => {
+    const { data } = await kyroApi.post('/materiales', materialData, {
+        // Le indicamos a Axios que estamos enviando archivos y texto mezclado
+        headers: { 'Content-Type': 'multipart/form-data' }
+    });
+    return data;
 };
-
-// Actualiza un material existente.
+/* Actualiza un material existente.
 export const actualizarMaterial = async (id: string, materialData: Partial<MaterialFormData>): Promise<Material> => {
     const { data } = await kyroApi.put(`/materiales/${id}`, materialData);
     return data;
+};*/
+export const actualizarMaterial = async (id: string, materialData: FormData): Promise<Material> => {
+    const { data } = await kyroApi.put(`/materiales/${id}`, materialData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+    });
+    return data;
 };
-
 // Elimina un material (Soft-Delete: pasa activo a false).
 export const eliminarMaterial = async (id: string): Promise<{ mensaje: string }> => {
     const { data } = await kyroApi.delete(`/materiales/${id}`);

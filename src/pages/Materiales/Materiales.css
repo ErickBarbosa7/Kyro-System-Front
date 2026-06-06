@@ -220,19 +220,29 @@
 .image-upload-wrapper {
     flex-shrink: 0; /* Evita que los inputs aplasten el cuadro de la foto */
 }
+/* ========================================== */
+/* BARRA DE HERRAMIENTAS (BÚSQUEDA Y FILTROS) */
+/* ========================================== */
+
 .toolbar-container {
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 16px;
+    justify-content: flex-end; /* Agrupa todo hacia la izquierda */
+    align-items: center; /* Centra la barra y los dropdowns en el mismo eje vertical */
+    gap: 16px; /* Espaciado uniforme entre la barra y el grupo de filtros */
     margin-bottom: 20px;
     flex-wrap: wrap; /* Permite que colapse en pantallas pequeñas */
+    
+    /* Opcional: Si quieres que todo el bloque tenga un fondo sutil tipo "panel" */
+    /* background-color: var(--color-surface); */
+    /* padding: 12px 16px; */
+    /* border-radius: 12px; */
+    /* border: 1px solid var(--color-border); */
 }
 
 .search-wrapper {
-    flex: 1;
-    min-width: 250px;
-    max-width: 400px; /* Evita que la barra de búsqueda sea gigante */
+    width: 280px; /* Le damos un ancho fijo y proporcionado */
+    margin-right: 16px; /* Separación entre la barra de búsqueda y los filtros */
+    /* Eliminamos el flex: 1 y los min/max width para evitar que se estire raro */
 }
 
 /* Hacemos la dropzone más grande usando la clase 'large' */
