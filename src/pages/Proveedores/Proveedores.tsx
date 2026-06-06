@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { toast } from 'react-hot-toast';
-import { Plus, Pencil, Trash2, Package, X, ChevronDown, ChevronUp, RefreshCcw, Copy } from 'lucide-react';
+import { Plus, Pencil, Trash2, Package, X, ChevronDown, ChevronUp, RefreshCcw, Copy, ExternalLink } from 'lucide-react';
 import { 
     obtenerProveedores, 
     crearProveedor, 
@@ -44,6 +44,15 @@ export const Proveedores = () => {
         redesSociales: '',
         observaciones: ''
     });
+    // === HELPER PARA URLS ===
+    const formatearUrl = (url: string) => {
+        if (!url) return '';
+        // Si no empieza con http:// o https://, se lo agregamos
+        if (!url.match(/^https?:\/\//i)) {
+            return `https://${url}`;
+        }
+        return url;
+    };
 
     // Estados de Confirmación (Eliminar)
     const [isConfirmOpen, setIsConfirmOpen] = useState(false);
@@ -342,7 +351,16 @@ export const Proveedores = () => {
                             <span className="detail-label">Web / Redes</span>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                                 {prov.paginaWeb ? (
-                                    <a href={prov.paginaWeb} target="_blank" rel="noreferrer" className="detail-link">Sitio Web</a>
+                                    <a 
+                                        href={formatearUrl(prov.paginaWeb)} 
+                                        target="_blank" 
+                                        rel="noreferrer" 
+                                        className="detail-link"
+                                        style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: 'var(--color-primary)', textDecoration: 'none', fontWeight: 500 }}
+                                    >
+                                        <ExternalLink size={14} />
+                                        Visitar sitio web
+                                    </a>
                                 ) : <span className="detail-value">Sin Web</span>}
                                 <span className="detail-value">{prov.redesSociales || 'Sin redes sociales'}</span>
                             </div>
@@ -510,11 +528,11 @@ export const Proveedores = () => {
                                 <div className="form-group">
                                     <label>Página Web</label>
                                     <input 
-                                        type="url" 
+                                        type="text" 
                                         name="paginaWeb" 
                                         value={formData.paginaWeb} 
                                         onChange={handleInputChange}
-                                        placeholder="https://www..."
+                                        placeholder="www.empresa.com"
                                     />
                                 </div>
                                 <div className="form-group">
