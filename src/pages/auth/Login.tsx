@@ -45,11 +45,11 @@ export const Login = () => {
             <div className="login-card-wrapper">
                 <div className="login-sidebar">
                     <div className="sidebar-content">
-                        <h2>Mejora la calidad de tus procesos</h2>
-                        <p>Un sistema balanceado e inteligente llenará tu trabajo de eficiencia y tranquilidad.</p>
+                        <h2>Control total para cada creación</h2>
+                        <p>Supervisa materiales, inventario y producción para mantener cada pieza bajo control.</p>
                     </div>
                     <div className="robot-container">
-                        <Player autoplay loop src={animacionRobot} className="robot-player" />
+                        <Player autoplay loop src={animacionRobot} className="robot-player" speed={0.8}/>
                     </div>
                 </div>
 

@@ -1,46 +1,77 @@
+/* ==========================================
+   Contenedor de la Barra de Búsqueda
+   ========================================== */
 .search-bar-container {
     display: flex;
     align-items: center;
-    background-color: var(--color-surface);
+    background-color: var(--color-surface); /* Beige oscuro en lugar del claro */
     border: 1px solid var(--color-border);
-    border-radius: 10px;
-    padding: 8px 14px;
-    width: 300px; /* Tamaño por defecto */
-    transition: border-color 0.2s, box-shadow 0.2s;
+    border-radius: var(--radius);
+    padding: 0.5rem 1rem;
+    height: 42px; 
+    transition: var(--transition);
+    width: 100%;
+    max-width: 400px; 
 }
 
+/* 🌟 Efecto Focus: Cuando el usuario da clic para escribir */
 .search-bar-container:focus-within {
-    border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px var(--color-primary-light); /* Opcional: un halo de foco */
+    border-color: var(--color-primary); /* Se pinta del terracota */
+    background-color: var(--color-surface); /* Cambia sutilmente el fondo */
+    box-shadow: 0 0 0 3px rgba(166, 77, 63, 0.15); /* Anillo de luz terracota */
 }
 
+/* ==========================================
+   Icono de la Lupa
+   ========================================== */
 .search-icon {
     color: var(--color-text-secondary);
-    margin-right: 10px;
+    margin-right: 0.6rem;
+    flex-shrink: 0;
+    transition: var(--transition);
 }
 
+/* Pinta la lupa cuando la barra está activa */
+.search-bar-container:focus-within .search-icon {
+    color: var(--color-primary);
+}
+
+/* ==========================================
+   Input de Texto
+   ========================================== */
 .search-input {
+    flex: 1;
     border: none;
     background: transparent;
-    outline: none;
-    flex: 1;
-    font-size: 14px;
     color: var(--color-text);
+    font-size: 0.95rem;
+    outline: none;
+    width: 100%;
 }
 
+.search-input::placeholder {
+    color: var(--color-text-secondary);
+    opacity: 0.7;
+}
+
+/* ==========================================
+   Botón para Limpiar (La 'X')
+   ========================================== */
 .clear-btn {
     background: transparent;
     border: none;
     color: var(--color-text-secondary);
     cursor: pointer;
-    padding: 2px;
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 0.2rem;
+    margin-left: 0.5rem;
     border-radius: 50%;
+    transition: var(--transition);
 }
 
 .clear-btn:hover {
-    background-color: var(--color-background);
-    color: var(--color-text);
+    color: var(--color-danger); /* Usa tu rojo de advertencia para la X */
+    background-color: rgba(176, 74, 74, 0.1); /* Un fondo rojizo muy transparente */
 }

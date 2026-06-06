@@ -14,6 +14,8 @@ import { ConfirmModal } from '../../components/ConfirmModal';
 import { FilterGroup } from '../../components/ui/FilterGroup/FilterGroup';
 import { DataTable, type ColumnConfig } from '../../components/ui/DataTable/DataTable';
 import { formatPhone, formatPhoneInput } from '../../utils/formatters';
+import { Loading } from '../../components/Loading/Loading';
+
 import './Proveedores.css';
 
 interface Proveedor extends ProveedorData {
@@ -60,9 +62,13 @@ export const Proveedores = () => {
     
     // === EFECTOS ===
     useEffect(() => {
-        cargarProveedores();
-        setExpandedRowId(null); 
-    }, [filtros.estado]);
+        // Simulamos la carga de tu API
+        setIsLoading(true);
+        obtenerProveedores().then((data) => {
+            setProveedores(data);
+            setIsLoading(false);
+        });
+    }, []);
 
     // === FUNCIONES DE RED ===
     const cargarProveedores = async () => {
@@ -427,7 +433,7 @@ export const Proveedores = () => {
             {/* TABLA PRINCIPAL */}
             <div className="table-container">
                 {isLoading ? (
-                    <div className="loading-state">Cargando proveedores...</div>
+                    <Loading texto="Cargando proveedores..." />
                 ) : (
                     <DataTable
                         data={proveedoresFiltrados}

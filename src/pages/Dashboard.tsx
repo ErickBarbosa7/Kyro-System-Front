@@ -69,7 +69,7 @@ export const Dashboard = () => {
                         <Package size={18} /> Proveedores Activos
                     </span>
                     <span className="stat-value">{totalProveedores}</span>
-                    <span className="stat-desc desc-positive">Módulo en funcionamiento</span>
+                    <span className="stat-desc desc-positive"></span>
                 </div>
 
                 {/* 3. Gastos Operativos (EN PROCESO) */}
@@ -78,7 +78,7 @@ export const Dashboard = () => {
                         <CircleDollarSign size={18} /> Gastos Operativos
                     </span>
                     <span className="stat-value">${totalGastos.toLocaleString('es-MX', { minimumFractionDigits: 2 })}</span>
-                    <span className="stat-desc desc-positive">Módulo en funcionamiento</span>
+                    <span className="stat-desc desc-positive"></span>
                 </div>
 
             </div>

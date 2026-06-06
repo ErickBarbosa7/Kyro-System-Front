@@ -1,49 +1,46 @@
-/* src/styles/variables.css */
-
 :root {
-   --font-main: "Cascadia Code", monospace;
-  /* Colores principales */
-  --color-primary: #C0392B;
-  --color-primary-hover: #6A001A;
-  --color-accent: #C5A059;
+  --font-main: "Cascadia Code", monospace;
 
+  /* Primarios */
+  --color-primary: #A64D3F;         
+  --color-primary-hover: #8C3D31;
+  --color-accent: #D9A066;
+  --color-toolbar: #EEE6DA  ;
   /* Fondos */
-  --color-background: #FBFBFB;
-  --color-surface: #FFFFFF;
-  --color-background-2:#f6e3d7;
+  --color-background: #F6F2EB;      
+  --color-background-2: #EEE6DA;    
+  --color-surface: #E9DFD0;         
+
   /* Texto */
-  --color-text: #2B2B2B;
-  --color-text-secondary: #6B7280;
+  --color-text: #2E2623;            
+  --color-text-secondary: #746B63;
 
   /* Estados */
-  --color-success: #3C7A57;
-  --color-warning: #D18B2C;
-  --color-danger: #C0392B;
+  --color-success: #6E8B74;
+  --color-warning: #C98A3D;
+  --color-danger: #B04A4A;
 
   /* Bordes */
-  --color-border: #E7E7E7;
+  --color-border: #D8CCBC;
 
   /* Extras */
   --radius: 12px;
   --transition: 0.3s ease;
-  --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
+  --shadow-sm: 0 4px 12px rgba(40,30,20,.08);
+}
 
-  *,
+/* fuera del root */
+*,
 *::before,
 *::after {
   box-sizing: border-box;
   font-family: inherit;
 }
 
-  body, 
-button, 
-input, 
-textarea, 
+body,
+button,
+input,
+textarea,
 select {
   font-family: var(--font-main);
-}
-h1, h2, h3, h4, h5, h6, p {
-  font-weight: 600; 
-  margin-top: 0;
-}
 }

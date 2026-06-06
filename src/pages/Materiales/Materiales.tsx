@@ -18,6 +18,8 @@ import { reactivarCategoria, obtenerCategorias, eliminarCategoria, type Categori
 import { obtenerUnidades, eliminarUnidad, reactivarUnidad } from '../../services/unidades-medida.service';
 import { obtenerMateriales, crearMaterial, actualizarMaterial, eliminarMaterial, reactivarMaterial, type Material } from '../../services/materiales.service';
 import { obtenerProveedores } from '../../services/proveedores.service';
+import { Loading } from '../../components/Loading/Loading';
+
 
 import './Materiales.css';
 
@@ -87,10 +89,26 @@ export const Materiales = () => {
     const [itemAEliminar, setItemAEliminar] = useState<{ id: string, nombre: string, tipo: 'material' | 'categoria' | 'unidad'} | null>(null);
 
     // === EFECTOS ===
+    // === EFECTOS ===
     useEffect(() => {
-        cargarDatos();
-    }, [filtros.estado]);
+        // Activamos el estado de carga para mostrar la animación
+        setIsLoading(true);
+        
+        // Llamamos a tu servicio de materiales
+        obtenerMateriales()
+            .then((data) => {
+                setMateriales(data);
+            })
+            .catch((error) => {
+                console.error("Error al cargar materiales:", error);
+                toast.error('Error al sincronizar el catálogo');
+            })
+            .finally(() => {
+                setIsLoading(false);
+            });
+    }, []);
 
+    
     const cargarDatos = async () => {
         setIsLoading(true);
         try {
@@ -489,7 +507,7 @@ export const Materiales = () => {
             {/* 4. CONTENEDOR DE LA TABLA */}
             <div className="table-container">
                 {isLoading ? (
-                    <div className="loading-state">Cargando materiales...</div>
+                    <Loading texto="Cargando materiales..." />
                 ) : (
                     <DataTable
                         data={materialesFiltrados}

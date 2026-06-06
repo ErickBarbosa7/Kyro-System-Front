@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
-
+import './DataTable.css';
+ 
 // Interfaz para controlar el estado del ordenamiento
 export interface SortConfig {
     key: string;

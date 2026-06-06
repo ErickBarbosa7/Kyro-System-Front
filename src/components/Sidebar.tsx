@@ -6,6 +6,8 @@ import {
   Receipt, Percent, Pin 
 } from 'lucide-react';
 import './Sidebar.css';
+import { Player } from '@lottiefiles/react-lottie-player'; 
+import animacionCat from './../assets/cat.json';
 
 const sections = [
   {
@@ -88,6 +90,16 @@ export const Sidebar = () => {
           </div>
         ))}
       </nav>
+      <div className="sidebar-cat-container">
+        <Player
+          autoplay
+          loop
+          src={animacionCat}
+          className="sidebar-cat-player"
+          speed={0.7}
+        />
+      </div>
     </aside>
+    
   );
 };

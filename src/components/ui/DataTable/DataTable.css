@@ -1,0 +1,121 @@
+/* ==========================================
+   Estado Vacío (Cuando no hay registros)
+   ========================================== */
+.empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--color-text-secondary);
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    font-style: italic;
+    width: 100%;
+}
+
+/* ==========================================
+   Estructura Principal de la Tabla
+   ========================================== */
+.kyro-table {
+    width: 100%;
+    border-collapse: separate; 
+    border-spacing: 0;
+    text-align: left;
+    font-size: 0.95rem;
+    background-color: var(--color-background); 
+    border-radius: var(--radius);
+    overflow: hidden; 
+    box-shadow: 0 4px 15px rgba(46, 38, 35, 0.08);
+}
+/* ==========================================
+   Cabecera (Thead)
+   ========================================== */
+.kyro-table thead th {
+    background-color: var(--color-surface); 
+    color: var(--color-text);
+    font-weight: 700;
+    padding: 1rem 1.2rem;
+    border-bottom: 2px solid var(--color-primary); 
+    white-space: nowrap;
+    user-select: none;
+}
+
+/* Interacción de las columnas ordenables */
+.kyro-table th.th-sortable {
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.kyro-table th.th-sortable:hover {
+    background-color: var(--color-border); /* Tono ligeramente más oscuro al pasar el mouse */
+}
+
+/* Contenido de la cabecera y alineación */
+.th-sortable-content {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.th-sortable-content.center {
+    justify-content: center;
+}
+
+/* Iconos de Ordenamiento (Lucide React) */
+.sort-icon {
+    color: var(--color-text-secondary);
+    transition: var(--transition);
+}
+
+.sort-icon.placeholder {
+    opacity: 0.3; /* Icono tenue cuando no está ordenado */
+}
+
+.sort-icon.active {
+    opacity: 1;
+    color: var(--color-primary); /* Se pinta de tu rojo/terracota cuando está activo */
+}
+
+/* ==========================================
+   Cuerpo y Filas (Tbody)
+   ========================================== */
+.kyro-table tbody tr {
+    background-color: transparent;
+    border-bottom: 1px solid var(--color-border);
+    transition: var(--transition);
+}
+
+/* Quita el borde de la última fila para que no choque con el redondeo */
+.kyro-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Efecto Hover en las filas */
+.kyro-table tbody tr:hover {
+    background-color: var(--color-background-2);
+}
+
+/* Celdas individuales */
+.kyro-table tbody td {
+    padding: 1rem 1.2rem;
+    color: var(--color-text);
+    vertical-align: middle;
+    border-bottom: 1px solid var(--color-border);
+}
+
+/* ==========================================
+   Estados Especiales (Fila Inactiva)
+   ========================================== */
+.kyro-table tbody tr.row-inactiva td {
+    background-color: var(--color-background);
+    color: var(--color-text-secondary);
+    opacity: 0.8;
+}
+
+/* ==========================================
+   Filas de Detalle Expandible (Opcional)
+   ========================================== */
+.expanded-detail-row td {
+    background-color: var(--color-background); /* Diferencia visual para el detalle */
+    padding: 0 !important; /* El padding se maneja en el contenido interno */
+    border-bottom: 2px solid var(--color-border) !important;
+}

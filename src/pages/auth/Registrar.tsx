@@ -74,8 +74,8 @@ export const Registrar = () => {
                 {/* LADO IZQUIERDO (Textos y Robot) */}
                 <div className="login-sidebar">
                     <div className="sidebar-content">
-                        <h2>Lleva tu gestión al siguiente nivel</h2>
-                        <p>Únete a nuestra plataforma y experimenta un control total, optimizado e inteligente.</p>
+                        <h2>Accede a una gestión centralizada</h2>
+                        <p>Organiza materiales, proveedores, metales y colecciones desde una sola plataforma.</p>
                     </div>
                     
                     <div className="robot-container">
@@ -84,6 +84,7 @@ export const Registrar = () => {
                             loop
                             src={animacionRobot}
                             className="robot-player"
+                            speed={0.8}
                         />
                     </div>
                 </div>
