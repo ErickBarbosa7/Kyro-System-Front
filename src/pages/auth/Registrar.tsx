@@ -2,7 +2,15 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { registrarUsuario } from '../../services/auth.service'; 
 import toast from 'react-hot-toast'; 
-import './Login.css'; 
+import { Player } from '@lottiefiles/react-lottie-player';
+
+// Importamos las mismas animaciones del Login
+import animacionFondoBling from '../../assets/bling.json'; 
+import animacionFondoPlane from '../../assets/plane.json'; 
+import animacionRobot from '../../assets/robot.json'; // Ajusta la ruta si es diferente
+import animacionWelcome from '../../assets/welcome.json'; 
+
+import './Login.css'; // Reutilizamos el mismo CSS
 
 export const Registrar = () => {
     // ==========================================
@@ -26,11 +34,8 @@ export const Registrar = () => {
 
         try {
             await registrarUsuario({ nombre, apellido, email, password });
-            
             toast.success('¡Cuenta creada exitosamente!');
-            
             navigate('/login'); 
-            
         } catch (err: any) {
             toast.error(err.response?.data?.error || "Error al conectar con el servidor");
         } finally {
@@ -43,90 +48,132 @@ export const Registrar = () => {
     // ==========================================
     return (
         <div className="login-page">
-            <div className="login-sidebar">
-                <div className="sidebar-content">
-                    <h2>Lleva tu gestión al siguiente nivel</h2>
-                    <p>Únete a nuestra plataforma y experimenta un control total, optimizado e inteligente.</p>
-                </div>
+            
+            <div className="brand-logo">
+                Kyro-System
             </div>
 
-            <div className="login-container">
-                <div className="login-box">
-                    <div className="login-header">
-                        <div className="logo-placeholder">K</div>
-                        <h2>Crear una Cuenta</h2>
-                        <p>Completa los campos para registrarte en el sistema</p>
+            {/* ==========================================
+               Capa de fondo (Animaciones)
+               ========================================== */}
+            
+            
+            {/* PLANE (Arriba-derecha) */}
+            <div className="plane-bg-container">
+                <Player
+                    autoplay
+                    loop
+                    src={animacionFondoPlane}
+                    className="plane-bg-player"
+                />
+            </div>
+
+            {/* ==========================================
+               TARJETA PRINCIPAL FLOTANTE (Glassmorphism)
+               ========================================== */}
+            <div className="login-card-wrapper">
+                
+                {/* LADO IZQUIERDO (Textos y Robot) */}
+                <div className="login-sidebar">
+                    <div className="sidebar-content">
+                        <h2>Lleva tu gestión al siguiente nivel</h2>
+                        <p>Únete a nuestra plataforma y experimenta un control total, optimizado e inteligente.</p>
                     </div>
+                    
+                    <div className="robot-container">
+                        <Player
+                            autoplay
+                            loop
+                            src={animacionRobot}
+                            className="robot-player"
+                        />
+                    </div>
+                </div>
 
-                    <form onSubmit={handleRegistro} className="login-form">
-                        
-                        {/* 3. Input de Nombre (modificado) */}
-                        <div className="form-field">
-                            <label>Nombre:</label>
-                            <input 
-                                type="text" 
-                                value={nombre} 
-                                onChange={(e) => setNombre(e.target.value)} 
-                                required 
-                                placeholder="Ingresa tu nombre"
-                            />
+                {/* LADO DERECHO (Formulario de Registro) */}
+                <div className="login-container">
+                    <div className="login-box">
+                        <div className="login-header">
+                            <div className="logo-placeholder">
+                                <Player
+                                    autoplay
+                                    loop
+                                    src={animacionWelcome}
+                                />
+                            </div>
+                            <h2>Crear una Cuenta</h2>
+                            <p>Completa los campos para registrarte en el sistema</p>
                         </div>
 
-                        {/* 4. Nuevo Input de Apellido */}
-                        <div className="form-field">
-                            <label>Apellido:</label>
-                            <input 
-                                type="text" 
-                                value={apellido} 
-                                onChange={(e) => setApellido(e.target.value)} 
-                                required 
-                                placeholder="Ingresa tu apellido"
-                            />
-                        </div>
+                        <form onSubmit={handleRegistro} className="login-form">
+                            
+                            <div className="form-field">
+                                <label>Nombre:</label>
+                                <input 
+                                    type="text" 
+                                    value={nombre} 
+                                    onChange={(e) => setNombre(e.target.value)} 
+                                    required 
+                                    placeholder="Ingresa tu nombre"
+                                />
+                            </div>
 
-                        <div className="form-field">
-                            <label>Correo Electrónico:</label>
-                            <input 
-                                type="email" 
-                                value={email} 
-                                onChange={(e) => setEmail(e.target.value)} 
-                                required 
-                                placeholder="usuario@correo.com"
-                            />
-                        </div>
+                            <div className="form-field">
+                                <label>Apellido:</label>
+                                <input 
+                                    type="text" 
+                                    value={apellido} 
+                                    onChange={(e) => setApellido(e.target.value)} 
+                                    required 
+                                    placeholder="Ingresa tu apellido"
+                                />
+                            </div>
 
-                        <div className="form-field">
-                            <label>Contraseña:</label>
-                            <input 
-                                type="password" 
-                                value={password} 
-                                onChange={(e) => setPassword(e.target.value)} 
-                                required 
-                                placeholder="••••••••"
-                            />
-                        </div>
+                            <div className="form-field">
+                                <label>Correo Electrónico:</label>
+                                <input 
+                                    type="email" 
+                                    value={email} 
+                                    onChange={(e) => setEmail(e.target.value)} 
+                                    required 
+                                    placeholder="usuario@correo.com"
+                                />
+                            </div>
 
-                        <button 
-                            type="submit" 
-                            disabled={isLoading}
-                            className="submit-button"
-                        >
-                            {isLoading ? 'Registrando...' : 'Registrarse'}
-                        </button>
-                        
-                        <div className="register-prompt">
-                            <span>¿Ya tienes una cuenta? </span>
+                            <div className="form-field">
+                                <label>Contraseña:</label>
+                                <input 
+                                    type="password" 
+                                    value={password} 
+                                    onChange={(e) => setPassword(e.target.value)} 
+                                    required 
+                                    placeholder="••••••••"
+                                />
+                            </div>
+
                             <button 
-                                type="button" 
-                                onClick={() => navigate('/login')}
-                                className="register-link-button"
+                                type="submit" 
+                                disabled={isLoading}
+                                className="submit-button"
                             >
-                                Inicia Sesión
+                                {isLoading ? 'Registrando...' : 'Registrarse'}
                             </button>
-                        </div>
-                    </form>
+                            
+                            <div className="register-prompt">
+                                <span>¿Ya tienes una cuenta? </span>
+                                <button 
+                                    type="button" 
+                                    onClick={() => navigate('/login')}
+                                    className="register-link-button"
+                                >
+                                    Inicia Sesión
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
+            
         </div>
     );
 };
