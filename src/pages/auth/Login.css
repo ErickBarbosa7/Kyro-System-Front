@@ -111,10 +111,77 @@
 }
 
 @media (max-width: 900px) {
+  /* 1. Ocultamos el panel del robot */
   .login-sidebar {
     display: none;
   }
+
+  /* 2. Ajuste de la página para permitir scroll si el form es largo */
+  .login-page {
+    align-items: flex-start; /* Empieza desde arriba para que el scroll sea natural */
+    padding-top: 80px;      /* Espacio para el logo centrado */
+    padding-bottom: 40px;   /* Espacio al final */
+    overflow-y: auto;       /* Habilitamos scroll en toda la pantalla */
+    height: auto;           /* Altura flexible */
+  }
+
+  /* 3. La tarjeta se adapta al contenido */
+  .login-card-wrapper {
+    width: 92%; 
+    min-height: auto; 
+    height: auto;       /* Que crezca según los inputs que tenga */
+    margin-bottom: 20px;
+    background: rgba(255, 255, 255, 0.6); /* Un poco más sólido para leer mejor */
+  }
+
+  /* 4. El contenedor del formulario */
+  .login-container {
+    padding: 1.5rem 1.2rem; /* Más compacto en los lados */
+  }
+
+  /* 5. REDUCCIÓN DE ESPACIOS (Clave para el Registro) */
+  .login-header {
+    margin-bottom: 1.5rem; /* Menos espacio entre el logo y el título */
+  }
+
+  .login-form {
+    gap: 0.8rem; /* Reducimos el espacio entre campos de 1.2rem a 0.8rem */
+  }
+
+  .logo-placeholder {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 0;
+  }
+
+  /* 6. Logo de marca siempre visible y fijo arriba */
+  .brand-logo {
+  position: absolute;
+  top: 40px; /* Lo bajamos un poquito para equilibrar */
+  left: 10%; /* 👈 Cambiamos 40px por 10% para empujarlo hacia el centro */
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--color-primary); 
+  letter-spacing: 1px;
+  z-index: 10; 
+  text-shadow: var(--shadow-sm);
+  user-select: none; 
 }
+
+  /* 7. Animaciones de fondo más discretas */
+  .plane-bg-container {
+    width: 120px;
+    height: 120px;
+    position: fixed; /* Para que no se muevan con el scroll del form */
+  }
+
+  .bling-bg-container {
+    width: 200px;
+    height: 200px;
+    position: fixed;
+  }
+}
+
 
 /* ==========================================
    PANEL DERECHO (Formulario)
