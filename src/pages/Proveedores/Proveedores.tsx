@@ -11,7 +11,7 @@ import {
 } from '../../services/proveedores.service';
 import { SearchBar } from '../../components/ui/SearchBar/SearchBar';
 import { ConfirmModal } from '../../components/ConfirmModal';
-import { FilterGroup, type FilterConfig } from '../../components/ui/FilterGroup/FilterGroup';
+import { FilterGroup } from '../../components/ui/FilterGroup/FilterGroup';
 import { DataTable, type ColumnConfig } from '../../components/ui/DataTable/DataTable';
 import { formatPhone, formatPhoneInput } from '../../utils/formatters';
 import './Proveedores.css';
