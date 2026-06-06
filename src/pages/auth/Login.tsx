@@ -4,8 +4,7 @@ import { login } from '../../services/auth.service';
 import toast from 'react-hot-toast'; 
 import { Player } from '@lottiefiles/react-lottie-player';
 
-// Importaciones de animaciones
-import animacionFondoBling from '../../assets/bling.json'; 
+// Importaciones de animaciones 
 import animacionFondoPlane from '../../assets/plane.json'; 
 import animacionRobot from '../../assets/robot.json';
 import animacionWelcome from '../../assets/welcome.json'; 
