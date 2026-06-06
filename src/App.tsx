@@ -8,8 +8,7 @@ import './App.css';
 const LayoutWrapper = () => {
     const location = useLocation();
     
-    // 2. Definimos las rutas donde NO queremos ver los menús
-    const rutasSinMenu = ['/login', '/registro', '/']; 
+    const rutasSinMenu = ['/login', '/registrar', '/']; 
     const ocultarMenu = rutasSinMenu.includes(location.pathname);
 
     if (ocultarMenu) {
@@ -20,7 +19,6 @@ const LayoutWrapper = () => {
         );
     }
 
-    // 4. Si estamos en el sistema (rutas privadas), retornamos el diseño completo con Sidebar y Navbar
     return (
         <div className="kyro-app-layout">
             <Navbar />
@@ -38,7 +36,6 @@ function App() {
     return (
         <BrowserRouter>
             <ToastProvider />
-            {/* Llamamos a nuestro nuevo Wrapper aquí adentro */}
             <LayoutWrapper />
         </BrowserRouter>
     );
