@@ -1,0 +1,147 @@
+/* ==========================================
+   SECCIÓN DE MÓDULOS
+   ========================================== */
+.modules-section {
+    padding: 6rem 3.5rem;
+    background: var(--color-background);
+}
+
+.modules-inner { 
+    max-width: 1200px; /* Un poco más ancho para que quepan bien las 5 columnas */
+    margin: 0 auto; 
+}
+
+/* ==========================================
+   CABECERA DE LA SECCIÓN
+   ========================================== */
+.modules-header {
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto 4rem;
+}
+
+.section-eyebrow {
+    font-family: var(--font-main);
+    color: var(--color-primary);
+    font-size: 0.85rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 0.8rem;
+    display: block;
+}
+
+.modules-header h2 {
+    font-family: var(--font-main);
+    font-size: 2.4rem;
+    font-weight: bold;
+    color: var(--color-text);
+    margin-bottom: 1rem;
+    line-height: 1.2;
+}
+
+.section-subtitle {
+    font-family: var(--font-main);
+    font-size: 1.05rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+}
+
+/* ==========================================
+   CUADRÍCULA DE MÓDULOS
+   ========================================== */
+.modules-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1.2rem;
+}
+
+/* ==========================================
+   TARJETAS INDIVIDUALES (Módulos)
+   ========================================== */
+.module-item {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: 1.5rem 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    transition: all var(--transition);
+    cursor: default;
+}
+
+.module-item:hover {
+    border-color: var(--color-primary);
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-sm);
+    /* Fondo ligeramente más claro al hacer hover */
+    background: var(--color-background); 
+}
+
+.module-icon {
+    width: 42px; 
+    height: 42px;
+    /* Fondo terracota transparente */
+    background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+    border-radius: 10px;
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    color: var(--color-primary);
+    flex-shrink: 0;
+    transition: background var(--transition), color var(--transition);
+}
+
+.module-item:hover .module-icon {
+    background: var(--color-primary);
+    color: white; /* El ícono se vuelve blanco al hacer hover para resaltar */
+}
+
+.module-text { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 6px; 
+}
+
+.module-name { 
+    font-family: var(--font-main);
+    font-size: 0.95rem; 
+    font-weight: bold; 
+    color: var(--color-text); 
+}
+
+.module-desc { 
+    font-family: var(--font-main);
+    font-size: 0.8rem; 
+    color: var(--color-text-secondary); 
+    line-height: 1.5; 
+}
+
+/* ==========================================
+   RESPONSIVE
+   ========================================== */
+@media (max-width: 1100px) {
+    .modules-grid { 
+        grid-template-columns: repeat(3, 1fr); 
+        gap: 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .modules-section { 
+        padding: 4rem 1.5rem; 
+    }
+    .modules-grid { 
+        grid-template-columns: repeat(2, 1fr); 
+    }
+    .modules-header h2 {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .modules-grid { 
+        grid-template-columns: 1fr; /* Una sola columna en celulares muy pequeños */
+    }
+}

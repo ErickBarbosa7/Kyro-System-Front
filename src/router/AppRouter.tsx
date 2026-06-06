@@ -14,10 +14,12 @@ import { GastosOperativos } from '../pages/GastosOperativos/GastosOperativos';
 import { ConfiguracionMargenes } from '../pages/ConfiguracionMargenes/ConfiguracionMargenes';
 
 import { Registrar } from '../pages/auth/Registrar';
+import { LandingPage } from '../pages/Landing/LandingPage/LandingPage';
 export const AppRouter = () => {
     return (
         <Routes>
             {/* RUTAS PÚBLICAS (Autenticación)             */}
+            <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/registrar" element={<Registrar />} />
 
@@ -44,7 +46,7 @@ export const AppRouter = () => {
                 <Route path="/margenes" element={<ConfiguracionMargenes />} />
             </Route>
           
-            <Route path="*" element={<Navigate to="/login" replace />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
             
         </Routes>
     );

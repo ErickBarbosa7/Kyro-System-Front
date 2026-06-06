@@ -1,0 +1,248 @@
+/* ════════════════════════════════════
+   KYRO — CTA Section
+   ════════════════════════════════════ */
+
+.cta-section {
+    position: relative;
+    overflow: hidden;
+
+    padding: 6rem 3.5rem;
+
+    background: var(--color-surface);
+    border-top: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+}
+
+/* fondo diagonal decorativo */
+.cta-section::before {
+    content: "";
+
+    position: absolute;
+    top: 0;
+    right: -5%;
+
+    width: 45%;
+    height: 100%;
+
+    background: color-mix(
+        in srgb,
+        var(--color-primary) 8%,
+        transparent
+    );
+
+    clip-path: polygon(
+        20% 0,
+        100% 0,
+        100% 100%,
+        0 100%
+    );
+
+    z-index: 0;
+}
+
+/* glow suave */
+.cta-section::after {
+    content: "";
+
+    position: absolute;
+
+    width: 380px;
+    height: 380px;
+
+    border-radius: 50%;
+
+    background: color-mix(
+        in srgb,
+        var(--color-accent) 12%,
+        transparent
+    );
+
+    filter: blur(80px);
+
+    bottom: -160px;
+    left: -120px;
+
+    pointer-events: none;
+}
+
+.cta-inner {
+    position: relative;
+    z-index: 2;
+
+    max-width: 760px;
+    margin: auto;
+
+    text-align: center;
+}
+
+.cta-eyebrow {
+    display: inline-block;
+
+    padding: .4rem 1rem;
+
+    border-radius: 999px;
+
+    font-size: .78rem;
+    font-weight: bold;
+    letter-spacing: 1px;
+
+    color: var(--color-warning);
+
+    border: 1px solid color-mix(
+        in srgb,
+        var(--color-accent) 30%,
+        transparent
+    );
+
+    background: color-mix(
+        in srgb,
+        var(--color-accent) 12%,
+        transparent
+    );
+
+    margin-bottom: 1.2rem;
+}
+
+.cta-title {
+    font-family: var(--font-main);
+
+    font-size: clamp(
+        2rem,
+        4vw,
+        3rem
+    );
+
+    line-height: 1.1;
+    font-weight: bold;
+
+    color: var(--color-text);
+
+    margin-bottom: 1.2rem;
+}
+
+.cta-title em {
+    color: var(--color-primary);
+    font-style: italic;
+}
+
+.cta-subtitle {
+    max-width: 620px;
+
+    margin: 0 auto 2.5rem;
+
+    color: var(--color-text-secondary);
+
+    font-size: 1rem;
+    line-height: 1.8;
+}
+
+/* botones */
+.cta-actions {
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.cta-btn-main {
+    background: var(--color-primary);
+    color: white;
+
+    border: none;
+
+    padding: .9rem 2rem;
+
+    border-radius: var(--radius);
+
+    font-family: var(--font-main);
+    font-size: .95rem;
+    font-weight: bold;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    cursor: pointer;
+    text-decoration: none;
+
+    transition:
+        transform .15s,
+        background var(--transition),
+        box-shadow var(--transition);
+
+    box-shadow:
+        0 4px 18px
+        color-mix(
+            in srgb,
+            var(--color-primary) 35%,
+            transparent
+        );
+}
+
+.cta-btn-main:hover {
+    transform: translateY(-2px);
+
+    background: var(--color-primary-hover);
+
+    box-shadow:
+        0 10px 30px
+        color-mix(
+            in srgb,
+            var(--color-primary) 45%,
+            transparent
+        );
+}
+
+.cta-btn-sec {
+    background: transparent;
+
+    color: var(--color-text);
+
+    border: 1.5px solid var(--color-border);
+
+    padding: .9rem 1.7rem;
+
+    border-radius: var(--radius);
+
+    font-family: var(--font-main);
+
+    font-size: .95rem;
+    font-weight: bold;
+
+    text-decoration: none;
+
+    transition:
+        border-color var(--transition),
+        background var(--transition);
+
+    cursor: pointer;
+}
+
+.cta-btn-sec:hover {
+    border-color: var(--color-primary);
+    background: var(--color-toolbar);
+}
+
+@media (max-width: 768px) {
+
+    .cta-section {
+        padding: 4rem 1.5rem;
+    }
+
+    .cta-actions {
+        flex-direction: column;
+    }
+
+    .cta-btn-main,
+    .cta-btn-sec {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .cta-section::before {
+        display: none;
+    }
+}

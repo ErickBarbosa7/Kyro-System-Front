@@ -1,0 +1,161 @@
+/* ════════════════════════════════════
+   KYRO — Landing Page Layout
+   ════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+/* Variables globales para toda la landing */
+.landing-layout {
+    --color-primary:     #C17A5B;
+    --color-primary-dk:  #8B4E35;
+    --color-primary-lt:  #F2E8E2;
+    --color-primary-mid: #D4956F;
+    --color-gold:        #D4A853;
+    --color-gold-lt:     #FBF3E2;
+    --color-dark:        #1C1612;
+    --color-dark-mid:    #2D2420;
+    --color-bg:          #FAF7F4;
+    --color-surface:     #FFFFFF;
+    --color-muted:       #8A7A72;
+    --color-border:      rgba(193, 122, 91, 0.18);
+    --color-border-soft: rgba(28, 22, 18, 0.08);
+    --font-display:      'Playfair Display', Georgia, serif;
+    --font-body:         'DM Sans', system-ui, sans-serif;
+
+    font-family: var(--font-body);
+    background: var(--color-bg);
+    color: var(--color-dark);
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* Reset mínimo dentro del layout */
+.landing-layout *, .landing-layout *::before, .landing-layout *::after {
+    box-sizing: border-box;
+}
+
+/* ── NAVBAR ── */
+.public-navbar {
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 3.5rem;
+    height: 64px;
+    background: rgba(250, 247, 244, 0.94);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(193, 122, 91, 0.18);
+}
+
+.nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+}
+
+.landing-logo-text {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1C1612;
+    letter-spacing: -0.3px;
+}
+
+.nav-links-center {
+    display: flex;
+    gap: 2rem;
+}
+
+.nav-link {
+    text-decoration: none;
+    color: #8A7A72;
+    font-size: 0.9rem;
+    font-weight: 400;
+    transition: color 0.2s;
+    font-family: 'DM Sans', system-ui, sans-serif;
+}
+.nav-link:hover { color: #C17A5B; }
+
+.nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+/* Botones de la navbar — valores literales para no depender de variables en cascada */
+.public-navbar .btn-primary {
+    background: #C17A5B;
+    color: white;
+    border: none;
+    padding: 0.55rem 1.4rem;
+    border-radius: 50px;
+    font-family: 'DM Sans', system-ui, sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.2s, transform 0.15s;
+}
+.public-navbar .btn-primary:hover {
+    background: #8B4E35;
+    transform: translateY(-1px);
+}
+
+.public-navbar .btn-outline {
+    background: transparent;
+    color: #8B4E35;
+    border: 1.5px solid #C17A5B;
+    padding: 0.5rem 1.25rem;
+    border-radius: 50px;
+    font-family: 'DM Sans', system-ui, sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    transition: background 0.2s;
+}
+.public-navbar .btn-outline:hover { background: #F2E8E2; }
+
+/* ── FOOTER ── */
+.landing-footer {
+    background: #1C1612;
+    padding: 2rem 3.5rem;
+}
+.footer-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+.footer-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #C17A5B;
+}
+.footer-copy {
+    color: #4A3D38;
+    font-size: 0.8rem;
+    font-family: 'DM Sans', system-ui, sans-serif;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+    .public-navbar { padding: 0 1.5rem; }
+    .nav-links-center { display: none; }
+    .public-navbar .btn-outline { display: none; }
+    .landing-footer { padding: 2rem 1.5rem; }
+    .footer-inner { flex-direction: column; text-align: center; }
+}

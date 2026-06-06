@@ -1,0 +1,118 @@
+/* ════════════════════════════════════
+   KYRO — Footer
+   ════════════════════════════════════ */
+
+.landing-footer {
+    position: relative;
+    background: var(--color-surface);
+    border-top: 1px solid var(--color-border);
+    overflow: hidden;
+}
+
+/* detalle decorativo similar al hero */
+.landing-footer::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: -10%;
+    width: 40%;
+    height: 100%;
+    background: color-mix(in srgb, var(--color-primary) 6%, transparent);
+    clip-path: polygon(25% 0, 100% 0, 100% 100%, 0 100%);
+    opacity: .8;
+}
+
+.footer-inner {
+    position: relative;
+    z-index: 2;
+
+    max-width: 1300px;
+    margin: auto;
+
+    padding: 1.4rem 3rem;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+
+    min-height: 78px;
+}
+
+.footer-brand {
+    display: flex;
+    align-items: center;
+    gap: .7rem;
+
+    font-family: var(--font-main);
+    font-weight: bold;
+    font-size: .95rem;
+
+    color: var(--color-text);
+}
+
+.footer-brand span {
+    letter-spacing: .3px;
+}
+
+.footer-brand svg {
+    filter: drop-shadow(
+        0 0 12px color-mix(
+            in srgb,
+            var(--color-primary) 30%,
+            transparent
+        )
+    );
+}
+
+.footer-copy {
+    font-family: var(--font-main);
+    font-size: .82rem;
+    color: var(--color-text-secondary);
+
+    margin: 0;
+    text-align: right;
+
+    opacity: .9;
+}
+
+/* línea premium abajo */
+.landing-footer::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+
+    width: 100%;
+    height: 2px;
+
+    background: linear-gradient(
+        90deg,
+        transparent,
+        var(--color-primary),
+        transparent
+    );
+
+    opacity: .5;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+
+    .footer-inner {
+        flex-direction: column;
+        text-align: center;
+
+        padding: 1.5rem;
+
+        gap: .7rem;
+    }
+
+    .footer-copy {
+        text-align: center;
+    }
+
+    .landing-footer::before {
+        display: none;
+    }
+}

@@ -1,0 +1,106 @@
+/* ==========================================
+   STATS BAR (Métrica rápida)
+   ========================================== */
+.stats-bar-container {
+    /* Usamos tu color de texto (café oscuro) como fondo para dar un contraste elegante */
+    background-color: var(--color-text);
+    padding: 3.5rem 0;
+    
+    /* Pequeños bordes terracota arriba y abajo para enmarcar la sección */
+    border-top: 2px solid color-mix(in srgb, var(--color-primary) 50%, transparent);
+    border-bottom: 2px solid color-mix(in srgb, var(--color-primary) 50%, transparent);
+}
+
+.stats-bar {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5rem; /* Más espacio para respirar */
+    flex-wrap: wrap;
+    padding: 0 2rem;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    transition: transform var(--transition);
+    cursor: default;
+}
+
+/* El elemento "flota" un poco cuando el usuario le pasa el mouse */
+.stat-item:hover {
+    transform: translateY(-6px); 
+}
+
+/* ==========================================
+   ÍCONOS
+   ========================================== */
+.stat-icon-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    /* Fondo semi-transparente para el ícono */
+    background-color: color-mix(in srgb, var(--color-surface) 10%, transparent);
+    border-radius: var(--radius);
+    border: 1px solid color-mix(in srgb, var(--color-surface) 20%, transparent);
+}
+
+.stat-icon {
+    color: var(--color-primary);
+}
+
+/* ==========================================
+   TEXTOS (Números y Etiquetas)
+   ========================================== */
+.stat-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-value {
+    font-family: var(--font-main);
+    font-size: 2.4rem;
+    font-weight: bold;
+    /* Usamos el color accent (dorado/crema) para que resalte como joyería pura */
+    color: var(--color-accent);
+    line-height: 1;
+    margin-bottom: 4px;
+}
+
+.stat-label {
+    font-family: var(--font-main);
+    font-size: 0.85rem;
+    color: var(--color-surface); /* Letra clara sobre el fondo oscuro */
+    opacity: 0.8;
+    text-transform: uppercase; /* Mayúsculas para darle un toque más técnico/ERP */
+    letter-spacing: 0.5px;
+}
+
+/* ==========================================
+   RESPONSIVE (Móviles)
+   ========================================== */
+@media (max-width: 968px) {
+    .stats-bar { gap: 3rem; }
+}
+
+@media (max-width: 768px) {
+    .stats-bar-container { padding: 2.5rem 0; }
+    .stats-bar {
+        gap: 2rem;
+        justify-content: flex-start; /* En móvil se ve mejor alineado a la izquierda */
+    }
+    .stat-item {
+        /* En pantallas pequeñas, forzamos que haya 2 tarjetas por fila */
+        width: calc(50% - 1rem); 
+    }
+    .stat-value { font-size: 1.8rem; }
+    .stat-icon-wrapper {
+        width: 42px;
+        height: 42px;
+    }
+}
