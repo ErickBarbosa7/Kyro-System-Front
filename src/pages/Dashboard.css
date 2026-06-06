@@ -1,15 +1,16 @@
-/* src/pages/Dashboard.css */
-
 .dashboard-container {
+    padding: 24px;
     display: flex;
     flex-direction: column;
-    gap: 30px;
+    gap: 32px;
 }
 
+/* Cabecera */
 .dashboard-header h1 {
-    color: var(--color-primary); /* Tu color Tinto */
-    font-size: 28px;
-    margin-bottom: 5px;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin: 0 0 8px 0;
 }
 
 .dashboard-header p {
@@ -17,70 +18,128 @@
     margin: 0;
 }
 
-/* ==========================================
-   GRID DE TARJETAS (ESTADÍSTICAS)
-========================================== */
+/* Grid de Tarjetas */
 .stats-grid {
     display: grid;
-    /* Esto hace que las tarjetas se acomoden solas dependiendo del tamaño de la pantalla */
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 20px;
 }
 
+/* Diseño base de las Tarjetas */
 .stat-card {
-    background-color: var(--color-surface); /* Blanco puro */
-    padding: 25px;
-    border-radius: var(--radius);
-    border: 1px solid var(--color-border);
-    box-shadow: var(--shadow-sm);
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    transition: var(--transition);
-}
-
-.stat-card:hover {
-    transform: translateY(-5px); /* Pequeño salto al pasar el mouse */
-    border-color: var(--color-accent); /* El borde se pinta de Dorado */
+    border: 1px solid var(--color-border);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    position: relative; /* Necesario para posicionar el badge */
+    overflow: hidden;
 }
 
 .stat-title {
-    color: var(--color-text-secondary);
     font-size: 14px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    color: var(--color-text-secondary);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .stat-value {
-    color: var(--color-text);
     font-size: 32px;
-    font-weight: bold;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin: 12px 0 4px 0;
 }
 
 .stat-desc {
     font-size: 13px;
+    color: var(--color-text-secondary);
 }
 
 .desc-positive {
-    color: var(--color-success);
+    color: #16a34a;
+    font-weight: 500;
 }
 
-.desc-warning {
-    color: var(--color-warning);
+/* Estilos específicos para tarjetas "En Proceso" */
+.pending-card {
+    background-color: #f8fafc;
+    border: 1px dashed #cbd5e1;
 }
 
-/* ==========================================
-   SECCIÓN DE ACCIONES RÁPIDAS
-========================================== */
-.quick-actions {
-    background-color: var(--color-surface);
-    padding: 25px;
-    border-radius: var(--radius);
-    border: 1px solid var(--color-border);
+.pending-card .stat-title,
+.pending-card .stat-desc {
+    opacity: 0.6;
 }
 
-.quick-actions h2 {
-    color: var(--color-text);
+.blur-value {
+    color: transparent;
+    text-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+    user-select: none;
+}
+
+.badge-pronto {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background-color: #e2e8f0;
+    color: #475569;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Área de Actividad Reciente */
+.recent-activity-section h2 {
     font-size: 18px;
-    margin-bottom: 20px;
+    color: var(--color-text-primary);
+    margin: 0 0 16px 0;
+}
+
+/* Caja de "En Construcción" */
+.construction-box {
+    background-color: #f8fafc;
+    border: 2px dashed #cbd5e1;
+    border-radius: 12px;
+    padding: 40px 20px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+}
+
+.construction-icon-wrapper {
+    background-color: #e2e8f0;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    color: #475569;
+}
+
+.construction-box h3 {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+    color: #334155;
+}
+
+.construction-box p {
+    margin: 0;
+    font-size: 14px;
+    max-width: 400px;
+    line-height: 1.5;
 }
