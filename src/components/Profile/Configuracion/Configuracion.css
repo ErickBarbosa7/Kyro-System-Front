@@ -1,0 +1,224 @@
+.config-container {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.config-header {
+    margin-bottom: 2rem;
+}
+
+.config-header h1 {
+    font-size: 1.8rem;
+    color: var(--color-text);
+    margin: 0 0 0.5rem 0;
+}
+
+.config-header p {
+    color: var(--color-text-secondary);
+    font-size: 0.95rem;
+}
+
+.config-layout {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 2.5rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 20px;
+    padding: 2rem;
+    min-height: 600px;
+    box-shadow: var(--shadow-sm);
+}
+
+/* ── Sidebar interna ── */
+.config-sidebar nav {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.config-nav-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border: none;
+    background: transparent;
+    border-radius: 10px;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    text-align: left;
+    font-family: inherit;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.config-nav-btn:hover {
+    background: var(--color-background);
+    color: var(--color-text);
+}
+
+.config-nav-btn.active {
+    background: var(--color-background);
+    color: var(--color-primary);
+    font-weight: 600;
+}
+
+.config-nav-btn .chevron {
+    margin-left: auto;
+}
+
+/* ── Contenido ── */
+.config-content {
+    border-left: 1px solid var(--color-border);
+    padding-left: 2.5rem;
+}
+
+.config-section .section-title {
+    margin-bottom: 1.5rem;
+}
+
+.config-section h2 {
+    font-size: 1.4rem;
+    color: var(--color-text);
+    margin: 0 0 0.5rem 0;
+}
+
+.config-section .section-title p {
+    color: var(--color-text-secondary);
+    font-size: 0.9rem;
+}
+
+.settings-card {
+    background: var(--color-background);
+    border: 1px dashed var(--color-border);
+    border-radius: 12px;
+    padding: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.placeholder-text {
+    color: var(--color-text-secondary);
+    font-style: italic;
+    font-size: 0.9rem;
+}
+
+/* ── Tab Perfil: tarjeta de identidad ── */
+.profile-identity-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    background: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+}
+
+.profile-avatar-lg {
+    width: 56px;
+    height: 56px;
+    min-width: 56px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 700;
+    color: white;
+}
+
+.profile-identity-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--color-text);
+    margin: 0 0 4px;
+}
+
+.profile-identity-role {
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 20px;
+    padding: 2px 10px;
+}
+
+/* ── Fields ── */
+.profile-fields {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.profile-field {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-background);
+    transition: background 0.15s;
+}
+
+.profile-field:last-child {
+    border-bottom: none;
+}
+
+.profile-field:hover {
+    background: var(--color-surface);
+}
+
+.profile-field-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-secondary);
+    flex-shrink: 0;
+}
+
+.profile-field label {
+    font-size: 11px;
+    color: var(--color-text-secondary);
+    display: block;
+    margin-bottom: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.profile-field p {
+    font-size: 14px;
+    color: var(--color-text);
+    margin: 0;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+    .config-layout {
+        grid-template-columns: 1fr;
+    }
+    .config-content {
+        border-left: none;
+        padding-left: 0;
+        padding-top: 2rem;
+        border-top: 1px solid var(--color-border);
+    }
+}

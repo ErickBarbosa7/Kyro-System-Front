@@ -1,0 +1,87 @@
+/* ==========================================
+   PROFILE DROPDOWN (Portal — fixed en body)
+   ========================================== */
+
+.profile-dropdown {
+  /* position: fixed y coordenadas vienen del inline style en React */
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.08);
+  padding: 6px;
+  z-index: 9999;
+
+  animation: dropdown-up 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes dropdown-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Botones ── */
+.profile-dropdown button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  text-align: left;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+
+.profile-dropdown button:hover {
+  background: var(--color-background);
+  color: var(--color-text);
+}
+
+.profile-dropdown button svg {
+  flex-shrink: 0;
+  color: inherit;
+}
+
+/* ── Divisor ── */
+.profile-dropdown .dropdown-divider {
+  height: 1px;
+  background: var(--color-border);
+  margin: 4px 0;
+}
+
+/* ── Logout ── */
+.profile-dropdown .dropdown-logout {
+  color: var(--color-error, #f87171);
+}
+
+.profile-dropdown .dropdown-logout:hover {
+  background: color-mix(in srgb, var(--color-error, #f87171) 10%, transparent);
+  color: var(--color-error, #f87171);
+}
+
+/* ── Botón activo ── */
+.profile-more.active {
+  color: var(--color-text);
+  background: var(--color-background);
+}
+
+/* ── Overlay clickeable sobre el avatar cuando el sidebar está cerrado ── */
+.profile-avatar-btn {
+  position: absolute;
+  inset: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}

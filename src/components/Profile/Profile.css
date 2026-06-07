@@ -1,0 +1,138 @@
+/* Reutiliza .config-container, .config-header, .config-content,
+   .config-section, .settings-card y .placeholder-text de Configuracion.css */
+
+.profile-layout {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 2.5rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 20px;
+    padding: 2rem;
+    min-height: 600px;
+    box-shadow: var(--shadow-sm);
+}
+
+/* ── Tarjeta lateral ── */
+.profile-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 12px;
+    gap: 8px;
+    text-align: center;
+}
+
+.profile-card-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 4px;
+}
+
+.profile-card-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--color-text);
+    margin: 0;
+}
+
+.profile-card-role {
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    background: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: 20px;
+    padding: 3px 12px;
+}
+
+.profile-card-divider {
+    width: 100%;
+    height: 1px;
+    background: var(--color-border);
+    margin: 8px 0;
+}
+
+.profile-card-email {
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    margin: 0;
+    word-break: break-all;
+}
+
+/* ── Fields ── */
+.profile-fields {
+    display: flex;
+    flex-direction: column;
+}
+
+.profile-field {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.profile-field:last-child {
+    border-bottom: none;
+}
+
+.profile-field-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    background: var(--color-background);
+    border: 1px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-secondary);
+    flex-shrink: 0;
+}
+
+.profile-field label {
+    font-size: 11px;
+    color: var(--color-text-secondary);
+    display: block;
+    margin-bottom: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.profile-field p {
+    font-size: 14px;
+    color: var(--color-text);
+    margin: 0;
+}
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+    .profile-layout {
+        grid-template-columns: 1fr;
+    }
+    .profile-card {
+        flex-direction: row;
+        align-items: center;
+        text-align: left;
+        gap: 16px;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid var(--color-border);
+    }
+    .profile-card-divider {
+        display: none;
+    }
+    .config-content {
+        border-left: none;
+        padding-left: 0;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--color-border);
+    }
+}

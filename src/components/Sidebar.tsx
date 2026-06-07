@@ -1,13 +1,12 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { 
-  LayoutDashboard, Store, Box, Gem, Sparkles, 
-  Palette, Crown, Calculator, PackageSearch, 
-  Receipt, Percent, Pin 
+import {
+  LayoutDashboard, Store, Box, Gem, Sparkles,
+  Palette, Crown, Calculator, PackageSearch,
+  Receipt, Percent, PanelLeftClose, PanelLeftOpen,
 } from 'lucide-react';
 import './Sidebar.css';
-import { Player } from '@lottiefiles/react-lottie-player'; 
-import animacionCat from './../assets/cat.json';
+import { SidebarProfile } from './Profile/SidebarProfile/SidebarProfile';
 
 const sections = [
   {
@@ -36,7 +35,7 @@ const sections = [
   {
     label: 'Inventario',
     links: [
-      { to: '/stock',  Icon: PackageSearch, label: 'Stock y movimientos' },
+      { to: '/stock', Icon: PackageSearch, label: 'Stock y movimientos' },
     ],
   },
   {
@@ -49,57 +48,64 @@ const sections = [
 ];
 
 export const Sidebar = () => {
-  const [isPinned, setIsPinned] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [usuario, setUsuario] = useState<any>(null);
+
+  useEffect(() => {
+    const usuarioGuardado = localStorage.getItem('kyro_usuario');
+    if (usuarioGuardado) {
+      setUsuario(JSON.parse(usuarioGuardado));
+    }
+  }, []);
 
   return (
-    <aside className={`sidebar ${isPinned ? 'sidebar--pinned' : ''}`}>
-      
+    <aside className={`sidebar ${isOpen ? 'sidebar--open' : ''}`}>
+
+      {/* ── Header ── */}
       <div className="sidebar-logo">
-        <div className="logo-icon">
-          <Gem size={24} color="var(--color-primary)" />
+        <div className="logo-left">
+          <span className="logo-text">Kyro System</span>
         </div>
-        <span className="logo-text">Kyro System</span>
-        
-        <button 
-          className={`pin-button ${isPinned ? 'pin-button--active' : ''}`}
-          onClick={() => setIsPinned(!isPinned)}
-          title={isPinned ? "Desanclar menú" : "Anclar menú"}
+        <button
+          className="menu-button"
+          onClick={() => setIsOpen((v) => !v)}
+          aria-label={isOpen ? 'Cerrar menú' : 'Abrir menú'}
+          title={isOpen ? 'Cerrar menú' : 'Abrir menú'}
         >
-          <Pin size={18} />
+          {isOpen ? <PanelLeftClose size={20} /> : <PanelLeftOpen size={20} />}
         </button>
       </div>
-      
+
+      {/* ── Navegación ── */}
       <nav className="sidebar-nav">
-        {sections.map((s) => (
-          <div key={s.label}>
-            <span className="sidebar-category">{s.label}</span>
-            {s.links.map((l) => (
+        {sections.map((section) => (
+          <div key={section.label}>
+            <span className="sidebar-category">{section.label}</span>
+            {section.links.map((link) => (
               <NavLink
-                key={l.to}
-                to={l.to}
+                key={link.to}
+                to={link.to}
                 className={({ isActive }) =>
                   `nav-link${isActive ? ' nav-link--active' : ''}`
                 }
               >
                 <span className="nav-icon">
-                  <l.Icon size={18} />
+                  <link.Icon size={18} />
                 </span>
-                <span className="nav-label">{l.label}</span>
+                <span className="nav-label">{link.label}</span>
+                <span className="nav-tooltip">{link.label}</span>
               </NavLink>
             ))}
           </div>
         ))}
       </nav>
-      <div className="sidebar-cat-container">
-        <Player
-          autoplay
-          loop
-          src={animacionCat}
-          className="sidebar-cat-player"
-          speed={0.7}
+
+      {usuario && (
+        <SidebarProfile
+          usuario={usuario}
+          sidebarOpen={isOpen} // ← pasamos el estado
         />
-      </div>
+      )}
     </aside>
-    
   );
 };
