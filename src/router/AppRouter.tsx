@@ -17,42 +17,46 @@ import { LandingPage } from '../pages/Landing/LandingPage/LandingPage';
 import { SettingsLayout } from '../components/Configuracion/Layout/SettingsLayout';
 import { ProfilePage } from '../components/Configuracion/pages/ProfilePage';
 import { AparienciaPage } from '../components/Configuracion/pages/AparienciaPage/AparienciaPage';
+import { ProtectedRoute } from '../guards/ProtectedRoutes';
+
 
 export const AppRouter = () => {
     return (
         <Routes>
-            {/* RUTAS PÚBLICAS */}
+            {/* ── PÚBLICAS ── */}
             <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/registrar" element={<Registrar />} />
 
-            {/* RUTAS PRIVADAS */}
-            <Route element={<DashboardLayout />}>
-                <Route path="/dashboard" element={<Dashboard />} />
+            {/* ── PRIVADAS — el JWT se verifica en ProtectedRoute ── */}
+            <Route element={<ProtectedRoute />}>
+                <Route element={<DashboardLayout />}>
+                    <Route path="/dashboard" element={<Dashboard />} />
 
-                {/* Catálogos */}
-                <Route path="/proveedores" element={<Proveedores />} />
-                <Route path="/materiales" element={<Materiales />} />
-                <Route path="/metales" element={<Metales />} />
-                <Route path="/acabados" element={<Acabados />} />
+                    {/* Catálogos */}
+                    <Route path="/proveedores" element={<Proveedores />} />
+                    <Route path="/materiales"  element={<Materiales />} />
+                    <Route path="/metales"     element={<Metales />} />
+                    <Route path="/acabados"    element={<Acabados />} />
 
-                {/* Producción */}
-                <Route path="/colecciones" element={<Colecciones />} />
-                <Route path="/piezas" element={<Piezas />} />
-                <Route path="/costeo" element={<Costeo />} />
+                    {/* Producción */}
+                    <Route path="/colecciones" element={<Colecciones />} />
+                    <Route path="/piezas"      element={<Piezas />} />
+                    <Route path="/costeo"      element={<Costeo />} />
 
-                {/* Inventario */}
-                <Route path="/stock" element={<Stock />} />
+                    {/* Inventario */}
+                    <Route path="/stock" element={<Stock />} />
 
-                {/* Finanzas */}
-                <Route path="/gastos" element={<GastosOperativos />} />
-                <Route path="/margenes" element={<ConfiguracionMargenes />} />
+                    {/* Finanzas */}
+                    <Route path="/gastos"   element={<GastosOperativos />} />
+                    <Route path="/margenes" element={<ConfiguracionMargenes />} />
 
-                {/* Cuenta */}
-                <Route element={<SettingsLayout />}>
-                    <Route path="/perfil" element={<ProfilePage />} />
-                    <Route path="/configuracion" element={<ProfilePage />} /> {/* O una vista general */}
-                    <Route path="/configuracion/apariencia" element={<AparienciaPage />} />
+                    {/* Cuenta */}
+                    <Route element={<SettingsLayout />}>
+                        <Route path="/perfil"                      element={<ProfilePage />} />
+                        <Route path="/configuracion"               element={<ProfilePage />} />
+                        <Route path="/configuracion/apariencia"    element={<AparienciaPage />} />
+                    </Route>
                 </Route>
             </Route>
 
