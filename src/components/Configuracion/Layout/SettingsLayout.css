@@ -1,0 +1,135 @@
+/* ── Contenedor Principal ── */
+.config-container {
+    padding: 0;
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.config-header {
+    margin-bottom: 2rem;
+    flex-shrink: 0; /* 2. Evita que el título se aplaste cuando el espacio es reducido */
+}
+
+.config-header h1 {
+    font-size: 1.8rem;
+    color: var(--color-text);
+    margin: 0 0 0.5rem 0;
+}
+
+.config-header p {
+    color: var(--color-text-secondary);
+    font-size: 0.95rem;
+}
+
+/* ── Layout (Cáscara) ── */
+.config-layout {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 2.5rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 20px;
+    padding: 2rem;
+    
+    /* 3. Toma todo el espacio vertical restante sin desbordarse */
+    flex: 1; 
+    overflow: hidden; 
+    box-shadow: var(--shadow-sm);
+}
+
+/* ── Sidebar interna ── */
+.config-sidebar {
+    /* 4. Mantiene la sidebar fija y sin scroll si no es necesario */
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.config-sidebar nav {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.config-nav-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border: none;
+    background: transparent;
+    border-radius: 10px;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    text-decoration: none;
+    text-align: left;
+    font-family: inherit;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.config-nav-btn:hover {
+    background: var(--color-background);
+    color: var(--color-text);
+}
+
+.config-nav-btn.active {
+    background: var(--color-background);
+    color: var(--color-primary);
+    font-weight: 600;
+}
+
+.config-nav-btn .chevron {
+    margin-left: auto;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.config-nav-btn.active .chevron {
+    opacity: 1;
+}
+
+.config-content {
+    border-left: 1px solid var(--color-border);
+    padding-left: 2.5rem;
+}
+
+/* Personalizar la barra de scroll de la derecha (opcional, para que se vea elegante) */
+.config-content::-webkit-scrollbar {
+    width: 6px;
+}
+.config-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+.config-content::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 10px;
+}
+.config-content::-webkit-scrollbar-thumb:hover {
+    background: var(--color-text-secondary);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+    .config-layout {
+        grid-template-columns: 1fr;
+        /* En móviles, permitimos que todo fluya hacia abajo */
+        overflow: visible; 
+    }
+    
+    .config-content {
+        border-left: none;
+        padding-left: 0;
+        padding-top: 2rem;
+        border-top: 1px solid var(--color-border);
+        overflow-y: visible;
+    }
+}

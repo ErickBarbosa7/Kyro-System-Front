@@ -1,3 +1,6 @@
+/* ==========================================
+   TEMA POR DEFECTO (Terracota / Arenoso claro)
+   ========================================== */
 :root {
   --font-main: "Cascadia Code", monospace;
 
@@ -5,7 +8,8 @@
   --color-primary: #A64D3F;         
   --color-primary-hover: #8C3D31;
   --color-accent: #D9A066;
-  --color-toolbar: #EEE6DA  ;
+  --color-toolbar: #EEE6DA;
+
   /* Fondos */
   --color-background: #F6F2EB;      
   --color-background-2: #EEE6DA;    
@@ -29,7 +33,79 @@
   --shadow-sm: 0 4px 12px rgba(40,30,20,.08);
 }
 
-/* fuera del root */
+/* ==========================================
+   TEMA OSCURO (Dark Mode)
+   ========================================== */
+  [data-theme="oscuro"] {
+  --color-primary: #E07A5F;         
+  --color-primary-hover: #F28C71;
+  --color-accent: #E2B480;
+  --color-toolbar: #1E1E1E;
+
+  /* Fondos (Más oscuros para dar profundidad) */
+  --color-background: #121212;      
+  --color-background-2: #1A1A1A;    
+  --color-surface: #242424;         
+
+  /* Textos (MUCHO más claros para contraste) */
+  --color-text: #F9FAFB;            
+  --color-text-secondary: #9CA3AF;  /* Un gris platinado muy legible */
+
+  /* Bordes (Sutiles pero visibles) */
+  --color-border: #374151;
+  
+  --shadow-sm: 0 4px 12px rgba(0,0,0, 0.4);
+}
+
+/* ==========================================
+   TEMA AZUL (Estilo "Acero/Océano Profundo")
+   ========================================== */
+/* ==========================================
+   TEMA AZUL (Océano vibrante y elegante)
+   ========================================== */
+[data-theme="azul"] {
+  /* Un azul con más vida y saturación, se nota mucho más */
+  --color-primary: #2B6BA5;         
+  --color-primary-hover: #1F5382;
+  --color-accent: #609DD1;
+  --color-toolbar: #E5EFF6;
+  
+  /* Fondos con un tinte azul más claro y evidente */
+  --color-background: #F0F5F9;      
+  --color-background-2: #E5EFF6;    
+  --color-surface: #DFE8EF;         
+
+  /* Texto con un toque azul oscuro */
+  --color-text: #172430;            
+  --color-text-secondary: #5C7082;
+
+  /* Bordes */
+  --color-border: #C1D4E3;
+}
+
+/* ==========================================
+   TEMA VERDE (Esmeralda/Bosque vivo)
+   ========================================== */
+[data-theme="verde"] {
+  /* Un verde con mucha más presencia, estilo esmeralda */
+  --color-primary: #3E8257;         
+  --color-primary-hover: #2A613E;
+  --color-accent: #78B58D;
+  --color-toolbar: #E5EFE7;
+  
+  /* Fondos con un tinte verde más evidente */
+  --color-background: #F0F6F1;      
+  --color-background-2: #E5EFE7;    
+  --color-surface: #DFE9E1;         
+
+  /* Texto verde muy oscuro */
+  --color-text: #18261D;            
+  --color-text-secondary: #5A7061;
+
+  /* Bordes */
+  --color-border: #C1D6C6;
+}
+
 *,
 *::before,
 *::after {
@@ -37,10 +113,10 @@
   font-family: inherit;
 }
 
-body,
-button,
-input,
-textarea,
-select {
+body, button, input, textarea, select {
   font-family: var(--font-main);
+  /* Es vital poner esto para que el body adopte el color global al cambiar */
+  background-color: var(--color-background);
+  color: var(--color-text);
+  transition: background-color var(--transition), color var(--transition);
 }

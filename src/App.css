@@ -1,35 +1,72 @@
+/* ==========================================
+   APP GLOBAL LAYOUT (Optimizado y Compacto)
+   ========================================== */
 
-/* Este es el fondo de toda la pantalla */
+/* 1. Fondo base y bloqueo de scroll nativo */
 body {
-    background-color: var(--color-background); /* Un gris muy clarito o beige */
     margin: 0;
+    padding: 0;
+    background-color: var(--color-background); 
+    font-family: var(--font-main);
+    color: var(--color-text);
+    overflow: hidden; /* Corta el scroll fantasma del navegador */
 }
-/* Contenedor principal: Ahora apila de arriba hacia abajo (Columna) */
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+/* 2. Contenedor principal: Fijo al tamaño exacto de la pantalla */
 .kyro-app-layout {
     display: flex;
     flex-direction: column; 
     height: 100vh;
-    padding: 20px;
-    gap: 20px; 
-    box-sizing: border-box;
+    width: 100vw;
+    padding: 16px; /* Un poco más compacto para ganar espacio en pantalla */
+    gap: 16px; 
     background-color: var(--color-background);
 }
 
-/* El nuevo contenedor que pone Sidebar y Dashboard lado a lado */
+/* 3. El contenedor que divide Navbar, Sidebar y Contenido */
 .kyro-content-wrapper {
     display: flex;
     flex: 1;
-    gap: 20px;
-    min-height: 0;   
+    gap: 16px;
+    min-height: 0; /* Clave para que el flexbox no se expanda al infinito */
     overflow: hidden;
 }
 
+/* 4. El "Lienzo" blanco/claro donde viven las pantallas (Dashboard, Settings, etc.) */
 .kyro-main-content {
     flex: 1;
     min-height: 0;
     background-color: var(--color-surface);
-    border-radius: 20px;
-    padding: 30px;
-    overflow-y: auto;
+    border-radius: 20px; /* Las curvas perfectas */
+    padding: 24px; /* Padding interno más compacto */
+    
+    /* EL ÚNICO SCROLL PERMITIDO EN TODA LA APP */
+    overflow-y: auto; 
+    overflow-x: hidden;
+    
+    border: 1px solid var(--color-border);
     box-shadow: var(--shadow-sm);
+}
+
+/* 5. Scrollbar flotante para que no tape tus bordes curvos de 20px */
+.kyro-main-content::-webkit-scrollbar {
+    width: 6px; /* Más delgado y sutil */
+}
+
+.kyro-main-content::-webkit-scrollbar-track {
+    background: transparent;
+    margin: 20px; /* Empuja el inicio y fin del scroll lejos de tus esquinas curvas */
+}
+
+.kyro-main-content::-webkit-scrollbar-thumb {
+    background-color: color-mix(in srgb, var(--color-border) 80%, transparent);
+    border-radius: 10px; /* Barra redondeada */
+}
+
+.kyro-main-content::-webkit-scrollbar-thumb:hover {
+    background-color: var(--color-text-secondary);
 }

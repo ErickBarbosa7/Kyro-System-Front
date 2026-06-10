@@ -1,0 +1,183 @@
+/* ==========================================
+   APARIENCIA PAGE (DISEÑO MODERNO)
+   ========================================== */
+
+.appearance-container {
+    background: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-top: 1.5rem;
+}
+
+.appearance-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.appearance-icon {
+    color: var(--color-text-secondary);
+}
+
+.appearance-header h3 {
+    font-size: 1.1rem;
+    color: var(--color-text);
+    margin: 0;
+}
+
+.appearance-desc {
+    color: var(--color-text-secondary);
+    font-size: 0.95rem;
+    margin-bottom: 24px;
+}
+
+/* ── Grid Moderno ── */
+.modern-theme-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+}
+
+/* ── Tarjeta Interactiva ── */
+.modern-theme-card {
+    background: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: all 0.2s ease;
+}
+
+/* ── Vista Previa (Mini UI) ── */
+.theme-visual-preview {
+    position: relative;
+    width: 100%;
+    height: 140px;
+    border-radius: 12px;
+    border: 2px solid var(--color-border);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.modern-theme-card:hover .theme-visual-preview {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.08);
+    border-color: var(--color-text-secondary);
+}
+
+.modern-theme-card.active .theme-visual-preview {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 30%, transparent);
+}
+
+/* ── Dibujando la Mini UI ── */
+.preview-navbar {
+    height: 24px;
+    background: rgba(150, 150, 150, 0.1);
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    gap: 8px;
+    border-bottom: 1px solid rgba(150, 150, 150, 0.1);
+}
+
+.preview-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.preview-line {
+    width: 40px;
+    height: 4px;
+    border-radius: 4px;
+    background: rgba(150, 150, 150, 0.2);
+}
+
+.preview-body {
+    flex: 1;
+    display: flex;
+}
+
+.preview-sidebar {
+    width: 30%;
+    background: rgba(150, 150, 150, 0.05);
+    border-right: 1px solid rgba(150, 150, 150, 0.1);
+}
+
+.preview-content {
+    flex: 1;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.preview-card {
+    height: 24px;
+    background: rgba(150, 150, 150, 0.1);
+    border-radius: 4px;
+}
+
+/* ── Indicador de Check ── */
+.check-indicator {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.check-indicator.visible {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* ── Información de Texto Debajo de la Imagen ── */
+.theme-info-modern {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 0 4px;
+}
+
+.theme-name-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.theme-color-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+.theme-info-modern h4 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-text);
+}
+
+.theme-info-modern span {
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    line-height: 1.4;
+}

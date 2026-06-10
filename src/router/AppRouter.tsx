@@ -14,7 +14,9 @@ import { GastosOperativos } from '../pages/GastosOperativos/GastosOperativos';
 import { ConfiguracionMargenes } from '../pages/ConfiguracionMargenes/ConfiguracionMargenes';
 import { Registrar } from '../pages/auth/Registrar';
 import { LandingPage } from '../pages/Landing/LandingPage/LandingPage';
-import { Configuracion } from '../components/Profile/Configuracion/Configuracion';
+import { SettingsLayout } from '../components/Configuracion/Layout/SettingsLayout';
+import { ProfilePage } from '../components/Configuracion/pages/ProfilePage';
+import { AparienciaPage } from '../components/Configuracion/pages/AparienciaPage/AparienciaPage';
 
 export const AppRouter = () => {
     return (
@@ -47,7 +49,11 @@ export const AppRouter = () => {
                 <Route path="/margenes" element={<ConfiguracionMargenes />} />
 
                 {/* Cuenta */}
-                <Route path="/configuracion" element={<Configuracion />} />
+                <Route element={<SettingsLayout />}>
+                    <Route path="/perfil" element={<ProfilePage />} />
+                    <Route path="/configuracion" element={<ProfilePage />} /> {/* O una vista general */}
+                    <Route path="/configuracion/apariencia" element={<AparienciaPage />} />
+                </Route>
             </Route>
 
             <Route path="*" element={<Navigate to="/" replace />} />

@@ -1,23 +1,34 @@
 :global(body) {
     margin: 0;
     padding: 0;
-    background-color: var(--color-background); /* Usamos tu gris súper clarito */
-    font-family: var(--font-main); /* Usamos Cascadia Code */
-    color: var(--color-text); /* Texto oscuro por defecto */
+    background-color: var(--color-background);
+    font-family: var(--font-main);
+    color: var(--color-text);
+    
+    /* 1. BLOQUEAMOS EL SCROLL GLOBAL DEL NAVEGADOR */
+    overflow: hidden; 
 }
-
 .layout-container {
     display: flex;
-    min-height: 100vh;
+    height: 100vh; /* Fijo a la altura de la pantalla */
+    overflow: hidden; /* Bloquea scroll global */
 }
 
 .main-content {
     flex: 1; 
     display: flex;
     flex-direction: column;
+    overflow: hidden; /* Bloquea scroll de esta columna */
 }
 
+/* Este es el contenedor crema donde se ven el título y las tarjetas */
 .content-area {
+    flex: 1; /* Toma todo el espacio vertical restante */
     padding: 30px;
-    overflow-y: auto;
+    
+    /* 👇 CAMBIO CLAVE: Bloqueamos scroll aquí para dárselo a la sub-sección */
+    overflow-y: hidden; 
+    
+    display: flex;
+    flex-direction: column;
 }

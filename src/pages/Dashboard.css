@@ -1,57 +1,97 @@
+/* ==========================================
+   DASHBOARD (Theme-Aware)
+   ========================================== */
+
 .dashboard-container {
-    padding: 24px;
     display: flex;
     flex-direction: column;
-    gap: 32px;
+    gap: 24px;
 }
 
-/* Cabecera */
 .dashboard-header h1 {
-    font-size: 24px;
-    font-weight: 700;
-    color: var(--color-text-primary);
+    font-size: 1.8rem;
+    color: var(--color-text); /* 👈 Usamos la variable global */
     margin: 0 0 8px 0;
 }
 
 .dashboard-header p {
-    color: var(--color-text-secondary);
+    color: var(--color-text-secondary); /* 👈 Usamos la variable global */
+    font-size: 1rem;
     margin: 0;
 }
 
-/* Grid de Tarjetas */
+/* ── Tarjetas (Stats Grid) ── */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 20px;
 }
 
-/* Diseño base de las Tarjetas */
 .stat-card {
-    background: white;
+    background: var(--color-surface); /* Fondo adaptable */
+    border: 1px solid var(--color-border); /* Borde adaptable */
     border-radius: 12px;
-    padding: 24px;
+    padding: 20px;
     display: flex;
     flex-direction: column;
-    border: 1px solid var(--color-border);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-    position: relative; /* Necesario para posicionar el badge */
-    overflow: hidden;
+    position: relative;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+}
+
+/* Tarjeta Activa (Toma el color principal elegido) */
+.active-card {
+    /* Le ponemos una línea superior del color del tema (Azul, Terracota, etc) */
+    border-top: 4px solid var(--color-primary); 
+}
+
+/* Tarjeta Pendiente */
+.pending-card {
+    background: color-mix(in srgb, var(--color-surface) 60%, transparent);
+    border: 1px dashed var(--color-border);
+}
+
+.badge-pronto {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: color-mix(in srgb, var(--color-warning) 15%, transparent);
+    color: var(--color-warning);
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
 }
 
 .stat-title {
-    font-size: 14px;
-    color: var(--color-text-secondary);
-    font-weight: 600;
     display: flex;
     align-items: center;
     gap: 8px;
+    color: var(--color-text-secondary);
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 12px;
 }
 
 .stat-value {
-    font-size: 32px;
+    font-size: 28px;
     font-weight: 700;
-    color: var(--color-text-primary);
-    margin: 12px 0 4px 0;
+    color: var(--color-text);
+    margin-bottom: 4px;
+}
+
+.blur-value {
+    filter: blur(4px);
+    opacity: 0.5;
+    user-select: none;
 }
 
 .stat-desc {
@@ -59,87 +99,45 @@
     color: var(--color-text-secondary);
 }
 
-.desc-positive {
-    color: #16a34a;
-    font-weight: 500;
+/* ── Sección de Construcción ── */
+.recent-activity-section {
+    margin-top: 16px;
 }
 
-/* Estilos específicos para tarjetas "En Proceso" */
-.pending-card {
-    background-color: #f8fafc;
-    border: 1px dashed #cbd5e1;
-}
-
-.pending-card .stat-title,
-.pending-card .stat-desc {
-    opacity: 0.6;
-}
-
-.blur-value {
-    color: transparent;
-    text-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
-    user-select: none;
-}
-
-.badge-pronto {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    background-color: #e2e8f0;
-    color: #475569;
-    font-size: 11px;
-    font-weight: 600;
-    padding: 4px 10px;
-    border-radius: 20px;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-/* Área de Actividad Reciente */
 .recent-activity-section h2 {
-    font-size: 18px;
-    color: var(--color-text-primary);
+    font-size: 1.2rem;
+    color: var(--color-text);
     margin: 0 0 16px 0;
 }
 
-/* Caja de "En Construcción" */
 .construction-box {
-    background-color: #f8fafc;
-    border: 2px dashed #cbd5e1;
-    border-radius: 12px;
-    padding: 40px 20px;
-    text-align: center;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    color: #64748b;
+    text-align: center;
+    padding: 40px 20px;
+    background: var(--color-surface); /* Fondo adaptable */
+    border: 2px dashed var(--color-border); /* Borde adaptable */
+    border-radius: 12px;
+    color: var(--color-text-secondary);
 }
 
 .construction-icon-wrapper {
-    background-color: #e2e8f0;
-    width: 64px;
-    height: 64px;
+    background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+    color: var(--color-primary); /* Toma el color del tema */
+    padding: 16px;
     border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     margin-bottom: 16px;
-    color: #475569;
 }
 
 .construction-box h3 {
+    color: var(--color-text);
     margin: 0 0 8px 0;
-    font-size: 16px;
-    color: #334155;
 }
 
 .construction-box p {
+    max-width: 500px;
     margin: 0;
-    font-size: 14px;
-    max-width: 400px;
     line-height: 1.5;
 }

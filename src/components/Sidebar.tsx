@@ -6,7 +6,7 @@ import {
   Receipt, Percent, PanelLeftClose, PanelLeftOpen,
 } from 'lucide-react';
 import './Sidebar.css';
-import { SidebarProfile } from './Profile/SidebarProfile/SidebarProfile';
+import { SidebarProfile } from './Configuracion/SidebarProfile/SidebarProfile';
 
 const sections = [
   {

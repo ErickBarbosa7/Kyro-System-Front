@@ -128,7 +128,10 @@ export const SidebarProfile = ({ usuario, sidebarOpen }: SidebarProfileProps) =>
                         width: dropdownPos.width,
                     }}
                 >
-                   
+                    <button onClick={() => { setIsMenuOpen(false); navigate('/perfil'); }}>
+                        <User size={16} />
+                        <span>Mi Perfil</span>
+                    </button>
 
                     <button onClick={() => { setIsMenuOpen(false); navigate('/configuracion'); }}>
                         <Settings size={16} />
