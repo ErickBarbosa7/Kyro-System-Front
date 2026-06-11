@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Hammer } from 'lucide-react';
 
 export const ConfigGeneralPage = () => {
