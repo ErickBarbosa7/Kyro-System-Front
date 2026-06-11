@@ -6,8 +6,8 @@ import './AparienciaPage.css';
 const THEMES = [
     { id: 'terracota', nombre: 'Terracota Original', color: '#A64D3F', bg: '#F6F2EB', descripcion: 'El tono arenoso, cálido y clásico de Kyro' },
     { id: 'oscuro', nombre: 'Modo Oscuro', color: '#E07A5F', bg: '#121212', descripcion: 'Interfaz oscura para reducir la fatiga visual' },
-    { id: 'perla', nombre: 'Perla', color: '#5F6368', bg: '#FCFCFD', descripcion: 'Minimalista, limpio y diseñado para largas jornadas de trabajo'},
-    { id: 'medianoche',nombre: 'Olivo Premium', color: '#575E55', bg: '#FFFBF5', descripcion: 'Natural, equilibrado y enfocado en productividad'},
+    { id: 'perla', nombre: 'Perla', color: '#5F6368', bg: '#FCFCFD', descripcion: 'Minimalista, limpio y diseñado para largas jornadas de trabajo' },
+    { id: 'medianoche', nombre: 'Medianoche', color: '#22304A', bg: '#FAFBFD', descripcion: 'Elegante, profesional y enfocado en la productividad' },
 ];
 
 export const AparienciaPage = () => {
