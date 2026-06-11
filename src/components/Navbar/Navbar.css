@@ -1,0 +1,37 @@
+.navbar {
+    height: 65px; /* Un poco más alto para que respire */
+    background-color: var(--color-surface); 
+    border-radius: 20px; 
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 25px;
+    box-shadow: var(--shadow-sm); 
+}
+.navbar-brand{
+    font-weight: 600;
+    font-size: 18px;
+}
+.btn-logout {
+    /* ESTADO NORMAL: Toma el color del tema actual (Azul, Verde, Terracota) */
+    background-color: var(--color-primary); 
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 10px; 
+    font-family: var(--font-main);
+    font-weight: 500;
+    cursor: pointer;
+    
+    /* Agregamos background-color a la transición para que el cambio a rojo sea suave */
+    transition: background-color var(--transition), transform var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 8px; 
+}
+
+.btn-logout:hover {
+    /* AL HACER HOVER: Pasa a ser rojo (peligro) indicando acción de salida */
+    background-color: var(--color-danger); 
+    transform: scale(0.98); 
+}

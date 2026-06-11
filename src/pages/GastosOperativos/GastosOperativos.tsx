@@ -51,6 +51,11 @@ export const GastosOperativos = () => {
         observaciones: ''
     });
 
+    // === ESTILOS MÁGICOS A PRUEBA DE FALLOS ===
+    // Evitan que el texto se quede gris en modo oscuro
+    const labelStyle = { color: 'var(--color-text)', fontWeight: 700 };
+    const inputStyle = { backgroundColor: 'var(--color-background)', color: 'var(--color-text)' };
+
     // Modal Confirmación
     const [isConfirmOpen, setIsConfirmOpen] = useState(false);
     const [gastoAEliminar, setGastoAEliminar] = useState<{ id: string, concepto: string } | null>(null);
@@ -242,11 +247,11 @@ export const GastosOperativos = () => {
 
     return (
         <div className="module-container">
-            {/* CABECERA CON BOTÓN DE PDF */}
+            {/* CABECERA CON COLOR FORZADO EN EL TÍTULO */}
             <div className="module-header">
                 <div className="module-title">
                     <Receipt size={28} color="var(--color-primary)" />
-                    <h2>Gastos Operativos</h2>
+                    <h2 style={{ color: 'var(--color-primary)' }}>Gastos Operativos</h2>
                 </div>
                 
                 <div style={{ display: 'flex', gap: '12px' }}>
@@ -292,17 +297,19 @@ export const GastosOperativos = () => {
                 )}
             </div>
 
+            {/* MODAL CON ESTILOS INYECTADOS */}
             <Modal
                 isOpen={isModalOpen}
                 onClose={cerrarModal}
-                title={editingId ? 'Editar Gasto' : 'Registrar Gasto'}
+                title={<span style={{ color: 'var(--color-text)' }}>{editingId ? 'Editar Gasto' : 'Registrar Gasto'}</span>}
                 maxWidth="500px"
             >
                 <form onSubmit={handleSubmit} className="modal-form">
                     
                     <div className="form-group">
-                        <label>Concepto del Gasto *</label>
+                        <label style={labelStyle}>Concepto del Gasto *</label>
                         <input 
+                            style={inputStyle}
                             type="text" 
                             name="concepto" 
                             value={formData.concepto} 
@@ -315,8 +322,9 @@ export const GastosOperativos = () => {
 
                     <div className="form-row">
                         <div className="form-group">
-                            <label>Monto Total ($) *</label>
+                            <label style={labelStyle}>Monto Total ($) *</label>
                             <input 
+                                style={inputStyle}
                                 type="number" 
                                 name="monto" 
                                 value={formData.monto} 
@@ -328,8 +336,8 @@ export const GastosOperativos = () => {
                         </div>
 
                         <div className="form-group">
-                            <label>Categoría *</label>
-                            <select name="categoria" value={formData.categoria} onChange={handleInputChange} required>
+                            <label style={labelStyle}>Categoría *</label>
+                            <select style={inputStyle} name="categoria" value={formData.categoria} onChange={handleInputChange} required>
                                 <option value="Fijo">Fijo (Renta, Sueldos, Internet)</option>
                                 <option value="Variable">Variable (Material empaque, Publicidad)</option>
                             </select>
@@ -338,8 +346,8 @@ export const GastosOperativos = () => {
 
                     <div className="form-row">
                         <div className="form-group">
-                            <label>Periodicidad *</label>
-                            <select name="periodicidad" value={formData.periodicidad} onChange={handleInputChange} required>
+                            <label style={labelStyle}>Periodicidad *</label>
+                            <select style={inputStyle} name="periodicidad" value={formData.periodicidad} onChange={handleInputChange} required>
                                 <option value="UNICA">Única (Un solo pago)</option>
                                 <option value="SEMANAL">Semanal</option>
                                 <option value="MENSUAL">Mensual</option>
@@ -348,8 +356,9 @@ export const GastosOperativos = () => {
                         </div>
 
                         <div className="form-group">
-                            <label>Fecha del Gasto *</label>
+                            <label style={labelStyle}>Fecha del Gasto *</label>
                             <input 
+                                style={inputStyle}
                                 type="date" 
                                 name="fecha" 
                                 value={formData.fecha} 
@@ -360,8 +369,9 @@ export const GastosOperativos = () => {
                     </div>
 
                     <div className="form-group">
-                        <label>Observaciones (Opcional)</label>
+                        <label style={labelStyle}>Observaciones (Opcional)</label>
                         <textarea 
+                            style={inputStyle}
                             name="observaciones" 
                             value={formData.observaciones} 
                             onChange={handleInputChange}
@@ -370,7 +380,7 @@ export const GastosOperativos = () => {
                         />
                     </div>
 
-                    <div className="modal-footer">
+                    <div className="modal-footer" style={{ marginTop: '24px', paddingTop: '20px', borderTop: '1px solid var(--color-border)', display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
                         <button type="button" className="btn-secondary" onClick={cerrarModal}>Cancelar</button>
                         <button type="submit" className="btn-primary">
                             {editingId ? 'Guardar Cambios' : 'Registrar Gasto'}

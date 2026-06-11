@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { User, Mail, Lock, Save, Pencil, X } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { actualizarPerfil } from '../../../services/auth.service';
+import { actualizarPerfil } from '../../../../services/auth.service';
 import './ProfilePage.css';
 
 export const ProfilePage = () => {
@@ -92,7 +92,7 @@ export const ProfilePage = () => {
         } finally {
             setLoading(false);
         }
-    };
+    };  
 
     return (
         <form onSubmit={handleSubmit} className="config-section">

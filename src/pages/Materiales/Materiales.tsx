@@ -20,10 +20,8 @@ import { obtenerMateriales, crearMaterial, actualizarMaterial, eliminarMaterial,
 import { obtenerProveedores } from '../../services/proveedores.service';
 import { Loading } from '../../components/Loading/Loading';
 
-
 import './Materiales.css';
 
-// Definimos la estructura del estado del formulario para que sea compatible con inputs vacíos y strings de FormData
 interface FormState {
     nombre: string;
     categoriaId: string;
@@ -37,7 +35,7 @@ interface FormState {
 }
 
 export const Materiales = () => {
-    // === ESTADOS ===
+    // === ESTADOS GLOBALES ===
     const [materiales, setMateriales] = useState<Material[]>([]);
     const [proveedores, setProveedores] = useState<{ id: string; nombre: string }[]>([]);
     const [categorias, setCategorias] = useState<CategoriaMaterial[]>([]);
@@ -46,14 +44,13 @@ export const Materiales = () => {
 
     const [searchTerm, setSearchTerm] = useState('');
     
-    // Estado unificado de filtros
     const [filtros, setFiltros] = useState({
         estado: 'activos', 
         categoriaId: '',   
         proveedorId: ''    
     });
 
-    // Estados específicos para la carga de imágenes en Cloudinary
+    // Estados Imágenes
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string>('');
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -63,38 +60,34 @@ export const Materiales = () => {
     const [editingId, setEditingId] = useState<string | null>(null);
     const [formData, setFormData] = useState<FormState>({
         nombre: '', categoriaId: '', proveedorId: '', unidadMedidaId: '', 
-        precioCompra: '', 
-        cantidadComprada: '', 
-        stockMinimo: 0, 
-        stockMaximo: '', 
-        imagenUrl: '',
+        precioCompra: '', cantidadComprada: '', stockMinimo: 0, stockMaximo: '', imagenUrl: '',
     });
 
-    // Modales Secundarios (Categorías y Unidades)
+    // === ESTILOS MÁGICOS A PRUEBA DE FALLOS ===
+    const labelStyle = { color: 'var(--color-text)', fontWeight: 700 };
+    const inputStyle = { backgroundColor: 'var(--color-background)', color: 'var(--color-text)' };
+
+    // Modales Secundarios
     const [isCategoriaModalOpen, setIsCategoriaModalOpen] = useState(false);
     const [categoriaAEditar, setCategoriaAEditar] = useState<{ id: string; nombre: string; descripcion?: string } | null>(null);
     
     const [isUnidadModalOpen, setIsUnidadModalOpen] = useState(false);
     const [unidadAEditar, setUnidadAEditar] = useState<{ id: string; nombre: string } | null>(null);
 
-    // Papeleras de Reciclaje
+    // Papeleras
     const [isPapeleraCategoriasOpen, setIsPapeleraCategoriasOpen] = useState(false);
     const [categoriasInactivas, setCategoriasInactivas] = useState<CategoriaMaterial[]>([]);
     
     const [isPapeleraUnidadesOpen, setIsPapeleraUnidadesOpen] = useState(false);
     const [unidadesInactivas, setUnidadesInactivas] = useState<{ id: string; nombre: string }[]>([]);
 
-    // Confirmación (Eliminar)
+    // Confirmación
     const [isConfirmOpen, setIsConfirmOpen] = useState(false);
     const [itemAEliminar, setItemAEliminar] = useState<{ id: string, nombre: string, tipo: 'material' | 'categoria' | 'unidad'} | null>(null);
 
     // === EFECTOS ===
-    // === EFECTOS ===
     useEffect(() => {
-        // Activamos el estado de carga para mostrar la animación
         setIsLoading(true);
-        
-        // Llamamos a tu servicio de materiales
         obtenerMateriales()
             .then((data) => {
                 setMateriales(data);
@@ -108,7 +101,6 @@ export const Materiales = () => {
             });
     }, []);
 
-    
     const cargarDatos = async () => {
         setIsLoading(true);
         try {
@@ -129,7 +121,6 @@ export const Materiales = () => {
         }
     };
 
-    // --- LÓGICA DE SELECCIÓN DE IMAGEN ---
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
@@ -138,7 +129,6 @@ export const Materiales = () => {
         }
     };
 
-    // --- LÓGICA DE MATERIALES ---
     const handleMaterialSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!formData.nombre.trim()) return toast.error('El nombre es obligatorio');
@@ -190,7 +180,6 @@ export const Materiales = () => {
                 unidadMedidaId: material.unidadMedidaId, 
                 precioCompra: material.precioCompra, 
                 cantidadComprada: material.cantidadComprada,
-                // Usamos ?? para atrapar tanto null como undefined
                 stockMinimo: material.stockMinimo ?? 0, 
                 stockMaximo: material.stockMaximo ?? '', 
                 imagenUrl: material.imagenUrl || '',
@@ -218,7 +207,6 @@ export const Materiales = () => {
         setFormData(prev => ({ ...prev, [name]: parsedValue }));
     };
 
-    // --- MANEJO DE CATEGORÍAS ---
     const abrirCategoriaModal = (id?: string) => {
         if (id) {
             const cat = categorias.find(c => c.id === id);
@@ -256,7 +244,6 @@ export const Materiales = () => {
         }
     };
 
-    // --- MANEJO DE UNIDADES DE MEDIDA ---
     const abrirPapeleraUnidades = async () => {
         const loadingToast = toast.loading('Buscando eliminadas...');
         try {
@@ -284,7 +271,6 @@ export const Materiales = () => {
         }
     };
 
-    // --- LÓGICA DE ELIMINACIÓN Y REACTIVACIÓN ---
     const handleDeleteClick = (id: string, nombre: string, tipo: 'material' | 'categoria' | 'unidad') => {
         setItemAEliminar({ id, nombre, tipo });
         setIsConfirmOpen(true);
@@ -326,7 +312,6 @@ export const Materiales = () => {
         }
     };
 
-    // --- FILTRADO EN MEMORIA ---
     const materialesFiltrados = materiales.filter(mat => {
         const busqueda = searchTerm.toLowerCase();
         const matchSearch = mat.nombre.toLowerCase().includes(busqueda) || 
@@ -338,7 +323,6 @@ export const Materiales = () => {
         return matchSearch && matchCategoria && matchProveedor;
     });
 
-    // --- CONFIGURACIÓN DE COLUMNAS PARA DATATABLE ---
     const columns: ColumnConfig<Material>[] = useMemo(() => [
         {
             key: 'imagenUrl',
@@ -437,36 +421,33 @@ export const Materiales = () => {
 
     return (
         <div className="module-container">
-            {/* 1. CABECERA PRINCIPAL */}
+            {/* CABECERA PRINCIPAL CON COLOR FORZADO */}
             <div className="module-header">
-    <div className="module-title">
-        <Box size={28} color="var(--color-primary)" />
-        <h2>Catálogo de Materiales</h2>
-    </div>
-    
-    {/* Contenedor para alinear los botones a la derecha */}
-    <div style={{ display: 'flex', gap: '12px' }}>
-        <button 
-            className="btn-secondary" 
-            style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
-            onClick={() => generarPDFMateriales(materialesFiltrados, filtros.estado)}
-            title="Exportar la vista actual a formato PDF"
-        >
-            <FileText size={20} /> Exportar PDF
-        </button>
+                <div className="module-title">
+                    <Box size={28} color="var(--color-primary)" />
+                    <h2 style={{ color: 'var(--color-primary)' }}>Catálogo de Materiales</h2>
+                </div>
+                
+                <div style={{ display: 'flex', gap: '12px' }}>
+                    <button 
+                        className="btn-secondary" 
+                        style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+                        onClick={() => generarPDFMateriales(materialesFiltrados, filtros.estado)}
+                        title="Exportar la vista actual a formato PDF"
+                    >
+                        <FileText size={20} /> Exportar PDF
+                    </button>
 
-        <button className="btn-primary" onClick={() => abrirModal()}>
-            <Plus size={20} /> Nuevo Material
-        </button>
-    </div>
-</div>
+                    <button className="btn-primary" onClick={() => abrirModal()}>
+                        <Plus size={20} /> Nuevo Material
+                    </button>
+                </div>
+            </div>
 
-            {/* 2. DESCRIPCIÓN */}
             <div className="module-description">
                 <p>Gestiona tu inventario de piedras, cadenas y fornituras. Controla precios y niveles de stock.</p>
             </div>
 
-            {/* 3. BARRA DE HERRAMIENTAS UNIFICADA */}
             <div className="toolbar-container">
                 <div className="search-wrapper">
                     <SearchBar placeholder="Buscar material..." value={searchTerm} onChange={setSearchTerm} />
@@ -504,7 +485,6 @@ export const Materiales = () => {
                 />
             </div>
 
-            {/* 4. CONTENEDOR DE LA TABLA */}
             <div className="table-container">
                 {isLoading ? (
                     <Loading texto="Cargando materiales..." />
@@ -520,11 +500,11 @@ export const Materiales = () => {
                 )}
             </div>
 
-            {/* MODAL 1: FORMULARIO DE MATERIAL */}
+            {/* MODAL PRINCIPAL: AHORA CON TITULO DE COLOR Y ESTILOS EN INPUTS */}
             <Modal
                 isOpen={isModalOpen}
                 onClose={cerrarModal}
-                title={editingId ? 'Editar Material' : 'Nuevo Material'}
+                title={<span style={{ color: 'var(--color-text)' }}>{editingId ? 'Editar Material' : 'Nuevo Material'}</span>}
                 maxWidth="700px"
                 zIndex={998}
             >
@@ -560,8 +540,9 @@ export const Materiales = () => {
 
                         <div className="header-fields-col">
                             <div className="form-group">
-                                <label>Nombre del Material *</label>
+                                <label style={labelStyle}>Nombre del Material *</label>
                                 <input
+                                    style={inputStyle}
                                     type="text"
                                     name="nombre"
                                     value={formData.nombre}
@@ -572,7 +553,7 @@ export const Materiales = () => {
                             </div>
 
                             <div className="form-group">
-                                <label>Categoría *</label>
+                                <label style={labelStyle}>Categoría *</label>
                                 <div className="input-group-actions">
                                     <ActionDropdown
                                         value={formData.categoriaId}
@@ -592,7 +573,7 @@ export const Materiales = () => {
                     </div>
 
                     <div className="form-group">
-                        <label>Proveedor (Opcional)</label>
+                        <label style={labelStyle}>Proveedor (Opcional)</label>
                         <ActionDropdown
                             value={formData.proveedorId || ''}
                             options={proveedores}
@@ -603,7 +584,7 @@ export const Materiales = () => {
 
                     <div className="form-row">
                         <div className="form-group">
-                            <label>Unidad de Compra *</label>
+                            <label style={labelStyle}>Unidad de Compra *</label>
                             <div className="input-group-actions">
                                 <ActionDropdown
                                     value={formData.unidadMedidaId}
@@ -630,8 +611,9 @@ export const Materiales = () => {
                         </div>
 
                         <div className="form-group">
-                            <label>Precio de Compra ($) *</label>
+                            <label style={labelStyle}>Precio de Compra ($) *</label>
                             <input
+                                style={inputStyle}
                                 type="number"
                                 name="precioCompra"
                                 value={formData.precioCompra}
@@ -643,10 +625,11 @@ export const Materiales = () => {
                         </div>
 
                         <div className="form-group">
-                            <label>
+                            <label style={labelStyle}>
                                 {editingId ? 'Cantidad' : 'Cantidad Comprada *'}
                             </label>
                             <input
+                                style={inputStyle}
                                 type="number"
                                 name="cantidadComprada"
                                 value={formData.cantidadComprada}
@@ -661,16 +644,16 @@ export const Materiales = () => {
 
                     <div className="form-row">
                         <div className="form-group">
-                            <label>Stock Mínimo (Alerta)</label>
-                            <input type="number" name="stockMinimo" value={formData.stockMinimo} onChange={handleInputChange} min="0" placeholder='Opcional'/>
+                            <label style={labelStyle}>Stock Mínimo (Alerta)</label>
+                            <input style={inputStyle} type="number" name="stockMinimo" value={formData.stockMinimo} onChange={handleInputChange} min="0" placeholder='Opcional'/>
                         </div>
                         <div className="form-group">
-                            <label>Stock Máximo</label>
-                            <input type="number" name="stockMaximo" value={formData.stockMaximo} onChange={handleInputChange} min="0" placeholder="Opcional (Sin límite)"/>
+                            <label style={labelStyle}>Stock Máximo</label>
+                            <input style={inputStyle} type="number" name="stockMaximo" value={formData.stockMaximo} onChange={handleInputChange} min="0" placeholder="Opcional (Sin límite)"/>
                         </div>
                     </div>
 
-                    <div className="modal-footer">
+                    <div className="modal-footer" style={{ marginTop: '24px', paddingTop: '20px', borderTop: '1px solid var(--color-border)', display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
                         <button type="button" className="btn-secondary" onClick={cerrarModal}>Cancelar</button>
                         <button type="submit" className="btn-primary">Guardar Material</button>
                     </div>
@@ -706,7 +689,7 @@ export const Materiales = () => {
                 title={
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <Trash2 size={20} color="var(--color-text-secondary)" />
-                        <h3>Categorías Eliminadas</h3>
+                        <span style={{ color: 'var(--color-text)' }}>Categorías Eliminadas</span>
                     </div>
                 }
                 maxWidth="400px"
@@ -743,7 +726,7 @@ export const Materiales = () => {
                 title={
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <Trash2 size={20} color="var(--color-text-secondary)" />
-                        <h3>Unidades Eliminadas</h3>
+                        <span style={{ color: 'var(--color-text)' }}>Unidades Eliminadas</span>
                     </div>
                 }
                 maxWidth="400px"

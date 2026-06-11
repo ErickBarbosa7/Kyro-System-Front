@@ -23,9 +23,10 @@
 }
 
 .module-title h2 {
+    color: var(--color-text); 
     margin: 0;
-    font-size: 22px;
-    color: var(--color-text);
+    font-size: 1.5rem;
+    font-weight: 700;
 }
 
 .module-description p {
@@ -75,7 +76,7 @@
 }
 
 .btn-secondary:hover {
-    background-color: var(--color-background);
+    background-color: var(--color-background-2);
 }
 
 /* ========================================== */
@@ -86,7 +87,6 @@
     justify-content: space-between;
     align-items: center;
     gap: 20px;
-
     background: var(--color-toolbar) !important;
     padding: 16px;
     border-radius: 12px;
@@ -114,7 +114,7 @@
 /* TABLA PRINCIPAL                            */
 /* ========================================== */
 .table-container {
-    background-color: transparent; /* Matamos el blanco */
+    background-color: transparent; 
     border: none;
     border-radius: 0;
     overflow: hidden;
@@ -150,7 +150,7 @@
 }
 
 .kyro-table tbody tr.expanded-detail-row:hover td {
-    background-color: #f8fafc;
+    background-color: var(--color-surface);
 }
 
 .font-medium {
@@ -171,7 +171,7 @@
 
 .expanded-detail-row td {
     padding: 0 !important; 
-    background-color: var(--color-background-2); /* Actualizado a tus variables */
+    background-color: var(--color-background-2); 
     border-bottom: 1px solid var(--color-border) !important;
 }
 
@@ -245,7 +245,7 @@
 }
 
 .copy-btn:hover {
-    background: rgba(166, 77, 63, 0.1); /* Rojizo basado en tu primary */
+    background: color-mix(in srgb, var(--color-primary) 10%, transparent);
     color: var(--color-primary);
 }
 
@@ -303,7 +303,7 @@
 }
 
 .badge-count:hover {
-    background-color: rgba(166, 77, 63, 0.1);
+    background-color: color-mix(in srgb, var(--color-primary) 10%, transparent);
     color: var(--color-primary);
     border-color: var(--color-primary);
 }
@@ -361,6 +361,7 @@
 .modal-header h3 {
     margin: 0;
     font-size: 20px;
+    color: var(--color-text);
 }
 
 .btn-close {
@@ -396,34 +397,50 @@
     gap: 16px;
 }
 
+/* 1. Etiquetas más brillantes y legibles */
 .form-group label {
     font-size: 13px;
-    font-weight: 600;
-    color: var(--color-text-secondary);
+    font-weight: 700; 
+    color: var(--color-text); /* Evita que se queden grises en modo oscuro */
+    letter-spacing: 0.3px;
 }
 
+/* 2. Cajas de texto con mejor contraste */
 .form-group input,
 .form-group textarea {
     padding: 12px 14px;
     border: 1px solid var(--color-border);
     border-radius: 10px;
     font-size: 14px;
-    background-color: var(--color-background); /* Actualizado a tus variables */
-    color: var(--color-text);
+    background-color: var(--color-background); 
+    color: var(--color-text); 
     outline: none;
     font-family: inherit;
-    transition: border-color 0.2s;
+    transition: all 0.2s ease;
 }
 
 .form-group textarea {
     resize: vertical;
 }
 
+/* 3. Arreglar los placeholders "fantasma" */
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+    color: var(--color-text-secondary);
+    opacity: 0.8; 
+    font-weight: 400;
+}
+
+/* 4. Efecto Premium al hacer clic (Focus) */
 .form-group input:focus,
 .form-group textarea:focus {
     border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 15%, transparent);
 }
 
+/* ========================================== */
+/* FOOTER DEL MODAL Y BOTONES EXTRA           */
+/* ========================================== */
 .modal-footer {
     display: flex;
     justify-content: flex-end;
@@ -433,7 +450,6 @@
     border-top: 1px solid var(--color-border);
 }
 
-/* Botones para agregar dinámicamente inputs */
 .btn-add-item {
     color: var(--color-primary);
     background: transparent;

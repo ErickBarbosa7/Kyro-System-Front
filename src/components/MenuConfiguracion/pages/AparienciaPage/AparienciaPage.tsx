@@ -3,13 +3,11 @@ import { Palette, Check } from 'lucide-react';
 import toast from 'react-hot-toast';
 import './AparienciaPage.css';
 
-// Coinciden con los [data-theme="id"] en tu variables.css
 const THEMES = [
     { id: 'terracota', nombre: 'Terracota Original', color: '#A64D3F', bg: '#F6F2EB', descripcion: 'El tono arenoso, cálido y clásico de Kyro' },
     { id: 'oscuro', nombre: 'Modo Oscuro', color: '#E07A5F', bg: '#121212', descripcion: 'Interfaz oscura para reducir la fatiga visual' },
-    { id: 'azul', nombre: 'Azul Minimalista', color: '#0284c7', bg: '#f8fafc', descripcion: 'Limpio, moderno y sin distracciones' },
-    { id: 'verde', nombre: 'Verde Salvia', color: '#575E55', bg: '#FBFCFA', descripcion: 'Fresco, sobrio y enfocado en productividad' },
-    
+    { id: 'perla', nombre: 'Perla', color: '#5F6368', bg: '#FCFCFD', descripcion: 'Minimalista, limpio y diseñado para largas jornadas de trabajo'},
+    { id: 'medianoche',nombre: 'Olivo Premium', color: '#575E55', bg: '#FFFBF5', descripcion: 'Natural, equilibrado y enfocado en productividad'},
 ];
 
 export const AparienciaPage = () => {

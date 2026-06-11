@@ -1,3 +1,7 @@
+/* ==========================================
+   LOADING COMPONENT
+   ========================================== */
+
 .loading-container {
     display: flex;
     flex-direction: column;
@@ -6,6 +10,7 @@
     width: 100%;
     min-height: 200px; 
     padding: 2rem;
+    background-color: var(--color-background); 
 }
 
 .loading-player {
@@ -14,16 +19,34 @@
 }
 
 .loading-text {
-    margin-top: 0px; 
+    margin-top: 8px; /* Un pequeño respiro visual con la animación */
+    
+    /* MAGIA GLOBAL: Cambia de color según el tema (Azul, Verde, etc.) */
     color: var(--color-primary); 
+    
+    /* Nos aseguramos de que use la Cascadia Code */
+    font-family: var(--font-main); 
+    
     font-weight: 600;
     font-size: 0.95rem;
     letter-spacing: 1px;
-    animation: pulse 1.5s infinite; 
+    text-transform: uppercase; /* Le da un toque muy pro / de sistema */
+    
+    /* Agregamos ease-in-out para que el latido sea más orgánico */
+    animation: pulseText 1.5s infinite ease-in-out; 
 }
 
-@keyframes pulse {
-    0% { opacity: 0.6; }
-    50% { opacity: 1; }
-    100% { opacity: 0.6; }
+/* Animación de latido suave */
+@keyframes pulseText {
+    0% { 
+        opacity: 0.4; 
+    }
+    50% { 
+        opacity: 1; 
+        /* Opcional: un micro-crecimiento para darle más vida */
+        transform: scale(1.02); 
+    }
+    100% { 
+        opacity: 0.4; 
+    }
 }

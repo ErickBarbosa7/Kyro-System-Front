@@ -6,7 +6,7 @@ import {
   Receipt, Percent, PanelLeftClose, PanelLeftOpen,
 } from 'lucide-react';
 import './Sidebar.css';
-import { SidebarProfile } from './Configuracion/SidebarProfile/SidebarProfile';
+import { SidebarProfile } from '../MenuConfiguracion/SidebarProfile/SidebarProfile';
 
 const sections = [
   {
@@ -64,7 +64,7 @@ export const Sidebar = () => {
       {/* ── Header ── */}
       <div className="sidebar-logo">
         <div className="logo-left">
-          <span className="logo-text">Kyro System</span>
+          <span className="logo-text">Menu</span>
         </div>
         <button
           className="menu-button"
@@ -103,7 +103,7 @@ export const Sidebar = () => {
       {usuario && (
         <SidebarProfile
           usuario={usuario}
-          sidebarOpen={isOpen} // ← pasamos el estado
+          sidebarOpen={isOpen} 
         />
       )}
     </aside>

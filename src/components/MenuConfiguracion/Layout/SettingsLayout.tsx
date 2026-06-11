@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from 'react-router-dom';
-import { User, Palette, ChevronRight } from 'lucide-react';
+import { User, Palette, ChevronRight, Settings } from 'lucide-react';
 import './SettingsLayout.css';
 
 export const SettingsLayout = () => {
@@ -29,6 +29,15 @@ export const SettingsLayout = () => {
                         >
                             <Palette size={18} />
                             <span>Apariencia</span>
+                            <ChevronRight size={14} className="chevron" />
+                        </NavLink>
+
+                         <NavLink 
+                            to="/configuracion/general" 
+                            className={({ isActive }) => `config-nav-btn ${isActive ? 'active' : ''}`}
+                        >
+                            <Settings size={18} />
+                            <span>Configuracion</span>
                             <ChevronRight size={14} className="chevron" />
                         </NavLink>
                     </nav>

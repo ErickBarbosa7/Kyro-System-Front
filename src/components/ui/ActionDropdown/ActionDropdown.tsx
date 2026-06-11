@@ -52,25 +52,32 @@ export const ActionDropdown: React.FC<ActionDropdownProps> = ({
 
     const selectedOption = options.find(opt => opt.id === value);
 
+    // === ESTILOS MÁGICOS A PRUEBA DE FALLOS ===
+    const triggerStyle = { backgroundColor: 'var(--color-background)', color: 'var(--color-text)' };
+    const menuStyle = { backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-border)' };
+
     return (
         <div className="custom-dropdown" ref={dropdownRef}>
-            {/* DISPARADOR (El botón principal que muestra lo seleccionado) */}
+            {/* DISPARADOR BLINDADO */}
             <div 
                 className="dropdown-trigger" 
                 onClick={() => setIsOpen(!isOpen)}
                 aria-expanded={isOpen}
+                style={triggerStyle}
             >
                 {selectedOption ? (
                     <span>{selectedOption.nombre}</span>
                 ) : (
-                    <span className="dropdown-placeholder">{placeholder}</span>
+                    <span className="dropdown-placeholder" style={{ color: 'var(--color-text-secondary)', opacity: 0.8 }}>
+                        {placeholder}
+                    </span>
                 )}
                 <ChevronDown size={18} color="var(--color-text-secondary)" />
             </div>
 
-            {/* MENÚ DESPLEGABLE */}
+            {/* MENÚ DESPLEGABLE BLINDADO */}
             {isOpen && (
-                <div className="dropdown-menu">
+                <div className="dropdown-menu" style={menuStyle}>
                     
                     {/* Lista de opciones iteradas */}
                     {options.map(opt => (
@@ -81,17 +88,18 @@ export const ActionDropdown: React.FC<ActionDropdownProps> = ({
                                 onChange(opt.id);
                                 setIsOpen(false);
                             }}
+                            style={{ color: 'var(--color-text)' }}
                         >
                             <span className="dropdown-item-text">{opt.nombre}</span>
                             
-                            {/* Acciones de Editar y Eliminar (Solo aparecen en hover por CSS) */}
+                            {/* Acciones de Editar y Eliminar */}
                             <div className="item-actions">
                                 {onEdit && (
                                     <button 
                                         type="button" 
                                         className="item-btn edit" 
                                         onClick={(e) => {
-                                            e.stopPropagation(); // Evita que se seleccione la opción
+                                            e.stopPropagation(); 
                                             setIsOpen(false);
                                             onEdit(opt.id);
                                         }}
@@ -120,13 +128,13 @@ export const ActionDropdown: React.FC<ActionDropdownProps> = ({
 
                     {/* Mensaje si no hay opciones activas */}
                     {options.length === 0 && (
-                        <div style={{ padding: '10px', textAlign: 'center', fontSize: '13px', color: '#94a3b8' }}>
+                        <div style={{ padding: '10px', textAlign: 'center', fontSize: '13px', color: 'var(--color-text-secondary)' }}>
                             No hay opciones disponibles
                         </div>
                     )}
 
                     {/* LÍNEA DIVISORA SI HAY BOTONES EXTRA */}
-                    {(onAdd || onRecover) && <div className="dropdown-divider"></div>}
+                    {(onAdd || onRecover) && <div className="dropdown-divider" style={{ backgroundColor: 'var(--color-border)' }}></div>}
 
                     {/* BOTÓN: CREAR  */}
                     {onAdd && (
@@ -137,6 +145,7 @@ export const ActionDropdown: React.FC<ActionDropdownProps> = ({
                                 setIsOpen(false);
                                 onAdd();
                             }}
+                            style={{ color: 'var(--color-primary)' }}
                         >
                             <Plus size={16} strokeWidth={2.5} />
                             {addLabel}
@@ -152,6 +161,7 @@ export const ActionDropdown: React.FC<ActionDropdownProps> = ({
                                 setIsOpen(false);
                                 onRecover();
                             }}
+                            style={{ color: 'var(--color-text-secondary)' }}
                         >
                             <Trash size={16} strokeWidth={2.5} />
                             {recoverLabel}

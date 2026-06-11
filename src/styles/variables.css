@@ -58,52 +58,41 @@
 }
 
 /* ==========================================
-   TEMA AZUL (Estilo "Acero/Océano Profundo")
-   ========================================== */
-/* ==========================================
    TEMA AZUL (Océano vibrante y elegante)
    ========================================== */
-[data-theme="azul"] {
-  /* Un azul con más vida y saturación, se nota mucho más */
-  --color-primary: #2B6BA5;         
-  --color-primary-hover: #1F5382;
-  --color-accent: #609DD1;
-  --color-toolbar: #E5EFF6;
-  
-  /* Fondos con un tinte azul más claro y evidente */
-  --color-background: #F0F5F9;      
-  --color-background-2: #E5EFF6;    
-  --color-surface: #DFE8EF;         
+[data-theme="medianoche"] {
+  --color-primary: #22304A;
+  --color-primary-hover: #182235;
+  --color-accent: #7B91B3;
+  --color-toolbar: #F1F4F8;
 
-  /* Texto con un toque azul oscuro */
-  --color-text: #172430;            
-  --color-text-secondary: #5C7082;
+  --color-background: #FAFBFD;
+  --color-background-2: #F1F4F8;
+  --color-surface: #E8EDF4;
 
-  /* Bordes */
-  --color-border: #C1D4E3;
+  --color-text: #1D2430;
+  --color-text-secondary: #667085;
+
+  --color-border: #D6DEE8;
 }
 
 /* ==========================================
    TEMA VERDE (Esmeralda/Bosque vivo)
    ========================================== */
-[data-theme="verde"] {
-  /* Un verde con mucha más presencia, estilo esmeralda */
-  --color-primary: #3E8257;         
-  --color-primary-hover: #2A613E;
-  --color-accent: #78B58D;
-  --color-toolbar: #E5EFE7;
-  
-  /* Fondos con un tinte verde más evidente */
-  --color-background: #F0F6F1;      
-  --color-background-2: #E5EFE7;    
-  --color-surface: #DFE9E1;         
+[data-theme="perla"] {
+  --color-primary: #5F6368;
+  --color-primary-hover: #4A4D52;
+  --color-accent: #A8ADB4;
+  --color-toolbar: #F3F4F6;
 
-  /* Texto verde muy oscuro */
-  --color-text: #18261D;            
-  --color-text-secondary: #5A7061;
+  --color-background: #FCFCFD;
+  --color-background-2: #F5F6F8;
+  --color-surface: #ECEEF1;
 
-  /* Bordes */
-  --color-border: #C1D6C6;
+  --color-text: #1F2937;
+  --color-text-secondary: #6B7280;
+
+  --color-border: #D8DCE1;
 }
 
 *,

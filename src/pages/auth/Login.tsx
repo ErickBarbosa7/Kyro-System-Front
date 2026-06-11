@@ -35,7 +35,14 @@ export const Login = () => {
 
     return (
         <div className="login-page">
-            <div className="brand-logo">Kyro-System</div>
+            <div 
+                className="brand-logo" 
+                onClick={() => navigate('/')} 
+                style={{ cursor: 'pointer' }}
+                title="Volver a la página principal"
+            >
+                Kyro-System
+            </div>
 
 
             <div className="plane-bg-container">
@@ -55,6 +62,7 @@ export const Login = () => {
 
                 <div className="login-container">
                     <div className="login-box">
+                        
                         <div className="login-header">
                             <div className="logo-placeholder">
                                 <Player

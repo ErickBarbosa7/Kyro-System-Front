@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
-import { logout } from '../services/auth.service';
+import { logout } from '../../services/auth.service';
+import { LogOut } from 'lucide-react';
 import './Navbar.css'; 
 
 export const Navbar = () => {
@@ -12,11 +13,12 @@ export const Navbar = () => {
 
     return (
         <header className="navbar">
-            <span style={{ fontWeight: 'bold', color: '#333' }}>
-                Sistema de Gestión
+            <span className="navbar-brand">
+                Kyro System
             </span>
-            <button onClick={handleLogout} className="btn-logout">
-                Cerrar Sesión
+            <button onClick={handleLogout} className="btn-logout" title="Cerrar sesión">
+                <LogOut size={16} />
+                <span>Cerrar Sesión</span>
             </button>
         </header>
     );

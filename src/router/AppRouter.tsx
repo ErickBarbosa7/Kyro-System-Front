@@ -14,10 +14,13 @@ import { GastosOperativos } from '../pages/GastosOperativos/GastosOperativos';
 import { ConfiguracionMargenes } from '../pages/ConfiguracionMargenes/ConfiguracionMargenes';
 import { Registrar } from '../pages/auth/Registrar';
 import { LandingPage } from '../pages/Landing/LandingPage/LandingPage';
-import { SettingsLayout } from '../components/Configuracion/Layout/SettingsLayout';
-import { ProfilePage } from '../components/Configuracion/pages/ProfilePage';
-import { AparienciaPage } from '../components/Configuracion/pages/AparienciaPage/AparienciaPage';
 import { ProtectedRoute } from '../guards/ProtectedRoutes';
+
+// ── IMPORTACIONES DE CONFIGURACIÓN ──
+import { SettingsLayout } from '../components/MenuConfiguracion/Layout/SettingsLayout';
+import { ProfilePage } from '../components/MenuConfiguracion/pages/ProfilePage/ProfilePage';
+import { AparienciaPage } from '../components/MenuConfiguracion/pages/AparienciaPage/AparienciaPage';
+import { ConfigGeneralPage } from '../components/MenuConfiguracion/pages/ConfigGeneralPage/ConfigGeneralPage'; 
 
 
 export const AppRouter = () => {
@@ -51,11 +54,17 @@ export const AppRouter = () => {
                     <Route path="/gastos"   element={<GastosOperativos />} />
                     <Route path="/margenes" element={<ConfiguracionMargenes />} />
 
-                    {/* Cuenta */}
+                    {/* ── SECCIÓN DE CUENTA / CONFIGURACIÓN ── */}
+                    {/* Al envolverlas en SettingsLayout, todas comparten el menú lateral */}
                     <Route element={<SettingsLayout />}>
-                        <Route path="/perfil"                      element={<ProfilePage />} />
-                        <Route path="/configuracion"               element={<ProfilePage />} />
-                        <Route path="/configuracion/apariencia"    element={<AparienciaPage />} />
+                        <Route path="/perfil" element={<ProfilePage />} />
+                        
+                        {/* Redirección automática: si entran a /configuracion, van a general */}
+                        <Route path="/configuracion" element={<Navigate to="/configuracion/general" replace />} />
+                        
+                        {/* Sub-rutas inyectadas en el <Outlet /> del SettingsLayout */}
+                        <Route path="/configuracion/general"    element={<ConfigGeneralPage />} />
+                        <Route path="/configuracion/apariencia" element={<AparienciaPage />} />
                     </Route>
                 </Route>
             </Route>

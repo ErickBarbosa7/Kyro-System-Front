@@ -1,7 +1,7 @@
 import { BrowserRouter, useLocation } from 'react-router-dom';
 import { ToastProvider } from './providers/ToastProvider';
-import { Sidebar } from './components/Sidebar';
-import { Navbar } from './components/Navbar';
+import { Sidebar } from './components/Sidebar/Sidebar';
+import { Navbar } from './components/Navbar/Navbar';
 import { AppRouter } from './router/AppRouter';
 import './App.css'; 
 

@@ -46,23 +46,26 @@ export const Proveedores = () => {
         redesSociales: '',
         observaciones: ''
     });
+
+    // === ESTILOS MÁGICOS A PRUEBA DE FALLOS ===
+    // Estas variables forzarán los colores sin romper el cambio de tema
+    const labelStyle = { color: 'var(--color-text)', fontWeight: 700 };
+    const inputStyle = { backgroundColor: 'var(--color-background)', color: 'var(--color-text)' };
+
     // === HELPER PARA URLS ===
     const formatearUrl = (url: string) => {
         if (!url) return '';
-        // Si no empieza con http:// o https://, se lo agregamos
         if (!url.match(/^https?:\/\//i)) {
             return `https://${url}`;
         }
         return url;
     };
 
-    // Estados de Confirmación (Eliminar)
+    // Estados de Confirmación
     const [isConfirmOpen, setIsConfirmOpen] = useState(false);
     const [proveedorAEliminar, setProveedorAEliminar] = useState<{id: string, nombre: string} | null>(null);
     
-    // === EFECTOS ===
     useEffect(() => {
-        // Simulamos la carga de tu API
         setIsLoading(true);
         obtenerProveedores().then((data) => {
             setProveedores(data);
@@ -70,7 +73,6 @@ export const Proveedores = () => {
         });
     }, []);
 
-    // === FUNCIONES DE RED ===
     const cargarProveedores = async () => {
         setIsLoading(true);
         try {
@@ -124,7 +126,6 @@ export const Proveedores = () => {
         }
     };
 
-    // === FUNCIONES DE ELIMINACIÓN/REACTIVACIÓN ===
     const handleDeleteClick = (id: string, nombre: string) => {
         setProveedorAEliminar({ id, nombre });
         setIsConfirmOpen(true);
@@ -155,7 +156,6 @@ export const Proveedores = () => {
         }
     };
 
-    // === MANEJADORES DE INTERFAZ Y ARREGLOS ===
     const toggleRow = (id: string) => setExpandedRowId(expandedRowId === id ? null : id);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -213,7 +213,6 @@ export const Proveedores = () => {
         setEditingId(null);
     };
 
-    // === FILTRADO EN MEMORIA ===
     const proveedoresFiltrados = proveedores.filter(prov => {
         const busqueda = searchTerm.toLowerCase();
         return (
@@ -223,7 +222,6 @@ export const Proveedores = () => {
         );
     });
 
-    // === CONFIGURACIÓN DE COLUMNAS PARA DATATABLE ===
     const columns: ColumnConfig<Proveedor>[] = useMemo(() => [
         {
             key: 'expand',
@@ -309,7 +307,6 @@ export const Proveedores = () => {
         }
     ], [expandedRowId]);
 
-    // === RENDERIZADO DE LA FILA DE DETALLE EXPANDIBLE ===
     const renderDetailRow = (prov: Proveedor) => {
         if (expandedRowId !== prov.id) return null;
         return (
@@ -384,11 +381,12 @@ export const Proveedores = () => {
 
     return (
         <div className="module-container">
-            {/* CABECERA */}
             <div className="module-header">
                 <div className="module-title">
                     <Package size={28} color="var(--color-primary)" />
-                    <h2>Catálogo de Proveedores</h2>
+                    <h2 style={{ color: 'var(--color-primary)' }}>
+                        Catálogo de Proveedores
+                    </h2>
                 </div>
                 <button className="btn-primary" onClick={() => abrirModal()}>
                     <Plus size={20} /> Nuevo Proveedor
@@ -399,7 +397,6 @@ export const Proveedores = () => {
                 <p>Administra la información de tus proveedores y mantén organizado el registro de contactos y materiales.</p>
             </div>
 
-            {/* BARRA DE HERRAMIENTAS UNIFICADA (Idéntica a Materiales) */}
             <div className="toolbar-container">
                 <div className="search-wrapper">
                     <SearchBar 
@@ -430,7 +427,6 @@ export const Proveedores = () => {
                 />
             </div>
 
-            {/* TABLA PRINCIPAL */}
             <div className="table-container">
                 {isLoading ? (
                     <Loading texto="Cargando proveedores..." />
@@ -447,19 +443,20 @@ export const Proveedores = () => {
                 )}
             </div>
 
-            {/* MODAL FORMULARIO */}
+            {/* MODAL FORMULARIO: REFACTORIZADO CON ESTILOS MÁGICOS */}
             {isModalOpen && (
                 <div className="modal-overlay">
-                    <div className="modal-content" style={{ maxWidth: '650px' }}>
+                    <div className="modal-content" style={{ maxWidth: '650px', backgroundColor: 'var(--color-surface)' }}>
                         <div className="modal-header">
-                            <h3>{editingId ? 'Editar Proveedor' : 'Nuevo Proveedor'}</h3>
-                            <button className="btn-close" onClick={cerrarModal}><X size={20} /></button>
+                            <h3 style={{ color: 'var(--color-text)' }}>{editingId ? 'Editar Proveedor' : 'Nuevo Proveedor'}</h3>
+                            <button className="btn-close" onClick={cerrarModal}><X size={20} color="var(--color-text-secondary)" /></button>
                         </div>
                         
                         <form onSubmit={handleSubmit} className="modal-form">
                             <div className="form-group">
-                                <label>Nombre de la Empresa *</label>
+                                <label style={labelStyle}>Nombre de la Empresa *</label>
                                 <input 
+                                    style={inputStyle}
                                     type="text" 
                                     name="nombre" 
                                     value={formData.nombre} 
@@ -471,10 +468,11 @@ export const Proveedores = () => {
 
                             <div className="form-row">
                                 <div className="form-group">
-                                    <label>Teléfonos de Contacto</label>
+                                    <label style={labelStyle}>Teléfonos de Contacto</label>
                                     {formData.telefonos?.map((tel, index) => (
                                         <div key={`tel-${index}`} style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
                                             <input 
+                                                style={inputStyle}
                                                 type="tel"
                                                 value={tel}
                                                 onChange={(e) => handleArrayChange(index, 'telefonos', e.target.value)}
@@ -495,10 +493,11 @@ export const Proveedores = () => {
                                 </div>
 
                                 <div className="form-group">
-                                    <label>Correos Electrónicos</label>
+                                    <label style={labelStyle}>Correos Electrónicos</label>
                                     {formData.emails?.map((email, index) => (
                                         <div key={`email-${index}`} style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
                                             <input 
+                                                style={inputStyle}
                                                 type="email"
                                                 value={email}
                                                 onChange={(e) => handleArrayChange(index, 'emails', e.target.value)}
@@ -520,8 +519,9 @@ export const Proveedores = () => {
                             </div>
 
                             <div className="form-group">
-                                <label>Domicilio</label>
+                                <label style={labelStyle}>Domicilio</label>
                                 <input 
+                                    style={inputStyle}
                                     type="text" 
                                     name="domicilio" 
                                     value={formData.domicilio} 
@@ -532,8 +532,9 @@ export const Proveedores = () => {
 
                             <div className="form-row">
                                 <div className="form-group">
-                                    <label>Página Web</label>
+                                    <label style={labelStyle}>Página Web</label>
                                     <input 
+                                        style={inputStyle}
                                         type="text" 
                                         name="paginaWeb" 
                                         value={formData.paginaWeb} 
@@ -542,8 +543,9 @@ export const Proveedores = () => {
                                     />
                                 </div>
                                 <div className="form-group">
-                                    <label>Redes Sociales</label>
+                                    <label style={labelStyle}>Redes Sociales</label>
                                     <input 
+                                        style={inputStyle}
                                         type="text" 
                                         name="redesSociales" 
                                         value={formData.redesSociales} 
@@ -554,8 +556,9 @@ export const Proveedores = () => {
                             </div>
 
                             <div className="form-group">
-                                <label>Observaciones</label>
+                                <label style={labelStyle}>Observaciones</label>
                                 <textarea 
+                                    style={inputStyle}
                                     name="observaciones" 
                                     value={formData.observaciones} 
                                     onChange={handleInputChange}

@@ -19,7 +19,6 @@ import {
 
 import './ConfiguracionMargenes.css'; 
 
-// Interfaz local para manejar los inputs del formulario sin que TypeScript se queje por campos vacíos
 interface FormState {
     nombre: string;
     margenTaller: string | number;
@@ -45,6 +44,10 @@ export const ConfiguracionMargenes = () => {
         descuentoMaximo: ''
     });
 
+    // === ESTILOS MÁGICOS A PRUEBA DE FALLOS ===
+    const labelStyle = { color: 'var(--color-text)', fontWeight: 700 };
+    const inputStyle = { backgroundColor: 'var(--color-background)', color: 'var(--color-text)' };
+
     // === ESTADOS DE ELIMINACIÓN ===
     const [isConfirmOpen, setIsConfirmOpen] = useState(false);
     const [configAEliminar, setConfigAEliminar] = useState<{ id: string, nombre: string } | null>(null);
@@ -69,7 +72,6 @@ export const ConfiguracionMargenes = () => {
     // === LÓGICA DE FORMULARIO ===
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value, type } = e.target;
-        // Si el input es de tipo número, guardamos el valor numérico (o vacío si borran todo)
         const parsedValue = type === 'number' ? (value === '' ? '' : Number(value)) : value;
         setFormData(prev => ({ ...prev, [name]: parsedValue }));
     };
@@ -82,7 +84,7 @@ export const ConfiguracionMargenes = () => {
                 margenTaller: config.margenTaller,
                 margenMayorista: config.margenMayorista,
                 margenPublico: config.margenPublico,
-                descuentoMaximo: config.descuentoMaximo ?? '' // Si es null/undefined, ponemos string vacío
+                descuentoMaximo: config.descuentoMaximo ?? '' 
             });
         } else {
             setEditingId(null);
@@ -105,7 +107,6 @@ export const ConfiguracionMargenes = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         
-        // Validaciones básicas de FrontEnd
         if (!formData.nombre.trim()) return toast.error('El nombre es obligatorio');
         if (formData.margenTaller === '' || Number(formData.margenTaller) < 0) return toast.error('Margen de taller inválido');
         if (formData.margenMayorista === '' || Number(formData.margenMayorista) < 0) return toast.error('Margen mayorista inválido');
@@ -114,13 +115,11 @@ export const ConfiguracionMargenes = () => {
         const loadingToast = toast.loading(editingId ? 'Actualizando configuración...' : 'Guardando configuración...');
 
         try {
-            // Empaquetamos los datos garantizando el formato numérico para Zod
             const dataToSend = {
                 nombre: formData.nombre,
                 margenTaller: Number(formData.margenTaller),
                 margenMayorista: Number(formData.margenMayorista),
                 margenPublico: Number(formData.margenPublico),
-                // Si dejaron el descuento en blanco, no lo enviamos (Zod lo acepta porque es optional)
                 ...(formData.descuentoMaximo !== '' && { descuentoMaximo: Number(formData.descuentoMaximo) })
             };
 
@@ -180,7 +179,7 @@ export const ConfiguracionMargenes = () => {
         {
             key: 'margenTaller',
             label: 'Margen Taller',
-            align: 'right',
+            align: 'left',
             render: (c: ConfiguracionMargen) => (
                 <span className="badge badge-secondary" style={{ backgroundColor: '#f1f5f9', color: '#475569' }}>
                     + {c.margenTaller}%
@@ -190,7 +189,7 @@ export const ConfiguracionMargenes = () => {
         {
             key: 'margenMayorista',
             label: 'Margen Mayorista',
-            align: 'right',
+            align: 'left', 
             render: (c: ConfiguracionMargen) => (
                 <span className="badge" style={{ backgroundColor: '#e0e7ff', color: '#4338ca' }}>
                     + {c.margenMayorista}%
@@ -200,7 +199,7 @@ export const ConfiguracionMargenes = () => {
         {
             key: 'margenPublico',
             label: 'Margen Público',
-            align: 'right',
+            align: 'left',
             render: (c: ConfiguracionMargen) => (
                 <span className="badge" style={{ backgroundColor: '#dcfce7', color: '#166534' }}>
                     + {c.margenPublico}%
@@ -210,7 +209,7 @@ export const ConfiguracionMargenes = () => {
         {
             key: 'descuentoMaximo',
             label: 'Desc. Máximo',
-            align: 'center',
+            align: 'left',
             render: (c: ConfiguracionMargen) => (
                 <span style={{ color: '#ef4444', fontWeight: 600 }}>
                     {c.descuentoMaximo ? `- ${c.descuentoMaximo}%` : 'N/A'}
@@ -237,19 +236,24 @@ export const ConfiguracionMargenes = () => {
 
     return (
         <div className="module-container">
-            {/* CABECERA */}
+            {/* CABECERA CON COLOR FORZADO EN EL TÍTULO */}
             <div className="module-header">
                 <div className="module-title">
                     <Percent size={28} color="var(--color-primary)" />
-                    <h2>Configuración de Márgenes</h2>
+                    <h2 style={{ color: 'var(--color-primary)' }}>Configuración de Márgenes</h2>
                 </div>
                 <button className="btn-primary" onClick={() => abrirModal()}>
                     <Plus size={20} /> Nueva Configuración
                 </button>
             </div>
 
+            {/* DESCRIPCIÓN MEJORADA */}
             <div className="module-description">
-                <p>Define los porcentajes de ganancia para calcular automáticamente los precios de venta de tus piezas.</p>
+                <p>
+                    Establece las reglas de ganancia sobre el costo de producción. 
+                    Estos porcentajes se sumarán al costo total de tus materiales y mano de obra 
+                    para calcular automáticamente los precios finales (Taller, Mayorista y Público).
+                </p>
             </div>
 
             {/* BUSCADOR */}
@@ -277,18 +281,19 @@ export const ConfiguracionMargenes = () => {
                 )}
             </div>
 
-            {/* MODAL FORMULARIO */}
+            {/* MODAL FORMULARIO CON ESTILOS MÁGICOS */}
             <Modal
                 isOpen={isModalOpen}
                 onClose={cerrarModal}
-                title={editingId ? 'Editar Configuración' : 'Nueva Configuración'}
+                title={<span style={{ color: 'var(--color-text)' }}>{editingId ? 'Editar Configuración' : 'Nueva Configuración'}</span>}
                 maxWidth="500px"
             >
                 <form onSubmit={handleSubmit} className="modal-form">
                     
                     <div className="form-group">
-                        <label>Nombre del Esquema *</label>
+                        <label style={labelStyle}>Nombre del Esquema *</label>
                         <input 
+                            style={inputStyle}
                             type="text" 
                             name="nombre" 
                             value={formData.nombre} 
@@ -301,8 +306,9 @@ export const ConfiguracionMargenes = () => {
 
                     <div className="form-row">
                         <div className="form-group">
-                            <label>Margen Taller (%) *</label>
+                            <label style={labelStyle}>Margen Taller (%) *</label>
                             <input 
+                                style={inputStyle}
                                 type="number" 
                                 name="margenTaller" 
                                 value={formData.margenTaller} 
@@ -315,8 +321,9 @@ export const ConfiguracionMargenes = () => {
                         </div>
 
                         <div className="form-group">
-                            <label>Margen Mayorista (%) *</label>
+                            <label style={labelStyle}>Margen Mayorista (%) *</label>
                             <input 
+                                style={inputStyle}
                                 type="number" 
                                 name="margenMayorista" 
                                 value={formData.margenMayorista} 
@@ -331,8 +338,9 @@ export const ConfiguracionMargenes = () => {
 
                     <div className="form-row">
                         <div className="form-group">
-                            <label>Margen Público (%) *</label>
+                            <label style={labelStyle}>Margen Público (%) *</label>
                             <input 
+                                style={inputStyle}
                                 type="number" 
                                 name="margenPublico" 
                                 value={formData.margenPublico} 
@@ -345,8 +353,9 @@ export const ConfiguracionMargenes = () => {
                         </div>
 
                         <div className="form-group">
-                            <label>Desc. Máximo Permitido (%)</label>
+                            <label style={labelStyle}>Desc. Máximo Permitido (%)</label>
                             <input 
+                                style={inputStyle}
                                 type="number" 
                                 name="descuentoMaximo" 
                                 value={formData.descuentoMaximo} 
@@ -359,7 +368,7 @@ export const ConfiguracionMargenes = () => {
                         </div>
                     </div>
 
-                    <div className="modal-footer">
+                    <div className="modal-footer" style={{ marginTop: '24px', paddingTop: '20px', borderTop: '1px solid var(--color-border)', display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
                         <button type="button" className="btn-secondary" onClick={cerrarModal}>Cancelar</button>
                         <button type="submit" className="btn-primary">
                             {editingId ? 'Guardar Cambios' : 'Crear Esquema'}

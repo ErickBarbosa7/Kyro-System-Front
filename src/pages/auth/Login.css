@@ -339,3 +339,21 @@
   margin: -20px auto 0.5rem auto;
   overflow: visible; /* Para que la animación pueda respirar */
 }
+.logo-placeholder svg path,
+.logo-placeholder svg rect,
+.logo-placeholder svg circle,
+.logo-placeholder svg polygon {
+    /* Si la animación usa color de relleno (lo más común): */
+    fill: var(--color-primary) !important;
+    
+    /* Si la animación está hecha de líneas (trazos), usa esta línea también: */
+    stroke: var(--color-primary) !important;
+    
+    /* Una transición suave por si cambias el tema sin recargar la página */
+    transition: fill var(--transition), stroke var(--transition);
+}
+
+/* Opcional: Para asegurarnos de que el player no tenga fondos extraños */
+.logo-placeholder lottie-player {
+    background: transparent !important;
+}
