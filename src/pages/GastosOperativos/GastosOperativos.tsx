@@ -7,6 +7,7 @@ import { SearchBar } from '../../components/ui/SearchBar/SearchBar';
 import { ConfirmModal } from '../../components/ConfirmModal';
 import { Modal } from '../../components/ui/Modal/Modal';
 import { DataTable, type ColumnConfig } from '../../components/ui/DataTable/DataTable';
+import { Loading } from '../../components/Loading/Loading';
 
 // SERVICIOS
 import { 
@@ -21,7 +22,6 @@ import { generarPDFGastos } from '../../utils/reportes';
 
 import './GastosOperativos.css'; 
 
-// Interfaz local para manejar los inputs del formulario
 interface FormState {
     concepto: string;
     monto: string | number;
@@ -32,16 +32,14 @@ interface FormState {
 }
 
 export const GastosOperativos = () => {
-    // === ESTADOS ===
+    // === ESTADOS GLOBALES ===
     const [gastos, setGastos] = useState<GastoOperativo[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
 
-    // Modal Formulario
+    // === ESTADOS DEL MODAL Y FORMULARIO ===
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingId, setEditingId] = useState<string | null>(null);
-    
-    // Estado del formulario alineado con el backend (Zod)
     const [formData, setFormData] = useState<FormState>({
         concepto: '',
         monto: '', 
@@ -52,11 +50,10 @@ export const GastosOperativos = () => {
     });
 
     // === ESTILOS MÁGICOS A PRUEBA DE FALLOS ===
-    // Evitan que el texto se quede gris en modo oscuro
     const labelStyle = { color: 'var(--color-text)', fontWeight: 700 };
     const inputStyle = { backgroundColor: 'var(--color-background)', color: 'var(--color-text)' };
 
-    // Modal Confirmación
+    // === ESTADOS DE ELIMINACIÓN ===
     const [isConfirmOpen, setIsConfirmOpen] = useState(false);
     const [gastoAEliminar, setGastoAEliminar] = useState<{ id: string, concepto: string } | null>(null);
 
@@ -68,12 +65,15 @@ export const GastosOperativos = () => {
     const cargarGastos = async () => {
         setIsLoading(true);
         try {
-            const data = await obtenerGastos();
+            const [data] = await Promise.all([
+                obtenerGastos(),
+                new Promise(resolve => setTimeout(resolve, 800))
+            ]);
             setGastos(data);
+            setIsLoading(false); // Solo se detiene el loader si tiene éxito
         } catch (error) {
-            toast.error('Error al cargar los gastos operativos');
-        } finally {
-            setIsLoading(false);
+            toast.error('Error al cargar los Gastos Operativos');
+            // Al omitir el setIsLoading(false) aquí, se queda cargando de forma infinita
         }
     };
 
@@ -247,7 +247,6 @@ export const GastosOperativos = () => {
 
     return (
         <div className="module-container">
-            {/* CABECERA CON COLOR FORZADO EN EL TÍTULO */}
             <div className="module-header">
                 <div className="module-title">
                     <Receipt size={28} color="var(--color-primary)" />
@@ -284,9 +283,10 @@ export const GastosOperativos = () => {
                 </div>
             </div>
 
+            {/* TABLA LIMPIA: CARGANDO INFINITAMENTE SI HAY ERROR */}
             <div className="table-container">
                 {isLoading ? (
-                    <div className="loading-state">Cargando gastos...</div>
+                    <Loading texto="Cargando gastos..." />
                 ) : (
                     <DataTable
                         data={gastosFiltrados}
@@ -297,7 +297,7 @@ export const GastosOperativos = () => {
                 )}
             </div>
 
-            {/* MODAL CON ESTILOS INYECTADOS */}
+            {/* MODAL FORMULARIO */}
             <Modal
                 isOpen={isModalOpen}
                 onClose={cerrarModal}
@@ -389,6 +389,7 @@ export const GastosOperativos = () => {
                 </form>
             </Modal>
 
+            {/* MODAL ELIMINAR */}
             <ConfirmModal
                 isOpen={isConfirmOpen}
                 title="Eliminar Gasto"

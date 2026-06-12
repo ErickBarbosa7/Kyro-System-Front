@@ -7,6 +7,7 @@ import { SearchBar } from '../../components/ui/SearchBar/SearchBar';
 import { Modal } from '../../components/ui/Modal/Modal';
 import { ConfirmModal } from '../../components/ConfirmModal';
 import { DataTable, type ColumnConfig } from '../../components/ui/DataTable/DataTable';
+import { Loading } from '../../components/Loading/Loading'; 
 
 // SERVICIOS
 import { 
@@ -60,12 +61,15 @@ export const ConfiguracionMargenes = () => {
     const cargarDatos = async () => {
         setIsLoading(true);
         try {
-            const data = await obtenerConfiguraciones();
+            const [data] = await Promise.all([
+                obtenerConfiguraciones(),
+                new Promise(resolve => setTimeout(resolve, 800))
+            ]);
             setConfiguraciones(data);
-        } catch (error) {
-            toast.error('Error al cargar las configuraciones de márgenes');
-        } finally {
             setIsLoading(false);
+        } catch (error) {
+            toast.error('Error al cargar la Configuración de Márgenes');
+            // Al no poner setIsLoading(false) aquí, se queda cargando si falla el backend
         }
     };
 
@@ -270,7 +274,7 @@ export const ConfiguracionMargenes = () => {
             {/* TABLA DE DATOS */}
             <div className="table-container">
                 {isLoading ? (
-                    <div className="loading-state">Cargando configuraciones...</div>
+                    <Loading texto="Cargando configuraciones..." /> /* 👈 Reemplazado por tu componente */
                 ) : (
                     <DataTable
                         data={datosFiltrados}
