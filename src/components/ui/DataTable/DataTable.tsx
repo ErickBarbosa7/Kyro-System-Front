@@ -1,14 +1,13 @@
 import React, { useState, useMemo } from 'react';
-import { ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
+import { ArrowUpDown, ArrowUp, ArrowDown, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ActionDropdown } from '../ActionDropdown/ActionDropdown';
 import './DataTable.css';
- 
-// Interfaz para controlar el estado del ordenamiento
+
 export interface SortConfig {
     key: string;
     direction: 'asc' | 'desc';
 }
 
-// Configuración de las columnas
 export type ColumnConfig<T> = {
     key: string;
     label: string;
@@ -19,7 +18,6 @@ export type ColumnConfig<T> = {
     getSortValue?: (item: T) => string | number | boolean | null | undefined; 
 };
 
-// Props del componente DataTable
 interface DataTableProps<T> {
     data: T[];
     columns: ColumnConfig<T>[];
@@ -28,7 +26,10 @@ interface DataTableProps<T> {
     rowClassName?: (item: T) => string;
     renderDetailRow?: (item: T) => React.ReactNode;
     defaultSort?: SortConfig | null;
+    itemsPerPageOptions?: number[]; // Nueva opción para configurar la paginación
 }
+
+
 
 export const DataTable = <T,>({
     data,
@@ -37,112 +38,120 @@ export const DataTable = <T,>({
     emptyMessage = 'No se encontraron registros.',
     rowClassName,
     renderDetailRow,
-    defaultSort = null
+    defaultSort = null,
+    itemsPerPageOptions = [10, 20, 50]
 }: DataTableProps<T>) => {
-    
-    const [sortConfig, setSortConfig] = useState<SortConfig | null>(defaultSort);
 
+    itemsPerPageOptions = [10, 15, 25]
+
+    // Estados de ordenamiento y paginación
+    const [sortConfig, setSortConfig] = useState<SortConfig | null>(defaultSort);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(itemsPerPageOptions[0]);
+
+    // Convierte las opciones al formato que espera ActionDropdown:
+    const pageOptions = itemsPerPageOptions.map(n => ({
+        id: String(n),
+        nombre: `${n} por pág.`
+    }));
+    // Lógica de ordenamiento (igual que antes)
     const handleRequestSort = (column: ColumnConfig<T>) => {
         if (!column.sortable) return;
-        
-        // 🛠️ SOLUCIÓN: Cambiamos el valor por defecto a 'desc' (flecha hacia abajo)
-        // para que el primer clic en cualquier columna nueva aplique este orden de inmediato.
         let direction: 'asc' | 'desc' = 'desc';
-        
-        // Si el usuario hace clic en la columna que YA estaba seleccionada,
-        // e inversamente ya estaba en 'desc', entonces lo cambiamos a 'asc'.
         if (sortConfig && sortConfig.key === column.key && sortConfig.direction === 'desc') {
             direction = 'asc';
         }
-        
         setSortConfig({ key: column.key, direction });
     };
 
     const sortedData = useMemo(() => {
         if (!sortConfig) return data;
-
         const activeColumn = columns.find(col => col.key === sortConfig.key);
         if (!activeColumn) return data;
 
         return [...data].sort((a, b) => {
             let aVal = activeColumn.getSortValue ? activeColumn.getSortValue(a) : (a as any)[sortConfig.key];
             let bVal = activeColumn.getSortValue ? activeColumn.getSortValue(b) : (b as any)[sortConfig.key];
-
-            if (aVal === undefined || aVal === null) aVal = '';
-            if (bVal === undefined || bVal === null) bVal = '';
+            if (aVal == null) aVal = '';
+            if (bVal == null) bVal = '';
 
             if (typeof aVal === 'string') {
-                return sortConfig.direction === 'asc'
-                    ? aVal.localeCompare(bVal)
-                    : bVal.localeCompare(aVal);
+                return sortConfig.direction === 'asc' ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
             }
-
-            return sortConfig.direction === 'asc' 
-                ? (aVal as number) - (bVal as number) 
-                : (bVal as number) - (aVal as number);
+            return sortConfig.direction === 'asc' ? (aVal as number) - (bVal as number) : (bVal as number) - (aVal as number);
         });
     }, [data, sortConfig, columns]);
 
+    // Lógica de Paginación
+    const totalPages = Math.ceil(sortedData.length / itemsPerPage);
+    const paginatedData = useMemo(() => {
+        const start = (currentPage - 1) * itemsPerPage;
+        return sortedData.slice(start, start + itemsPerPage);
+    }, [sortedData, currentPage, itemsPerPage]);
+
+    // Resetear a página 1 si cambian los datos
+    React.useEffect(() => { setCurrentPage(1); }, [data]);
+
     const renderSortIcon = (column: ColumnConfig<T>) => {
         if (!column.sortable) return null;
-        if (!sortConfig || sortConfig.key !== column.key) {
-            return <ArrowUpDown size={14} className="sort-icon placeholder" />;
-        }
-        return sortConfig.direction === 'asc'
-            ? <ArrowUp size={14} className="sort-icon active" />
-            : <ArrowDown size={14} className="sort-icon active" />;
+        if (!sortConfig || sortConfig.key !== column.key) return <ArrowUpDown size={14} className="sort-icon placeholder" />;
+        return sortConfig.direction === 'asc' ? <ArrowUp size={14} className="sort-icon active" /> : <ArrowDown size={14} className="sort-icon active" />;
     };
 
-    if (sortedData.length === 0) {
-        return <div className="empty-state">{emptyMessage}</div>;
-    }
-
     return (
-        <table className={`kyro-table ${className}`}>
-            <thead>
-                <tr>
-                    {columns.map((col) => {
-                        const isCenter = col.align === 'center';
-                        const thClass = col.sortable ? 'th-sortable' : '';
-                        
-                        return (
-                            <th
-                                key={col.key}
-                                style={{ width: col.width }}
-                                className={thClass}
-                                onClick={() => handleRequestSort(col)}
-                            >
-                                <div className={`th-sortable-content ${isCenter ? 'center' : ''}`}>
-                                    {col.label}
-                                    {renderSortIcon(col)}
+        <div className="datatable-container">
+            <table className={`kyro-table ${className}`}>
+                <thead>
+                    <tr>
+                        {columns.map((col) => (
+                            <th key={col.key} style={{ width: col.width }} className={col.sortable ? 'th-sortable' : ''} onClick={() => handleRequestSort(col)}>
+                                <div className={`th-sortable-content ${col.align === 'center' ? 'center' : ''}`}>
+                                    {col.label} {renderSortIcon(col)}
                                 </div>
                             </th>
-                        );
-                    })}
-                </tr>
-            </thead>
-            <tbody>
-                {sortedData.map((item, index) => {
-                    const customRowClass = rowClassName ? rowClassName(item) : '';
-                    const itemId = (item as any).id || index;
-
-                    return (
-                        <React.Fragment key={itemId}>
-                            <tr className={customRowClass}>
-                                {columns.map((col) => {
-                                    const textAlign = col.align || 'left';
-                                    return (
-                                        <td key={col.key} style={{ textAlign }}>
+                        ))}
+                    </tr>
+                </thead>
+                <tbody>
+                    {paginatedData.length > 0 ? (
+                        paginatedData.map((item, index) => (
+                            <React.Fragment key={(item as any).id || index}>
+                                <tr className={rowClassName ? rowClassName(item) : ''}>
+                                    {columns.map((col) => (
+                                        <td key={col.key} style={{ textAlign: col.align || 'left' }}>
                                             {col.render ? col.render(item) : String((item as any)[col.key] || '')}
                                         </td>
-                                    );
-                                })}
-                            </tr>
-                            {renderDetailRow && renderDetailRow(item)}
-                        </React.Fragment>
-                    );
-                })}
-            </tbody>
-        </table>
+                                    ))}
+                                </tr>
+                                {renderDetailRow && renderDetailRow(item)}
+                            </React.Fragment>
+                        ))
+                    ) : (
+                        <tr><td colSpan={columns.length} className="empty-state">{emptyMessage}</td></tr>
+                    )}
+                </tbody>
+            </table>
+
+            {/* Footer de Paginación */}
+            {sortedData.length > 0 && (
+                <div className="pagination-footer">
+                    <div className="page-info">
+                        Mostrando {((currentPage - 1) * itemsPerPage) + 1} - {Math.min(currentPage * itemsPerPage, sortedData.length)} de {sortedData.length}
+                    </div>
+                    <div className="pagination-controls">
+                        <ActionDropdown
+                            value={String(itemsPerPage)}
+                            options={pageOptions}
+                            onChange={(val) => { setItemsPerPage(Number(val)); setCurrentPage(1); }}
+                            placeholder="Por página"
+                            className="compact"   // ← agregar className al prop de ActionDropdown
+                        />
+                        <button disabled={currentPage === 1} onClick={() => setCurrentPage(c => c - 1)}><ChevronLeft size={18} /></button>
+                        <span>{currentPage} / {totalPages}</span>
+                        <button disabled={currentPage === totalPages} onClick={() => setCurrentPage(c => c + 1)}><ChevronRight size={18} /></button>
+                    </div>
+                </div>
+            )}
+        </div>
     );
 };

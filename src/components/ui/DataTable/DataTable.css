@@ -119,3 +119,107 @@
     padding: 0 !important; /* El padding se maneja en el contenido interno */
     border-bottom: 2px solid var(--color-border) !important;
 }
+
+/* ==========================================
+   Contenedor principal (envuelve tabla + footer)
+   ========================================== */
+.datatable-container {
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(46, 38, 35, 0.08);
+}
+
+/* El shadow ahora vive en el container, no en la tabla */
+.kyro-table {
+    box-shadow: none;
+    border-radius: 0;
+}
+
+/* ==========================================
+   Footer de Paginación
+   ========================================== */
+.pagination-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.65rem 1.2rem;
+    background-color: var(--color-surface);
+    border-top: 1px solid var(--color-border);
+    border-radius: 0 0 var(--radius) var(--radius);
+}
+
+.page-info {
+    font-size: 0.82rem;
+    color: var(--color-text-secondary);
+}
+
+.pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.pagination-controls select {
+    font-size: 0.82rem;
+    color: var(--color-text);
+    background-color: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: calc(var(--radius) - 2px);
+    padding: 0.25rem 0.5rem 0.25rem 0.4rem;
+    cursor: pointer;
+    outline: none;
+    transition: var(--transition);
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888780' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 6px center;
+    padding-right: 1.4rem;
+}
+
+.pagination-controls select:hover {
+    border-color: var(--color-primary);
+}
+
+.pagination-controls select:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px rgba(216, 90, 48, 0.15);
+}
+
+.pagination-controls .page-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    background: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: calc(var(--radius) - 2px);
+    cursor: pointer;
+    color: var(--color-text);
+    transition: var(--transition);
+    padding: 0;
+}
+
+.pagination-controls .page-btn:hover:not(:disabled) {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+    background-color: var(--color-background-2);
+}
+
+.pagination-controls .page-btn:active:not(:disabled) {
+    transform: scale(0.95);
+}
+
+.pagination-controls .page-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+.pagination-controls .page-counter {
+    font-size: 0.82rem;
+    color: var(--color-text-secondary);
+    padding: 0 0.3rem;
+    min-width: 44px;
+    text-align: center;
+}

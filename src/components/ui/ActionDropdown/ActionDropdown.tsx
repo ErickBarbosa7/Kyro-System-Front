@@ -22,6 +22,7 @@ interface ActionDropdownProps {
     
     onRecover?: () => void;
     recoverLabel?: string;
+    className?: string;
 }
 
 export const ActionDropdown: React.FC<ActionDropdownProps> = ({

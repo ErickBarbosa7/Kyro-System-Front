@@ -179,3 +179,15 @@
     background-color: var(--color-background);
     color: var(--color-text);
 }
+/* Variante compacta para uso dentro de footers/toolbars */
+.custom-dropdown.compact .dropdown-trigger {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.82rem;
+    min-height: unset;
+    height: 30px;
+}
+
+.custom-dropdown.compact .dropdown-menu {
+    font-size: 0.82rem;
+    min-width: 130px;
+}
