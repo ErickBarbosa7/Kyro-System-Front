@@ -217,7 +217,7 @@ export const Materiales = () => {
         setIsCategoriaModalOpen(true);
     };
 
-    const abrirPapereraCategorias = async () => {
+    const abrirPapeleraCategorias = async () => {
         const loadingToast = toast.loading('Buscando eliminadas...');
         try {
             const inactivas = await obtenerCategorias('inactivas');
@@ -564,7 +564,7 @@ export const Materiales = () => {
                                         onAdd={() => abrirCategoriaModal()}
                                         onEdit={(id) => abrirCategoriaModal(id)}
                                         onDelete={(id, nombre) => handleDeleteClick(id, nombre, 'categoria')}
-                                        onRecover={() => abrirPapereraCategorias()}
+                                        onRecover={() => abrirPapeleraCategorias()}
                                         recoverLabel="Papelera"
                                     />
                                 </div>
