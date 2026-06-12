@@ -20,48 +20,50 @@ interface FormState {
 
 export const Colecciones = () => {
 
-    // === ESTADOS GLOBALES ===
+    // Estados principales de la vista
     const [colecciones, setColecciones] = useState<ColeccionData[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     
+    // Controles de filtrado (activos/inactivos)
     const [filtros, setFiltros] = useState({
         estado: 'activos'
     });
 
-    // === ESTADOS DEL MODAL Y FORMULARIO ===
+    // Control del modal y datos del formulario
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingId, setEditingId] = useState<string | null>(null);
     const [formData, setFormData] = useState<FormState>({
         nombre: '', codigo: '', descripcion: '', activa: true
     });
 
-    // === ESTILOS MÁGICOS A PRUEBA DE FALLOS ===
+    // Variables de estilo inyectadas para forzar visibilidad en modo oscuro
     const labelStyle = { color: 'var(--color-text)', fontWeight: 700 };
     const inputStyle = { backgroundColor: 'var(--color-background)', color: 'var(--color-text)' };
 
-    // === ESTADOS DE ELIMINACIÓN ===
+    // Control de la alerta de eliminación
     const [isConfirmOpen, setIsConfirmOpen] = useState(false);
     const [itemAEliminar, setItemAEliminar] = useState<{ id: string; nombre: string } | null>(null);
 
-    // === EFECTOS ===
+    // AQUÍ ESTÁ LA MAGIA DEL FILTRO: 
+    // Al pasar [filtros.estado], React ejecuta cargarColecciones automáticamente cada que cambias el select.
     useEffect(() => {
         cargarColecciones();
-    }, []);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [filtros.estado]);
 
     const cargarColecciones = async () => {
         setIsLoading(true);
         try {
             const data = await obtenerColecciones(filtros.estado as any);
-            setColecciones(data);            
+            setColecciones(data);
+            setIsLoading(false); 
         } catch (error) {
-            toast.error('Error al cargar la información de colecciones');
-        } finally {
-            setIsLoading(false);
+            toast.error('Error de conexión con el servidor');
         }
     };
 
-    // === MANEJADORES DEL FORMULARIO ===
+    // Actualiza el state conforme el usuario escribe en los inputs
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value, type } = e.target;
         const checked = (e.target as HTMLInputElement).checked;
@@ -72,6 +74,7 @@ export const Colecciones = () => {
         }));
     };
 
+    // Prepara el formulario ya sea para crear uno nuevo o editar uno existente
     const abrirModal = (coleccion?: ColeccionData) => {
         if (coleccion) {
             setEditingId(coleccion.id || null);
@@ -104,7 +107,7 @@ export const Colecciones = () => {
         if (!formData.nombre.trim()) return toast.error('El nombre de la colección es obligatorio');
         if (!formData.codigo.trim()) return toast.error('El código es obligatorio');
 
-        const loadingToast = toast.loading(editingId ? 'Actualizando colección...' : 'Registrando colección...');
+        const loadingToast = toast.loading(editingId ? 'Actualizando...' : 'Guardando...');
 
         try {
             const dataToSend = {
@@ -115,22 +118,21 @@ export const Colecciones = () => {
 
             if (editingId) {
                 await actualizarColeccion(editingId, dataToSend);
-                toast.success('Colección actualizada exitosamente', { id: loadingToast });
+                toast.success('Colección actualizada', { id: loadingToast });
             } else {
                 await crearColeccion(dataToSend);
-                toast.success('Colección registrada exitosamente', { id: loadingToast });
+                toast.success('Colección registrada', { id: loadingToast });
             }
             
             cerrarModal(); 
             cargarColecciones(); 
             
         } catch (error: any) {
-            const errorMsg = error.response?.data?.error || 'Ocurrió un error al guardar la colección';
+            const errorMsg = error.response?.data?.error || 'Ocurrió un error al guardar';
             toast.error(errorMsg, { id: loadingToast });
         }
     };
 
-    // === LÓGICA DE PAPELERA Y ELIMINACIÓN ===
     const ejecutarReactivacionColeccion = async (id: string) => {
         const loadingToast = toast.loading('Restaurando...');
         try {
@@ -142,28 +144,29 @@ export const Colecciones = () => {
         }
     };
 
+    // Abre la alerta de confirmación antes de borrar
     const handleDeleteClick = (id: string, nombre: string) => {
         setItemAEliminar({ id, nombre });
         setIsConfirmOpen(true);
     };
 
+    // Hace el borrado lógico (soft-delete)
     const ejecutarEliminacion = async () => {
         if (!itemAEliminar) return;
-        const loadingToast = toast.loading('Enviando a la papelera...');
+        const loadingToast = toast.loading('Enviando a papelera...');
         
         try {
             await eliminarColeccion(itemAEliminar.id);
-            toast.success('Colección eliminada exitosamente', { id: loadingToast });
+            toast.success('Colección eliminada', { id: loadingToast });
             setIsConfirmOpen(false);
             setItemAEliminar(null);
             cargarColecciones();
         } catch (error: any) {
-            const errorMsg = error.response?.data?.error || 'Error al eliminar la colección';
-            toast.error(errorMsg, { id: loadingToast });
+            toast.error('Error al eliminar', { id: loadingToast });
         }
     };
 
-    // === FILTRADO LOCAL ===
+    // Buscador local en memoria
     const coleccionesFiltradas = colecciones.filter(col => {
         const busqueda = searchTerm.toLowerCase();
         return (
@@ -173,7 +176,6 @@ export const Colecciones = () => {
         );
     });
 
-    // === CONFIGURACIÓN DE COLUMNAS PARA DATATABLE ===
     const columns: ColumnConfig<ColeccionData>[] = useMemo(() => [
         {
             key: 'codigo',
@@ -303,7 +305,6 @@ export const Colecciones = () => {
                 )}
             </div>
 
-            {/* MODAL CORRECTAMENTE ENVOLVIENDO AL FORMULARIO */}
             <Modal
                 isOpen={isModalOpen}
                 onClose={cerrarModal}
@@ -351,7 +352,6 @@ export const Colecciones = () => {
                         />
                     </div>
 
-                    {/* BOTONES DEL MODAL */}
                     <div className="modal-footer" style={{ marginTop: '24px', paddingTop: '20px', borderTop: '1px solid var(--color-border)', display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
                         <button type="button" className="btn-secondary" onClick={cerrarModal}>Cancelar</button>
                         <button type="submit" className="btn-primary">
@@ -361,7 +361,6 @@ export const Colecciones = () => {
                 </form>
             </Modal>
 
-            {/* MODAL DE ELIMINACIÓN CORREGIDO */}
             <ConfirmModal
                 isOpen={isConfirmOpen}
                 title="Eliminar Colección"
