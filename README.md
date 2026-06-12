@@ -1,74 +1,38 @@
-# React + TypeScript + Vite
+# Kyro System
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Sistema ERP moderno diseñado para centralizar la gestión operativa, administrativa y financiera de pequeñas y medianas empresas.
 
-Currently, two official plugins are available:
+Kyro proporciona una experiencia intuitiva, rápida y escalable para la administración de procesos empresariales, permitiendo un mayor control sobre la información crítica del negocio desde una única plataforma.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Características Principales
 
-## React Compiler
+* Gestión de proveedores.
+* Administración de colecciones y catálogos.
+* Control de gastos operativos.
+* Configuración de márgenes y costos.
+* Paneles administrativos modulares.
+* Interfaz moderna con enfoque en productividad.
+* Arquitectura escalable para nuevos módulos empresariales.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Enfoque
 
-## Expanding the ESLint configuration
+Aunque inicialmente está orientado al sector de la joyería y artículos de lujo, Kyro ha sido diseñado bajo una arquitectura flexible que permite adaptarse a distintos modelos de negocio.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Tecnologías
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+* React
+* TypeScript
+* Vite
+* Axios
+* Lucide React
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Objetivos
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+* Centralizar la información empresarial.
+* Reducir procesos manuales.
+* Facilitar la toma de decisiones mediante información organizada.
+* Proporcionar una experiencia de usuario moderna y eficiente.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Estado del Proyecto
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-# Kyro-System-Front
+Kyro se encuentra en desarrollo activo y continúa incorporando nuevas funcionalidades enfocadas en la gestión empresarial, control operativo y automatización de procesos.
