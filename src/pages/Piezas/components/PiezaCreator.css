@@ -1,0 +1,306 @@
+.creator-overlay {
+    display: flex;
+    flex-direction: column;
+    min-height: 400px;
+    height: calc(100vh - 220px);
+}
+
+.creator-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    background: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+    flex-shrink: 0;
+}
+
+.creator-back-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border: 1px solid var(--color-border);
+    background: var(--color-background);
+    color: var(--color-text-secondary);
+    font-size: 0.82rem;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.15s;
+}
+
+.creator-back-btn:hover {
+    background: var(--color-surface);
+    color: var(--color-text);
+    border-color: var(--color-primary);
+}
+
+.creator-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-text);
+    margin: 0;
+}
+
+.creator-body {
+    flex: 1;
+    display: flex;
+    gap: 0;
+    overflow: hidden;
+    min-height: 0;
+}
+
+.creator-left {
+    width: 260px;
+    flex-shrink: 0;
+    overflow-y: auto;
+    padding: 14px;
+    border-right: 1px solid var(--color-border);
+    background: var(--color-surface);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.creator-center {
+    flex: 1;
+    overflow-y: auto;
+    padding: 14px;
+    min-width: 0;
+}
+
+.creator-right {
+    width: 280px;
+    flex-shrink: 0;
+    overflow-y: auto;
+    padding: 14px;
+    border-left: 1px solid var(--color-border);
+    background: var(--color-surface);
+}
+
+.creator-right > * {
+    position: sticky;
+    top: 0;
+}
+
+.creator-footer {
+    flex-shrink: 0;
+    padding: 12px 20px;
+    background: var(--color-surface);
+    border-top: 1px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.creator-footer-cost {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 0.8rem;
+    color: var(--color-text-secondary);
+}
+
+.creator-footer-cost strong {
+    color: var(--color-text);
+    font-family: monospace;
+    font-size: 0.95rem;
+}
+
+.creator-footer-cost .final-price {
+    color: var(--color-primary);
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.btn-creator-save {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 28px;
+    background: var(--color-primary);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.btn-creator-save:hover:not(:disabled) {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+}
+
+.btn-creator-save:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.creator-image-upload {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.creator-image-dropzone {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 10px;
+    border: 2px dashed var(--color-border);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.15s;
+    overflow: hidden;
+    background: var(--color-background);
+}
+
+.creator-image-dropzone:hover {
+    border-color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary) 4%, transparent);
+}
+
+.creator-image-dropzone img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.creator-image-dropzone p {
+    font-size: 0.7rem;
+    color: var(--color-text-secondary);
+    margin: 4px 0 0 0;
+}
+
+.creator-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.creator-field label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--color-text);
+}
+
+.creator-field input,
+.creator-field textarea {
+    padding: 7px 10px;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    background: var(--color-background);
+    color: var(--color-text);
+    font-size: 0.8rem;
+    transition: border-color 0.15s;
+}
+
+.creator-field input:focus,
+.creator-field textarea:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 12%, transparent);
+}
+
+.creator-field textarea {
+    resize: vertical;
+    min-height: 50px;
+}
+
+.creator-field input.input-error,
+.creator-field textarea.input-error {
+    border-color: var(--color-danger) !important;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-danger) 12%, transparent) !important;
+}
+
+.creator-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.creator-crud-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+    background: rgba(0,0,0,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.creator-crud-modal {
+    background: var(--color-surface);
+    border-radius: 14px;
+    padding: 24px;
+    width: 360px;
+    max-width: 90vw;
+    border: 1px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.2);
+}
+
+.creator-crud-modal h3 {
+    margin: 0;
+    color: var(--color-text);
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+.creator-crud-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 4px;
+}
+
+.creator-crud-modal-actions .btn-crud-cancel {
+    padding: 8px 16px;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--color-text-secondary);
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+
+.creator-crud-modal-actions .btn-crud-cancel:hover {
+    background: var(--color-background);
+}
+
+.creator-crud-modal-actions .btn-crud-save {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 8px;
+    background: var(--color-primary);
+    color: white;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.creator-crud-modal-actions .btn-crud-save:hover {
+    filter: brightness(1.1);
+}
+
+.creator-crud-modal-actions .btn-crud-danger {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 8px;
+    background: var(--color-danger, #dc2626);
+    color: white;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.creator-crud-modal-actions .btn-crud-danger:hover {
+    filter: brightness(1.1);
+}

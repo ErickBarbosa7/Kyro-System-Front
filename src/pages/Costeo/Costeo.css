@@ -1,0 +1,268 @@
+.costeo-selector {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: var(--color-toolbar);
+    padding: 16px;
+    border-radius: 12px;
+}
+
+.costeo-selector-label label {
+    white-space: nowrap;
+    font-size: 14px;
+}
+
+.costeo-selector-input {
+    flex: 1;
+    max-width: 500px;
+}
+
+.costeo-info-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+}
+
+.costeo-info-clave {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--color-primary);
+    letter-spacing: 0.5px;
+}
+
+.costeo-info-nombre {
+    font-size: 14px;
+    color: var(--color-text-secondary);
+}
+
+.costeo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 16px;
+}
+
+.costeo-section {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    border-top: 3px solid;
+    overflow: hidden;
+}
+
+.costeo-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.costeo-section-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--color-text);
+}
+
+.costeo-section .btn-icon.add {
+    color: var(--color-text-secondary);
+    background: transparent;
+    border: none;
+    padding: 6px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.costeo-section .btn-icon.add:hover {
+    background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+    color: var(--color-primary);
+}
+
+.costeo-section-empty {
+    padding: 24px;
+    text-align: center;
+}
+
+.costeo-section-empty p {
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: 13px;
+}
+
+.costeo-items {
+    display: flex;
+    flex-direction: column;
+}
+
+.costeo-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--color-border);
+    transition: background 0.15s;
+}
+
+.costeo-item:last-child {
+    border-bottom: none;
+}
+
+.costeo-item:hover {
+    background: var(--color-background);
+}
+
+.costeo-item-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    flex: 1;
+}
+
+.costeo-item-nombre {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-text);
+}
+
+.costeo-item-detalle {
+    font-size: 11px;
+    color: var(--color-text-secondary);
+}
+
+.costeo-item-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.costeo-item-subtotal {
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--color-text);
+    min-width: 80px;
+    text-align: right;
+}
+
+.costeo-item-actions .btn-icon {
+    padding: 4px;
+    border-radius: 4px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.costeo-item-actions .btn-icon.edit {
+    color: var(--color-text-secondary);
+}
+
+.costeo-item-actions .btn-icon.edit:hover {
+    color: var(--color-accent);
+    background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+}
+
+.costeo-item-actions .btn-icon.delete {
+    color: var(--color-text-secondary);
+}
+
+.costeo-item-actions .btn-icon.delete:hover {
+    color: var(--color-danger);
+    background: rgba(176, 74, 74, 0.15);
+}
+
+.costeo-section-total {
+    padding: 10px 16px;
+    font-weight: 700;
+    font-size: 14px;
+    border-top: 1px solid var(--color-border);
+    text-align: right;
+}
+
+.costeo-totales-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.costeo-totales-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 20px;
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--color-text);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.costeo-totales-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 0;
+    padding: 20px;
+}
+
+.costeo-total-item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 12px 16px;
+    border-right: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.costeo-total-item:nth-child(3n) {
+    border-right: none;
+}
+
+.costeo-total-item:nth-last-child(-n+3) {
+    border-bottom: none;
+}
+
+.costeo-total-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.costeo-total-value {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--color-text);
+}
+
+.costeo-total-value--grande {
+    font-size: 24px;
+    color: var(--color-primary);
+}
+
+.costeo-total-value--precio {
+    font-size: 22px;
+    color: #16a34a;
+}
+
+.costeo-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 60px 20px;
+}
+
+.costeo-empty p {
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: 15px;
+}

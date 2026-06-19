@@ -24,8 +24,8 @@ export const ConfirmModal = ({
     if (!isOpen) return null;
 
     return (
-        <div className="confirm-overlay">
-            <div className="confirm-content">
+        <div className="confirm-overlay" onClick={onCancel}>
+            <div className="confirm-content" onClick={(e) => e.stopPropagation()}>
                 <button className="confirm-close" onClick={onCancel}>
                     <X size={20} />
                 </button>

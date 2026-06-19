@@ -1,39 +1,88 @@
-@import '../Proveedores/Proveedores.css'; 
+/* ========================================== */
+/* CONTENEDOR PRINCIPAL                       */
+/* ========================================== */
+.module-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.module-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.module-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.module-title h2 {
+    color: var(--color-primary);
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.module-description p {
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
 
 /* ========================================== */
-/* CORRECCIÓN DE ALINEACIÓN DE TABLAS         */
+/* BARRA DE HERRAMIENTAS (BÚSQUEDA Y FILTROS) */
 /* ========================================== */
-
-.kyro-table.materials-table {
-    table-layout: fixed;
-    width: 100%;
+.module-container .toolbar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    background: var(--color-toolbar) !important;
+    padding: 16px;
+    border-radius: 12px;
 }
 
-.kyro-table.materials-table th {
-    padding: 12px 16px;
-    vertical-align: middle;
+.module-container .search-wrapper {
+    flex: 1;
+    min-width: 250px;
+    max-width: 450px;
 }
 
-.kyro-table.materials-table td {
-    vertical-align: middle !important;
-    padding: 12px 16px; 
-    background-color: transparent; 
+@media (max-width: 600px) {
+    .module-container .toolbar-container {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 1rem;
+    }
+    .module-container .search-wrapper {
+        max-width: 100%;
+    }
 }
 
-.kyro-table.materials-table tbody tr {
-    transition: background-color 0.2s ease, opacity 0.2s ease;
-}
-
-.kyro-table.materials-table tbody tr:hover {
-    background-color: var(--color-background);
-}
-
-.kyro-table.materials-table tbody tr:hover td {
-     background-color: transparent; 
+/* ========================================== */
+/* TABLA PRINCIPAL                            */
+/* ========================================== */
+.module-container .table-container {
+    background-color: transparent;
+    border: none;
+    border-radius: 0;
+    overflow: hidden;
 }
 
 .kyro-table.materials-table .actions-cell {
-    display: flex; 
+    display: flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
@@ -44,16 +93,6 @@
 /* ========================================== */
 /* ESTILOS PARA ELEMENTOS EN PAPELERA         */
 /* ========================================== */
-
-.kyro-table.materials-table tbody tr.row-inactiva {
-    opacity: 0.55;
-    background-color: #f8fafc;
-}
-
-.kyro-table.materials-table tbody tr.row-inactiva:hover {
-    opacity: 0.85;
-}
-
 .badge-eliminado {
     align-self: flex-start;
     background-color: #fee2e2;
@@ -70,7 +109,6 @@
 /* ========================================== */
 /* ESTILOS ESPECÍFICOS PARA MATERIALES        */
 /* ========================================== */
-
 .text-muted {
     color: var(--color-text-secondary);
     font-size: 13px;
@@ -94,7 +132,7 @@
 }
 
 /* ========================================== */
-/* MINIATURAS DE IMAGEN                         */
+/* MINIATURAS DE IMAGEN                       */
 /* ========================================== */
 .material-thumb {
     width: 64px;
@@ -107,7 +145,7 @@
     justify-content: center;
     overflow: hidden;
     margin: 0 auto;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
 /* ========================================== */
@@ -184,40 +222,20 @@
 }
 
 /* ========================================== */
-/* BARRA DE HERRAMIENTAS (BÚSQUEDA Y FILTROS) */
-/* ========================================== */
-
-.toolbar-container {
-    display: flex;
-    justify-content: flex-end; 
-    align-items: center; 
-    gap: 16px; 
-    margin-bottom: 20px;
-    flex-wrap: wrap; 
-}
-
-.search-wrapper {
-    width: 280px; 
-    margin-right: 16px; 
-}
-
-
-/* ========================================== */
 /* DISEÑO DEL FORMULARIO Y CONTRASTES GLOBALES*/
 /* ========================================== */
-
 .form-row {
     display: flex;
     gap: 16px;
     margin-bottom: 16px;
-    width: 100%; 
+    width: 100%;
 }
 
 .form-group {
     display: flex;
     flex-direction: column;
-    flex: 1; 
-    min-width: 0; 
+    flex: 1;
+    min-width: 0;
 }
 
 .form-header-layout {
@@ -228,14 +246,14 @@
 }
 
 .image-upload-wrapper {
-    flex-shrink: 0; 
+    flex-shrink: 0;
 }
 
 .header-fields-col {
     display: flex;
     flex-direction: column;
-    justify-content: space-between; 
-    flex: 1; 
+    justify-content: space-between;
+    flex: 1;
     gap: 12px;
 }
 
@@ -243,11 +261,10 @@
     margin-bottom: 0;
 }
 
-/* 1. Etiquetas brillantes */
 .form-group label {
     font-size: 13px;
     font-weight: 700;
-    color: var(--color-text); /* Evita grises opacos */
+    color: var(--color-text);
     margin-bottom: 6px;
     white-space: nowrap;
     overflow: hidden;
@@ -255,7 +272,6 @@
     letter-spacing: 0.3px;
 }
 
-/* 2. Cajas de texto e inputs con color dinámico */
 .form-group input,
 .form-group textarea,
 .form-group select,
@@ -265,15 +281,14 @@
     border: 1px solid var(--color-border);
     border-radius: 10px;
     font-size: 14px;
-    background-color: var(--color-background); 
-    color: var(--color-text); 
+    background-color: var(--color-background);
+    color: var(--color-text);
     outline: none;
-    box-sizing: border-box; 
+    box-sizing: border-box;
     transition: all 0.2s ease;
     font-family: inherit;
 }
 
-/* 3. Placeholders arreglados (ya no son invisibles) */
 .form-group input::placeholder,
 .form-group textarea::placeholder {
     color: var(--color-text-secondary);
@@ -281,7 +296,6 @@
     font-weight: 400;
 }
 
-/* 4. Efecto Premium (Halo de luz) al hacer click */
 .form-group input:focus,
 .form-group textarea:focus,
 .form-group select:focus,

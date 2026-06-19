@@ -5,26 +5,27 @@
     text-align: center;
     padding: 3rem 1rem;
     color: var(--color-text-secondary);
-    background-color: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
+    background-color: transparent;
+    border: none;
+    border-radius: 0;
     font-style: italic;
     width: 100%;
 }
 
+
 /* ==========================================
    Estructura Principal de la Tabla
    ========================================== */
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
 .kyro-table {
     width: 100%;
-    border-collapse: separate; 
-    border-spacing: 0;
-    text-align: left;
-    font-size: 0.95rem;
-    background-color: var(--color-background); 
-    border-radius: var(--radius);
-    overflow: hidden; 
-    box-shadow: 0 4px 15px rgba(46, 38, 35, 0.08);
+    border-collapse: collapse;
+    box-shadow: none;
+    border-radius: 0;
 }
 /* ==========================================
    Cabecera (Thead)
@@ -125,14 +126,11 @@
    ========================================== */
 .datatable-container {
     border-radius: var(--radius);
-    overflow: hidden;
     box-shadow: 0 4px 15px rgba(46, 38, 35, 0.08);
-}
-
-/* El shadow ahora vive en el container, no en la tabla */
-.kyro-table {
-    box-shadow: none;
-    border-radius: 0;
+    background-color: var(--color-background);
+    display: flex;
+    flex-direction: column;
+    height: auto;
 }
 
 /* ==========================================
@@ -157,6 +155,7 @@
     display: flex;
     align-items: center;
     gap: 0.4rem;
+    flex-shrink: 0;
 }
 
 .pagination-controls select {
@@ -222,4 +221,46 @@
     padding: 0 0.3rem;
     min-width: 44px;
     text-align: center;
+}
+
+.pagination-controls .page-num-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 30px;
+    height: 30px;
+    padding: 0 6px;
+    background: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: calc(var(--radius) - 2px);
+    cursor: pointer;
+    color: var(--color-text);
+    font-size: 0.8rem;
+    font-family: inherit;
+    transition: var(--transition);
+}
+
+.pagination-controls .page-num-btn:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+    background-color: var(--color-background-2);
+}
+
+.pagination-controls .page-num-btn.active {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+    color: #fff;
+    font-weight: 700;
+}
+
+.pagination-controls .page-ellipsis {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    height: 30px;
+    color: var(--color-text-secondary);
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    user-select: none;
 }

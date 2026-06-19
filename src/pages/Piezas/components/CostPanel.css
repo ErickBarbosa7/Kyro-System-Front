@@ -1,0 +1,159 @@
+.cost-panel {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 14px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.cost-panel-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: var(--color-text);
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.cost-panel-items {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.cost-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    border-radius: 8px;
+    background: var(--color-background);
+    font-size: 0.8rem;
+}
+
+.cost-item-left {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex: 1;
+}
+
+.cost-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.cost-item-label {
+    color: var(--color-text);
+    font-weight: 500;
+}
+
+.cost-items-count {
+    font-size: 0.7rem;
+    color: var(--color-text-secondary);
+    background: var(--color-surface);
+    padding: 0 6px;
+    border-radius: 4px;
+    min-width: 20px;
+    text-align: center;
+}
+
+.cost-item-value {
+    font-family: monospace;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-text);
+    min-width: 60px;
+    text-align: right;
+}
+
+.cost-divider {
+    height: 1px;
+    background: var(--color-border);
+}
+
+.cost-total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-text);
+}
+
+.cost-total-value {
+    font-family: monospace;
+    font-size: 1rem;
+    color: var(--color-primary);
+}
+
+.cost-panel-margins {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 10px 8px;
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--color-primary) 6%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-primary) 20%, transparent);
+}
+
+.cost-panel-margins-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.cost-margin-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.8rem;
+    color: var(--color-text);
+    padding: 2px 0;
+}
+
+.cost-margin-row.final {
+    padding-top: 6px;
+    border-top: 1px dashed color-mix(in srgb, var(--color-primary) 20%, transparent);
+    margin-top: 2px;
+}
+
+.cost-margin-value {
+    font-family: monospace;
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+.cost-margin-value.publico {
+    color: var(--color-primary);
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.cost-margin-name {
+    font-size: 0.7rem;
+    color: var(--color-text-secondary);
+    text-align: center;
+}
+
+.cost-no-margin {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    color: var(--color-text-secondary);
+    padding: 12px;
+}

@@ -1,20 +1,18 @@
 import kyroApi from '../api/kyroApi';
 
-// Interfaz para el catálogo de Acabados
 export interface AcabadoData {
     nombre: string;
     descripcion?: string;
-    costoAdicional: number; // Costo extra que suma el acabado
-    proveedorId?: string | number | null; 
+    tipoCobro: 'FIJO' | 'POR_PIEZA' | 'POR_GRAMO' | 'POR_LOTE';
+    costoBase: number;
+    proveedorId?: string | number | null;
     activo?: boolean;
 }
 
 export type UpdateAcabadoData = Partial<AcabadoData>;
 
-// ENDPOINTS DE ACABADOS
-
-export const obtenerAcabados = async () => {
-    const { data } = await kyroApi.get('/acabados');
+export const obtenerAcabados = async (estado: string = 'activos') => {
+    const { data } = await kyroApi.get('/acabados', { params: { estado } });
     return data;
 };
 
@@ -30,5 +28,10 @@ export const actualizarAcabado = async (id: string | number, datosAcabado: Updat
 
 export const eliminarAcabado = async (id: string | number) => {
     const { data } = await kyroApi.delete(`/acabados/${id}`);
+    return data;
+};
+
+export const reactivarAcabado = async (id: string | number) => {
+    const { data } = await kyroApi.put(`/acabados/${id}/reactivar`);
     return data;
 };

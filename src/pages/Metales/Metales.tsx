@@ -9,6 +9,7 @@ import { ConfirmModal } from '../../components/ConfirmModal';
 import { FilterGroup } from '../../components/ui/FilterGroup/FilterGroup';
 import { DataTable, type ColumnConfig } from '../../components/ui/DataTable/DataTable';
 import { Loading } from '../../components/Loading/Loading';
+import { FieldError } from '../../components/ui/FieldError/FieldError';
 
 // SERVICIOS
 import { 
@@ -46,6 +47,9 @@ export const Metales = () => {
         activo: true
     });
 
+    const [errors, setErrors] = useState<Record<string, string>>({});
+    const [touched, setTouched] = useState<Record<string, boolean>>({});
+
     // === ESTILOS MÁGICOS (DARK MODE SAFE) ===
     const labelStyle = { color: 'var(--color-text)', fontWeight: 700 };
     const inputStyle = { backgroundColor: 'var(--color-background)', color: 'var(--color-text)' };
@@ -57,13 +61,13 @@ export const Metales = () => {
     // === EFECTOS ===
     useEffect(() => {
         cargarMetales();
-    }, []);
+    }, [filtros.estado]);
 
     const cargarMetales = async () => {
     setIsLoading(true);
 
     try {
-        const data = await obtenerMetales();
+        const data = await obtenerMetales(filtros.estado);
         setMetales(data);
     } catch (error) {
         toast.error('Error al conectar con el servidor de Kyro');
@@ -76,7 +80,18 @@ export const Metales = () => {
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value, type } = e.target;
         const parsedValue = type === 'number' ? (value === '' ? '' : Number(value)) : value;
-        setFormData(prev => ({ ...prev, [name]: parsedValue }));
+        const updated = { ...formData, [name]: parsedValue };
+        setFormData(updated);
+        if (touched[name]) {
+            const newErrors = validate(updated);
+            setErrors(prev => ({ ...prev, [name]: newErrors[name] }));
+        }
+    };
+
+    const handleBlur = (field: string) => {
+        setTouched(prev => ({ ...prev, [field]: true }));
+        const newErrors = validate(formData);
+        setErrors(prev => ({ ...prev, [field]: newErrors[field] }));
     };
 
     const abrirModal = (metal?: Metal) => {
@@ -101,6 +116,8 @@ export const Metales = () => {
                 activo: true
             });
         }
+        setErrors({});
+        setTouched({});
         setIsModalOpen(true);
     };
 
@@ -109,9 +126,23 @@ export const Metales = () => {
         setEditingId(null);
     };
 
+    const requiredMsg = (label: string) => `${label} es obligatorio`;
+    const validate = (data: MetalData): Record<string, string> => {
+        const e: Record<string, string> = {};
+        if (!data.nombre?.trim()) e.nombre = requiredMsg('El nombre');
+        if (Number(data.precioPorGramo) <= 0) e.precioPorGramo = 'El precio por gramo debe ser mayor a 0';
+        if (Number(data.stockDisponible) <= 0) e.stockDisponible = 'El stock disponible debe ser mayor a 0';
+        if (Number(data.stockMinimo) <= 0) e.stockMinimo = 'El stock mínimo debe ser mayor a 0';
+        return e;
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        
+        const validationErrors = validate(formData);
+        setErrors(validationErrors);
+        setTouched({ nombre: true, precioPorGramo: true, stockDisponible: true, stockMinimo: true });
+        if (Object.keys(validationErrors).length > 0) return;
+
         if (!formData.nombre.trim()) return toast.error('El nombre del metal es obligatorio');
         if (Number(formData.precioPorGramo) <= 0) return toast.error('El precio por gramo debe ser mayor a 0');
 
@@ -174,20 +205,11 @@ export const Metales = () => {
         }
     };
 
-    // === FILTRADO LOCAL AVANZADO ===
+    // === FILTRADO LOCAL (solo búsqueda, el backend maneja el estado) ===
     const metalesFiltrados = metales.filter(m => {
-        // 1. Filtro por búsqueda de texto
         const busqueda = searchTerm.toLowerCase();
-        const matchSearch = m.nombre.toLowerCase().includes(busqueda) || 
-                           (m.observaciones && m.observaciones.toLowerCase().includes(busqueda));
-        
-        // 2. Filtro por estado (Papelera local)
-        const matchEstado = 
-            filtros.estado === 'todos' ? true :
-            filtros.estado === 'inactivos' ? m.activo === false :
-            m.activo !== false; // activos por defecto
-
-        return matchSearch && matchEstado;
+        return m.nombre.toLowerCase().includes(busqueda) || 
+               (m.observaciones && m.observaciones.toLowerCase().includes(busqueda));
     });
 
     // === CONFIGURACIÓN DE COLUMNAS ===
@@ -200,7 +222,7 @@ export const Metales = () => {
             render: (m: Metal) => (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                     <span className="font-medium">{m.nombre}</span>
-                    {m.activo === false && <span className="badge-eliminado">Inactivo</span>}
+                    {m.activo === false && <span className="badge-eliminado">Desactivado</span>}
                 </div>
             )
         },
@@ -345,7 +367,7 @@ export const Metales = () => {
                 maxWidth="550px"
             >
                 <form onSubmit={handleSubmit} className="modal-form">
-                    <div className="form-group">
+                    <div className={`form-group ${errors.nombre && touched.nombre ? 'form-group--error' : ''}`}>
                         <label style={labelStyle}>Nombre / Aleación *</label>
                         <input 
                             style={inputStyle}
@@ -353,59 +375,63 @@ export const Metales = () => {
                             name="nombre" 
                             value={formData.nombre} 
                             onChange={handleInputChange}
+                            onBlur={() => handleBlur('nombre')}
                             placeholder="Ej. Oro Amarillo 18k, Plata 925..."
                             autoFocus
-                            required
                         />
+                        <FieldError message={touched.nombre ? errors.nombre : undefined} />
                     </div>
 
                     <div className="form-row">
-                        <div className="form-group">
-                            <label style={labelStyle}>Costo por Gramo ($) *</label>
-                            <input 
-                                style={inputStyle}
-                                type="number" 
-                                name="precioPorGramo" 
-                                value={formData.precioPorGramo} 
-                                onChange={handleInputChange}
-                                step="0.01"
-                                min="0"
-                                placeholder="0.00"
-                                required
-                            />
-                        </div>
+                    <div className={`form-group ${errors.precioPorGramo && touched.precioPorGramo ? 'form-group--error' : ''}`}>
+                        <label style={labelStyle}>Costo por Gramo ($) *</label>
+                        <input 
+                            style={inputStyle}
+                            type="number" 
+                            name="precioPorGramo" 
+                            value={formData.precioPorGramo} 
+                            onChange={handleInputChange}
+                            onBlur={() => handleBlur('precioPorGramo')}
+                            step="0.01"
+                            min="0"
+                            placeholder="0.00"
+                        />
+                        <FieldError message={touched.precioPorGramo ? errors.precioPorGramo : undefined} />
+                    </div>
                     </div>
 
                     <div className="form-row">
-                        <div className="form-group">
-                            <label style={labelStyle}>Stock Disponible (Gramos) *</label>
+                    <div className={`form-group ${errors.stockDisponible && touched.stockDisponible ? 'form-group--error' : ''}`}>
+                        <label style={labelStyle}>Stock Disponible (Gramos) *</label>
+                        <input 
+                            style={inputStyle}
+                            type="number" 
+                            name="stockDisponible" 
+                            value={formData.stockDisponible} 
+                            onChange={handleInputChange}
+                            onBlur={() => handleBlur('stockDisponible')}
+                            step="0.01"
+                            min="0"
+                            placeholder="0.00 g"
+                        />
+                        <FieldError message={touched.stockDisponible ? errors.stockDisponible : undefined} />
+                    </div>
+
+                    <div className={`form-group ${errors.stockMinimo && touched.stockMinimo ? 'form-group--error' : ''}`}>
+                        <label style={labelStyle}>Alerta Mínima (Gramos) *</label>
                             <input 
                                 style={inputStyle}
                                 type="number" 
-                                name="stockDisponible" 
-                                value={formData.stockDisponible} 
+                                name="stockMinimo" 
+                                value={formData.stockMinimo} 
                                 onChange={handleInputChange}
+                                onBlur={() => handleBlur('stockMinimo')}
                                 step="0.01"
                                 min="0"
-                                placeholder="0.00 g"
-                                required
+                                placeholder="Ej. 50 g" 
                             />
-                        </div>
-
-                        <div className="form-group">
-                            <label style={labelStyle}>Alerta Mínima (Gramos) *</label>
-                                <input 
-                                    style={inputStyle}
-                                    type="number" 
-                                    name="stockMinimo" 
-                                    value={formData.stockMinimo} 
-                                    onChange={handleInputChange}
-                                    step="0.01"
-                                    min="0"
-                                    placeholder="Ej. 50 g" 
-                                    required
-                                />
-                        </div>
+                        <FieldError message={touched.stockMinimo ? errors.stockMinimo : undefined} />
+                    </div>
                     </div>
 
                     <div className="form-group">

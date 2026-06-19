@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { toast } from 'react-hot-toast';
-import { Plus, Pencil, Trash2, Percent, Settings2 } from 'lucide-react';
+import { Plus, Pencil, Trash2, Percent, Settings2, RefreshCcw } from 'lucide-react';
 
 // COMPONENTES
 import { SearchBar } from '../../components/ui/SearchBar/SearchBar';
 import { Modal } from '../../components/ui/Modal/Modal';
 import { ConfirmModal } from '../../components/ConfirmModal';
+import { FilterGroup } from '../../components/ui/FilterGroup/FilterGroup';
 import { DataTable, type ColumnConfig } from '../../components/ui/DataTable/DataTable';
+import { FieldError } from '../../components/ui/FieldError/FieldError';
 
 // SERVICIOS
 import { 
@@ -14,6 +16,7 @@ import {
     crearConfiguracion, 
     actualizarConfiguracion, 
     eliminarConfiguracion,
+    reactivarConfiguracion,
     type ConfiguracionMargen 
 } from '../../services/configuracion-margenes.service';
 
@@ -32,6 +35,7 @@ export const ConfiguracionMargenes = () => {
     const [configuraciones, setConfiguraciones] = useState<ConfiguracionMargen[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
+    const [filtros, setFiltros] = useState({ estado: 'activos' });
 
     // === ESTADOS DEL MODAL Y FORMULARIO ===
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -43,6 +47,18 @@ export const ConfiguracionMargenes = () => {
         margenPublico: '',
         descuentoMaximo: ''
     });
+    const [errors, setErrors] = useState<Record<string, string>>({});
+    const [touched, setTouched] = useState<Record<string, boolean>>({});
+
+    const requiredMsg = (label: string) => `${label} es obligatorio`;
+    const validate = (data: FormState): Record<string, string> => {
+        const e: Record<string, string> = {};
+        if (!data.nombre?.trim()) e.nombre = requiredMsg('El nombre');
+        if (data.margenTaller === '' || Number(data.margenTaller) <= 0) e.margenTaller = 'El margen de taller debe ser mayor a 0';
+        if (data.margenMayorista === '' || Number(data.margenMayorista) <= 0) e.margenMayorista = 'El margen mayorista debe ser mayor a 0';
+        if (data.margenPublico === '' || Number(data.margenPublico) <= 0) e.margenPublico = 'El margen público debe ser mayor a 0';
+        return e;
+    };
 
     // === ESTILOS MÁGICOS A PRUEBA DE FALLOS ===
     const labelStyle = { color: 'var(--color-text)', fontWeight: 700 };
@@ -55,12 +71,12 @@ export const ConfiguracionMargenes = () => {
     // === EFECTOS ===
     useEffect(() => {
         cargarDatos();
-    }, []);
+    }, [filtros.estado]);
 
     const cargarDatos = async () => {
         setIsLoading(true);
         try {
-            const data = await obtenerConfiguraciones();
+            const data = await obtenerConfiguraciones(filtros.estado);
             setConfiguraciones(data);
         } catch (error) {
             toast.error('Error al cargar las configuraciones de márgenes');
@@ -73,7 +89,18 @@ export const ConfiguracionMargenes = () => {
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value, type } = e.target;
         const parsedValue = type === 'number' ? (value === '' ? '' : Number(value)) : value;
-        setFormData(prev => ({ ...prev, [name]: parsedValue }));
+        const next = { ...formData, [name]: parsedValue };
+        setFormData(next);
+        if (touched[name]) {
+            const newErrors = validate(next);
+            setErrors(prev => ({ ...prev, [name]: newErrors[name] }));
+        }
+    };
+
+    const handleBlur = (field: string) => {
+        setTouched(prev => ({ ...prev, [field]: true }));
+        const newErrors = validate(formData);
+        setErrors(prev => ({ ...prev, [field]: newErrors[field] }));
     };
 
     const abrirModal = (config?: ConfiguracionMargen) => {
@@ -96,21 +123,25 @@ export const ConfiguracionMargenes = () => {
                 descuentoMaximo: ''
             });
         }
+        setErrors({});
+        setTouched({});
         setIsModalOpen(true);
     };
 
     const cerrarModal = () => {
         setIsModalOpen(false);
         setEditingId(null);
+        setErrors({});
+        setTouched({});
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         
-        if (!formData.nombre.trim()) return toast.error('El nombre es obligatorio');
-        if (formData.margenTaller === '' || Number(formData.margenTaller) < 0) return toast.error('Margen de taller inválido');
-        if (formData.margenMayorista === '' || Number(formData.margenMayorista) < 0) return toast.error('Margen mayorista inválido');
-        if (formData.margenPublico === '' || Number(formData.margenPublico) < 0) return toast.error('Margen público inválido');
+        const validationErrors = validate(formData);
+        setErrors(validationErrors);
+        setTouched({ nombre: true, margenTaller: true, margenMayorista: true, margenPublico: true });
+        if (Object.keys(validationErrors).length > 0) return;
 
         const loadingToast = toast.loading(editingId ? 'Actualizando configuración...' : 'Guardando configuración...');
 
@@ -144,6 +175,17 @@ export const ConfiguracionMargenes = () => {
         setIsConfirmOpen(true);
     };
 
+    const handleReactivar = async (id: string) => {
+        const loadingToast = toast.loading('Restaurando configuración...');
+        try {
+            await reactivarConfiguracion(id);
+            toast.success('Configuración restaurada', { id: loadingToast });
+            cargarDatos();
+        } catch (error) {
+            toast.error('Error al restaurar', { id: loadingToast });
+        }
+    };
+
     const ejecutarEliminacion = async () => {
         if (!configAEliminar) return;
         const loadingToast = toast.loading('Eliminando...');
@@ -173,6 +215,7 @@ export const ConfiguracionMargenes = () => {
                 <span className="font-medium" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <Settings2 size={16} color="#64748b" />
                     {c.nombre}
+                    {c.activo === false && <span className="badge-eliminado">Desactivado</span>}
                 </span>
             )
         },
@@ -226,9 +269,15 @@ export const ConfiguracionMargenes = () => {
                     <button className="btn-icon edit" onClick={() => abrirModal(c)} title="Editar">
                         <Pencil size={18} />
                     </button>
-                    <button className="btn-icon delete" onClick={() => confirmarEliminacion(c.id, c.nombre)} title="Eliminar">
-                        <Trash2 size={18} />
-                    </button>
+                    {c.activo === false ? (
+                        <button className="btn-icon reactivate" style={{ color: '#16a34a' }} onClick={() => handleReactivar(c.id)} title="Restaurar">
+                            <RefreshCcw size={18} />
+                        </button>
+                    ) : (
+                        <button className="btn-icon delete" onClick={() => confirmarEliminacion(c.id, c.nombre)} title="Enviar a papelera">
+                            <Trash2 size={18} />
+                        </button>
+                    )}
                 </div>
             )
         }
@@ -256,7 +305,7 @@ export const ConfiguracionMargenes = () => {
                 </p>
             </div>
 
-            {/* BUSCADOR */}
+            {/* BUSCADOR Y FILTROS */}
             <div className="toolbar-container">
                 <div className="search-wrapper" style={{ maxWidth: '400px' }}>
                     <SearchBar 
@@ -265,6 +314,26 @@ export const ConfiguracionMargenes = () => {
                         onChange={setSearchTerm} 
                     />
                 </div>
+                <FilterGroup
+                    values={filtros}
+                    onChange={(name, value) => setFiltros(prev => ({ ...prev, [name]: value }))}
+                    onClear={() => {
+                        setFiltros({ estado: 'activos' });
+                        setSearchTerm('');
+                    }}
+                    filters={[
+                        {
+                            name: 'estado',
+                            placeholder: 'Ver Activos',
+                            hideEmptyOption: true,
+                            options: [
+                                { id: 'activos', nombre: 'Ver Activos' },
+                                { id: 'inactivos', nombre: 'Papelera' },
+                                { id: 'todos', nombre: 'Ver Todos' },
+                            ],
+                        },
+                    ]}
+                />
             </div>
 
             {/* TABLA DE DATOS */}
@@ -276,6 +345,7 @@ export const ConfiguracionMargenes = () => {
                         data={datosFiltrados}
                         columns={columns}
                         emptyMessage={searchTerm ? `No se encontraron resultados para "${searchTerm}"` : "No hay configuraciones de márgenes registradas."}
+                        rowClassName={(c) => (c.activo === false ? 'row-inactiva' : '')}
                         defaultSort={{ key: 'nombre', direction: 'asc' }}
                     />
                 )}
@@ -290,7 +360,7 @@ export const ConfiguracionMargenes = () => {
             >
                 <form onSubmit={handleSubmit} className="modal-form">
                     
-                    <div className="form-group">
+                    <div className={`form-group ${errors.nombre && touched.nombre ? 'form-group--error' : ''}`}>
                         <label style={labelStyle}>Nombre del Esquema *</label>
                         <input 
                             style={inputStyle}
@@ -298,14 +368,16 @@ export const ConfiguracionMargenes = () => {
                             name="nombre" 
                             value={formData.nombre} 
                             onChange={handleInputChange}
+                            onBlur={() => handleBlur('nombre')}
                             placeholder="Ej. Márgenes Base 2026, Campaña Navidad..."
                             autoFocus
                             required
                         />
+                        <FieldError message={touched.nombre ? errors.nombre : undefined} />
                     </div>
 
                     <div className="form-row">
-                        <div className="form-group">
+                        <div className={`form-group ${errors.margenTaller && touched.margenTaller ? 'form-group--error' : ''}`}>
                             <label style={labelStyle}>Margen Taller (%) *</label>
                             <input 
                                 style={inputStyle}
@@ -313,14 +385,16 @@ export const ConfiguracionMargenes = () => {
                                 name="margenTaller" 
                                 value={formData.margenTaller} 
                                 onChange={handleInputChange}
+                                onBlur={() => handleBlur('margenTaller')}
                                 placeholder="Ej. 10"
                                 min="0"
                                 step="0.01"
                                 required
                             />
+                            <FieldError message={touched.margenTaller ? errors.margenTaller : undefined} />
                         </div>
 
-                        <div className="form-group">
+                        <div className={`form-group ${errors.margenMayorista && touched.margenMayorista ? 'form-group--error' : ''}`}>
                             <label style={labelStyle}>Margen Mayorista (%) *</label>
                             <input 
                                 style={inputStyle}
@@ -328,16 +402,18 @@ export const ConfiguracionMargenes = () => {
                                 name="margenMayorista" 
                                 value={formData.margenMayorista} 
                                 onChange={handleInputChange}
+                                onBlur={() => handleBlur('margenMayorista')}
                                 placeholder="Ej. 30"
                                 min="0"
                                 step="0.01"
                                 required
                             />
+                            <FieldError message={touched.margenMayorista ? errors.margenMayorista : undefined} />
                         </div>
                     </div>
 
                     <div className="form-row">
-                        <div className="form-group">
+                        <div className={`form-group ${errors.margenPublico && touched.margenPublico ? 'form-group--error' : ''}`}>
                             <label style={labelStyle}>Margen Público (%) *</label>
                             <input 
                                 style={inputStyle}
@@ -345,11 +421,13 @@ export const ConfiguracionMargenes = () => {
                                 name="margenPublico" 
                                 value={formData.margenPublico} 
                                 onChange={handleInputChange}
+                                onBlur={() => handleBlur('margenPublico')}
                                 placeholder="Ej. 50"
                                 min="0"
                                 step="0.01"
                                 required
                             />
+                            <FieldError message={touched.margenPublico ? errors.margenPublico : undefined} />
                         </div>
 
                         <div className="form-group">
@@ -380,11 +458,11 @@ export const ConfiguracionMargenes = () => {
             {/* MODAL ELIMINAR */}
             <ConfirmModal
                 isOpen={isConfirmOpen}
-                title="Eliminar Configuración"
-                message={`¿Estás seguro de eliminar el esquema de márgenes "${configAEliminar?.nombre}"? Las piezas que usen este esquema podrían verse afectadas.`}
+                title="Enviar a Papelera"
+                message={`¿Estás seguro de desactivar el esquema "${configAEliminar?.nombre}"? Las piezas que usen este esquema dejarán de tener margen asignado.`}
                 onConfirm={ejecutarEliminacion}
                 onCancel={() => setIsConfirmOpen(false)}
-                confirmText="Sí, eliminar"
+                confirmText="Sí, desactivar"
             />
         </div>
     );

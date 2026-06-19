@@ -6,8 +6,8 @@
     background: var(--color-background);
     border: 1px solid var(--color-border);
     border-radius: 12px;
-    padding: 24px;
-    margin-top: 1.5rem;
+    padding: 20px;
+    margin-top: 1rem;
 }
 
 .appearance-header {
@@ -29,15 +29,21 @@
 
 .appearance-desc {
     color: var(--color-text-secondary);
-    font-size: 0.95rem;
-    margin-bottom: 24px;
+    font-size: 0.9rem;
+    margin-bottom: 16px;
 }
 
 /* ── Grid Moderno ── */
 .modern-theme-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+}
+
+@media (max-width: 900px) {
+    .modern-theme-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
 /* ── Tarjeta Interactiva ── */
@@ -49,7 +55,7 @@
     text-align: left;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 8px;
     transition: all 0.2s ease;
 }
 
@@ -57,8 +63,8 @@
 .theme-visual-preview {
     position: relative;
     width: 100%;
-    height: 140px;
-    border-radius: 12px;
+    height: 110px;
+    border-radius: 10px;
     border: 2px solid var(--color-border);
     overflow: hidden;
     display: flex;
@@ -80,25 +86,25 @@
 
 /* ── Dibujando la Mini UI ── */
 .preview-navbar {
-    height: 24px;
+    height: 18px;
     background: rgba(150, 150, 150, 0.1);
     display: flex;
     align-items: center;
-    padding: 0 12px;
-    gap: 8px;
+    padding: 0 8px;
+    gap: 6px;
     border-bottom: 1px solid rgba(150, 150, 150, 0.1);
 }
 
 .preview-dot {
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
     border-radius: 50%;
 }
 
 .preview-line {
-    width: 40px;
-    height: 4px;
-    border-radius: 4px;
+    width: 30px;
+    height: 3px;
+    border-radius: 3px;
     background: rgba(150, 150, 150, 0.2);
 }
 
@@ -115,14 +121,14 @@
 
 .preview-content {
     flex: 1;
-    padding: 12px;
+    padding: 8px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
 }
 
 .preview-card {
-    height: 24px;
+    height: 16px;
     background: rgba(150, 150, 150, 0.1);
     border-radius: 4px;
 }
@@ -130,10 +136,10 @@
 /* ── Indicador de Check ── */
 .check-indicator {
     position: absolute;
-    bottom: 12px;
-    right: 12px;
-    width: 24px;
-    height: 24px;
+    bottom: 6px;
+    right: 6px;
+    width: 20px;
+    height: 20px;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -153,31 +159,31 @@
 .theme-info-modern {
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    padding: 0 4px;
+    gap: 2px;
+    padding: 0 2px;
 }
 
 .theme-name-row {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
 }
 
 .theme-color-dot {
-    width: 10px;
-    height: 10px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
 }
 
 .theme-info-modern h4 {
     margin: 0;
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 600;
     color: var(--color-text);
 }
 
 .theme-info-modern span {
-    font-size: 12px;
+    font-size: 11px;
     color: var(--color-text-secondary);
-    line-height: 1.4;
+    line-height: 1.3;
 }

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { ArrowUpDown, ArrowUp, ArrowDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import { ActionDropdown } from '../ActionDropdown/ActionDropdown';
 import './DataTable.css';
@@ -24,12 +24,32 @@ interface DataTableProps<T> {
     className?: string;
     emptyMessage?: string;
     rowClassName?: (item: T) => string;
+    onRowClick?: (item: T) => void;
     renderDetailRow?: (item: T) => React.ReactNode;
     defaultSort?: SortConfig | null;
-    itemsPerPageOptions?: number[]; // Nueva opción para configurar la paginación
+    itemsPerPageOptions?: number[];
 }
 
+const getPageNumbers = (currentPage: number, totalPages: number) => {
+    const pages: (number | 'ellipsis')[] = [];
+    const maxVisible = 5;
 
+    if (totalPages <= maxVisible + 2) {
+        for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+        pages.push(1);
+        if (currentPage > 3) pages.push('ellipsis');
+
+        const start = Math.max(2, currentPage - 1);
+        const end = Math.min(totalPages - 1, currentPage + 1);
+        for (let i = start; i <= end; i++) pages.push(i);
+
+        if (currentPage < totalPages - 2) pages.push('ellipsis');
+        pages.push(totalPages);
+    }
+
+    return pages;
+};
 
 export const DataTable = <T,>({
     data,
@@ -37,32 +57,29 @@ export const DataTable = <T,>({
     className = '',
     emptyMessage = 'No se encontraron registros.',
     rowClassName,
+    onRowClick,
     renderDetailRow,
     defaultSort = null,
-    itemsPerPageOptions = [10, 20, 50]
+    itemsPerPageOptions = [10, 15, 25]
 }: DataTableProps<T>) => {
 
-    itemsPerPageOptions = [10, 15, 25]
-
-    // Estados de ordenamiento y paginación
     const [sortConfig, setSortConfig] = useState<SortConfig | null>(defaultSort);
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(itemsPerPageOptions[0]);
 
-    // Convierte las opciones al formato que espera ActionDropdown:
-    const pageOptions = itemsPerPageOptions.map(n => ({
+    const pageOptions = useMemo(() => itemsPerPageOptions.map(n => ({
         id: String(n),
         nombre: `${n} por pág.`
-    }));
-    // Lógica de ordenamiento (igual que antes)
-    const handleRequestSort = (column: ColumnConfig<T>) => {
+    })), [itemsPerPageOptions]);
+
+    const handleRequestSort = useCallback((column: ColumnConfig<T>) => {
         if (!column.sortable) return;
         let direction: 'asc' | 'desc' = 'desc';
         if (sortConfig && sortConfig.key === column.key && sortConfig.direction === 'desc') {
             direction = 'asc';
         }
         setSortConfig({ key: column.key, direction });
-    };
+    }, [sortConfig]);
 
     const sortedData = useMemo(() => {
         if (!sortConfig) return data;
@@ -82,15 +99,36 @@ export const DataTable = <T,>({
         });
     }, [data, sortConfig, columns]);
 
-    // Lógica de Paginación
     const totalPages = Math.ceil(sortedData.length / itemsPerPage);
+    
     const paginatedData = useMemo(() => {
         const start = (currentPage - 1) * itemsPerPage;
         return sortedData.slice(start, start + itemsPerPage);
     }, [sortedData, currentPage, itemsPerPage]);
 
-    // Resetear a página 1 si cambian los datos
-    React.useEffect(() => { setCurrentPage(1); }, [data]);
+    useEffect(() => { 
+        setCurrentPage(1); 
+    }, [data]);
+
+    const goToPage = useCallback((page: number) => {
+        setCurrentPage(page);
+    }, []);
+
+    const goToPrevPage = useCallback(() => {
+        setCurrentPage(c => Math.max(1, c - 1));
+    }, []);
+
+    const goToNextPage = useCallback(() => {
+        setCurrentPage(c => Math.min(totalPages, c + 1));
+    }, [totalPages]);
+
+    const handleItemsPerPageChange = useCallback((val: string) => {
+        setItemsPerPage(Number(val)); 
+        setCurrentPage(1);
+    }, []);
+
+    const start = ((currentPage - 1) * itemsPerPage) + 1;
+    const end = Math.min(currentPage * itemsPerPage, sortedData.length);
 
     const renderSortIcon = (column: ColumnConfig<T>) => {
         if (!column.sortable) return null;
@@ -98,60 +136,107 @@ export const DataTable = <T,>({
         return sortConfig.direction === 'asc' ? <ArrowUp size={14} className="sort-icon active" /> : <ArrowDown size={14} className="sort-icon active" />;
     };
 
+    const renderPagination = () => {
+        if (sortedData.length === 0) return null;
+
+        return (
+            <div className="pagination-footer">
+                <div className="page-info">
+                    Mostrando {start} - {end} de {sortedData.length}
+                </div>
+                
+                <div className="pagination-controls">
+                    <ActionDropdown
+                        value={String(itemsPerPage)}
+                        options={pageOptions}
+                        onChange={handleItemsPerPageChange}
+                        placeholder="Por página"
+                        className="compact"
+                        dropUp
+                    />
+                    
+                    {totalPages > 1 && (
+                        <>
+                            <button 
+                                type="button"
+                                className="page-btn" 
+                                disabled={currentPage === 1} 
+                                onClick={goToPrevPage}
+                            >
+                                <ChevronLeft size={16} />
+                            </button>
+
+                            {getPageNumbers(currentPage, totalPages).map((page, idx) =>
+                                page === 'ellipsis' ? (
+                                    <span key={`e-${idx}`} className="page-ellipsis">...</span>
+                                ) : (
+                                    <button
+                                        type="button"
+                                        key={page}
+                                        className={`page-num-btn ${currentPage === page ? 'active' : ''}`}
+                                        onClick={() => goToPage(page)}
+                                    >
+                                        {page}
+                                    </button>
+                                )
+                            )}
+                            
+                            <button 
+                                type="button"
+                                className="page-btn" 
+                                disabled={currentPage === totalPages} 
+                                onClick={goToNextPage}
+                            >
+                                <ChevronRight size={16} />
+                            </button>
+                        </>
+                    )}
+                </div>
+            </div>
+        );
+    };
+
     return (
         <div className="datatable-container">
-            <table className={`kyro-table ${className}`}>
-                <thead>
-                    <tr>
-                        {columns.map((col) => (
-                            <th key={col.key} style={{ width: col.width }} className={col.sortable ? 'th-sortable' : ''} onClick={() => handleRequestSort(col)}>
-                                <div className={`th-sortable-content ${col.align === 'center' ? 'center' : ''}`}>
-                                    {col.label} {renderSortIcon(col)}
-                                </div>
-                            </th>
-                        ))}
-                    </tr>
-                </thead>
-                <tbody>
-                    {paginatedData.length > 0 ? (
-                        paginatedData.map((item, index) => (
-                            <React.Fragment key={(item as any).id || index}>
-                                <tr className={rowClassName ? rowClassName(item) : ''}>
-                                    {columns.map((col) => (
-                                        <td key={col.key} style={{ textAlign: col.align || 'left' }}>
-                                            {col.render ? col.render(item) : String((item as any)[col.key] || '')}
-                                        </td>
-                                    ))}
-                                </tr>
-                                {renderDetailRow && renderDetailRow(item)}
-                            </React.Fragment>
-                        ))
-                    ) : (
-                        <tr><td colSpan={columns.length} className="empty-state">{emptyMessage}</td></tr>
-                    )}
-                </tbody>
-            </table>
+            <div className="table-responsive">
+                <table className={`kyro-table ${className}`}>
+                    <thead>
+                        <tr>
+                            {columns.map((col) => (
+                                <th key={col.key} style={{ width: col.width }} className={col.sortable ? 'th-sortable' : ''} onClick={() => handleRequestSort(col)}>
+                                    <div className={`th-sortable-content ${col.align === 'center' ? 'center' : ''}`}>
+                                        {col.label} {renderSortIcon(col)}
+                                    </div>
+                                </th>
+                            ))}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {paginatedData.length > 0 ? (
+                            paginatedData.map((item, index) => (
+                                <React.Fragment key={(item as any).id || index}>
+                                    <tr
+                                        className={rowClassName ? rowClassName(item) : ''}
+                                        onClick={() => onRowClick?.(item)}
+                                        style={{ cursor: onRowClick ? 'pointer' : undefined }}
+                                    >
+                                        {columns.map((col) => (
+                                            <td key={col.key} style={{ textAlign: col.align || 'left' }}>
+                                                {col.render ? col.render(item) : String((item as any)[col.key] || '')}
+                                            </td>
+                                        ))}
+                                    </tr>
+                                    {renderDetailRow && renderDetailRow(item)}
+                                </React.Fragment>
+                            ))
+                        ) : (
+                            <tr><td colSpan={columns.length} className="empty-state">{emptyMessage}</td></tr>
+                        )}
+                    </tbody>
+                </table>
+            </div>
 
-            {/* Footer de Paginación */}
-            {sortedData.length > 0 && (
-                <div className="pagination-footer">
-                    <div className="page-info">
-                        Mostrando {((currentPage - 1) * itemsPerPage) + 1} - {Math.min(currentPage * itemsPerPage, sortedData.length)} de {sortedData.length}
-                    </div>
-                    <div className="pagination-controls">
-                        <ActionDropdown
-                            value={String(itemsPerPage)}
-                            options={pageOptions}
-                            onChange={(val) => { setItemsPerPage(Number(val)); setCurrentPage(1); }}
-                            placeholder="Por página"
-                            className="compact"   // ← agregar className al prop de ActionDropdown
-                        />
-                        <button disabled={currentPage === 1} onClick={() => setCurrentPage(c => c - 1)}><ChevronLeft size={18} /></button>
-                        <span>{currentPage} / {totalPages}</span>
-                        <button disabled={currentPage === totalPages} onClick={() => setCurrentPage(c => c + 1)}><ChevronRight size={18} /></button>
-                    </div>
-                </div>
-            )}
+            {renderPagination()}
         </div>
     );
 };

@@ -10,6 +10,7 @@ import { actualizarColeccion, crearColeccion, eliminarColeccion, obtenerColeccio
 import { SearchBar } from '../../components/ui/SearchBar/SearchBar';
 import { FilterGroup } from '../../components/ui/FilterGroup/FilterGroup';
 import { Loading } from '../../components/Loading/Loading';
+import { FieldError } from '../../components/ui/FieldError/FieldError';
 
 interface FormState {
     nombre: string;
@@ -35,6 +36,16 @@ export const Colecciones = () => {
     const [formData, setFormData] = useState<FormState>({
         nombre: '', codigo: '', descripcion: '', activa: true
     });
+    const [errors, setErrors] = useState<Record<string, string>>({});
+    const [touched, setTouched] = useState<Record<string, boolean>>({});
+
+    const requiredMsg = (label: string) => `${label} es obligatorio`;
+    const validate = (data: FormState): Record<string, string> => {
+        const e: Record<string, string> = {};
+        if (!data.nombre?.trim()) e.nombre = requiredMsg('El nombre');
+        if (!data.codigo?.trim()) e.codigo = requiredMsg('El código');
+        return e;
+    };
 
     // === ESTILOS MÁGICOS A PRUEBA DE FALLOS ===
     const labelStyle = { color: 'var(--color-text)', fontWeight: 700 };
@@ -65,11 +76,19 @@ export const Colecciones = () => {
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value, type } = e.target;
         const checked = (e.target as HTMLInputElement).checked;
-        
-        setFormData(prev => ({ 
-            ...prev, 
-            [name]: type === 'checkbox' ? checked : value 
-        }));
+        const parsedValue = type === 'checkbox' ? checked : value;
+        const next = { ...formData, [name]: parsedValue };
+        setFormData(next);
+        if (touched[name]) {
+            const newErrors = validate(next);
+            setErrors(prev => ({ ...prev, [name]: newErrors[name] }));
+        }
+    };
+
+    const handleBlur = (field: string) => {
+        setTouched(prev => ({ ...prev, [field]: true }));
+        const newErrors = validate(formData);
+        setErrors(prev => ({ ...prev, [field]: newErrors[field] }));
     };
 
     const abrirModal = (coleccion?: ColeccionData) => {
@@ -90,19 +109,25 @@ export const Colecciones = () => {
                 activa: true
             });
         }
+        setErrors({});
+        setTouched({});
         setIsModalOpen(true);
     };
 
     const cerrarModal = () => {
         setIsModalOpen(false);
         setEditingId(null);
+        setErrors({});
+        setTouched({});
     };
 
     const handleColeccionSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         
-        if (!formData.nombre.trim()) return toast.error('El nombre de la colección es obligatorio');
-        if (!formData.codigo.trim()) return toast.error('El código es obligatorio');
+        const validationErrors = validate(formData);
+        setErrors(validationErrors);
+        setTouched({ nombre: true, codigo: true });
+        if (Object.keys(validationErrors).length > 0) return;
 
         const loadingToast = toast.loading(editingId ? 'Actualizando colección...' : 'Registrando colección...');
 
@@ -312,7 +337,7 @@ export const Colecciones = () => {
                 zIndex={998} 
             >
                 <form onSubmit={handleColeccionSubmit} className="modal-form">
-                    <div className="form-group">
+                    <div className={`form-group ${errors.nombre && touched.nombre ? 'form-group--error' : ''}`}>
                         <label style={labelStyle}>Nombre de Colección *</label>
                         <input
                             style={inputStyle}
@@ -320,13 +345,15 @@ export const Colecciones = () => {
                             name="nombre"
                             value={formData.nombre}
                             onChange={handleInputChange}
+                            onBlur={() => handleBlur('nombre')}
                             placeholder="Ej. Barroco Primavera"
                             autoFocus
                             required
                         />
+                        <FieldError message={touched.nombre ? errors.nombre : undefined} />
                     </div>
                     
-                    <div className="form-group">
+                    <div className={`form-group ${errors.codigo && touched.codigo ? 'form-group--error' : ''}`}>
                         <label style={labelStyle}>Código *</label>
                         <input
                             style={inputStyle}
@@ -334,9 +361,11 @@ export const Colecciones = () => {
                             name="codigo"
                             value={formData.codigo}
                             onChange={handleInputChange}
+                            onBlur={() => handleBlur('codigo')}
                             placeholder="Ej. COL-BARR-26"
                             required
                         />
+                        <FieldError message={touched.codigo ? errors.codigo : undefined} />
                     </div>
 
                     <div className="form-group">

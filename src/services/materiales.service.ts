@@ -19,6 +19,7 @@ export interface Material {
     stockDisponible: number;     // Asignado inicialmente por el backend
     stockMinimo: number;
     stockMaximo?: number;
+    observaciones?: string;
     fechaCompra: string;
     activo: boolean;
     
@@ -91,8 +92,8 @@ export const eliminarMaterial = async (id: string): Promise<{ mensaje: string }>
     return data;
 };
 
-// Reactiva un material eliminado.
 export const reactivarMaterial = async (id: string): Promise<Material> => {
-    const { data } = await kyroApi.put(`/materiales/${id}`, { activo: true });
+    // 🚨 Fíjate en el "/reactivar" al final de la URL
+    const { data } = await kyroApi.put(`/materiales/${id}/reactivar`);
     return data;
 };
