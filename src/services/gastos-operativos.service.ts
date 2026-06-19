@@ -4,8 +4,8 @@ export interface GastoOperativo {
     id: string;
     concepto: string;
     monto: number;
-    categoria: string; 
-    periodicidad: 'SEMANAL' | 'MENSUAL' | 'ANUAL' | 'UNICA'; // 👈 El nuevo campo obligatorio de Zod
+    categoria: string;
+    periodicidad: 'SEMANAL' | 'MENSUAL' | 'ANUAL' | 'UNICA';
     fecha: string;
     observaciones?: string;
     activo: boolean;
@@ -13,8 +13,8 @@ export interface GastoOperativo {
 
 export type GastoFormData = Omit<GastoOperativo, 'id' | 'activo'>;
 
-export const obtenerGastos = async (): Promise<GastoOperativo[]> => {
-    const { data } = await kyroApi.get('/gastos-operativos'); // Ajusta la ruta si es diferente
+export const obtenerGastos = async (estado: string = 'activos'): Promise<GastoOperativo[]> => {
+    const { data } = await kyroApi.get('/gastos-operativos', { params: { estado } });
     return data;
 };
 
@@ -30,5 +30,10 @@ export const actualizarGasto = async (id: string, gastoData: Partial<GastoFormDa
 
 export const eliminarGasto = async (id: string): Promise<{ mensaje: string }> => {
     const { data } = await kyroApi.delete(`/gastos-operativos/${id}`);
+    return data;
+};
+
+export const reactivarGasto = async (id: string): Promise<{ mensaje: string }> => {
+    const { data } = await kyroApi.put(`/gastos-operativos/${id}/reactivar`);
     return data;
 };

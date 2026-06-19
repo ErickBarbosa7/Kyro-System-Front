@@ -15,6 +15,7 @@ import { FilterGroup } from '../../components/ui/FilterGroup/FilterGroup';
 import { DataTable, type ColumnConfig } from '../../components/ui/DataTable/DataTable';
 import { formatPhone, formatPhoneInput } from '../../utils/formatters';
 import { Loading } from '../../components/Loading/Loading';
+import { FieldError } from '../../components/ui/FieldError/FieldError';
 
 import './Proveedores.css';
 
@@ -47,6 +48,9 @@ export const Proveedores = () => {
         observaciones: ''
     });
 
+    const [errors, setErrors] = useState<Record<string, string>>({});
+    const [touched, setTouched] = useState<Record<string, boolean>>({});
+
     // === ESTILOS MÁGICOS A PRUEBA DE FALLOS ===
     // Estas variables forzarán los colores sin romper el cambio de tema
     const labelStyle = { color: 'var(--color-text)', fontWeight: 700 };
@@ -59,6 +63,13 @@ export const Proveedores = () => {
             return `https://${url}`;
         }
         return url;
+    };
+
+    const requiredMsg = (label: string) => `${label} es obligatorio`;
+    const validate = (data: ProveedorData): Record<string, string> => {
+        const e: Record<string, string> = {};
+        if (!data.nombre?.trim()) e.nombre = requiredMsg('El nombre');
+        return e;
     };
 
     // Estados de Confirmación
@@ -96,7 +107,11 @@ export const Proveedores = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        
+        const validationErrors = validate(formData);
+        setErrors(validationErrors);
+        setTouched({ nombre: true });
+        if (Object.keys(validationErrors).length > 0) return;
+
         if (!formData.nombre.trim()) {
             toast.error('El nombre del proveedor es obligatorio');
             return;
@@ -161,10 +176,22 @@ export const Proveedores = () => {
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setFormData(prev => {
-            if (name === 'telefono') return { ...prev, telefonos: [formatPhoneInput(value)] };
-            if (name === 'email') return { ...prev, emails: [value] };
-            return { ...prev, [name]: value };
+            let updated: ProveedorData;
+            if (name === 'telefono') updated = { ...prev, telefonos: [formatPhoneInput(value)] };
+            else if (name === 'email') updated = { ...prev, emails: [value] };
+            else updated = { ...prev, [name]: value };
+            if (touched[name]) {
+                const newErrors = validate(updated);
+                setErrors(prev => ({ ...prev, [name]: newErrors[name] }));
+            }
+            return updated;
         });
+    };
+
+    const handleBlur = (field: string) => {
+        setTouched(prev => ({ ...prev, [field]: true }));
+        const newErrors = validate(formData);
+        setErrors(prev => ({ ...prev, [field]: newErrors[field] }));
     };
 
     const handleArrayChange = (index: number, field: 'telefonos' | 'emails', value: string) => {
@@ -205,6 +232,8 @@ export const Proveedores = () => {
                 emails: [''], paginaWeb: '', redesSociales: '', observaciones: '' 
             });
         }
+        setErrors({});
+        setTouched({});
         setIsModalOpen(true);
     };
 
@@ -453,7 +482,7 @@ export const Proveedores = () => {
                         </div>
                         
                         <form onSubmit={handleSubmit} className="modal-form">
-                            <div className="form-group">
+                            <div className={`form-group ${errors.nombre && touched.nombre ? 'form-group--error' : ''}`}>
                                 <label style={labelStyle}>Nombre de la Empresa *</label>
                                 <input 
                                     style={inputStyle}
@@ -461,9 +490,11 @@ export const Proveedores = () => {
                                     name="nombre" 
                                     value={formData.nombre} 
                                     onChange={handleInputChange}
+                                    onBlur={() => handleBlur('nombre')}
                                     placeholder="Ej. Metales del Centro"
                                     autoFocus
                                 />
+                                <FieldError message={touched.nombre ? errors.nombre : undefined} />
                             </div>
 
                             <div className="form-row">

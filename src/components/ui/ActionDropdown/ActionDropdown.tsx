@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { ChevronDown, Plus, Pencil, Trash2, Trash } from 'lucide-react';
 import './ActionDropdown.css';
 
@@ -12,16 +13,14 @@ interface ActionDropdownProps {
     options: Option[];
     onChange: (value: string) => void;
     placeholder?: string;
-    
-    // Funciones opcionales para habilitar los botones
     onAdd?: () => void;
     addLabel?: string;
-    
     onEdit?: (id: string) => void;
     onDelete?: (id: string, nombre: string) => void;
-    
     onRecover?: () => void;
     recoverLabel?: string;
+    className?: string;
+    dropUp?: boolean;
 }
 
 export const ActionDropdown: React.FC<ActionDropdownProps> = ({
@@ -34,34 +33,85 @@ export const ActionDropdown: React.FC<ActionDropdownProps> = ({
     onEdit,
     onDelete,
     onRecover,
-    recoverLabel = 'Papelera'
+    recoverLabel = 'Papelera',
+    className = '',
+    dropUp = false
 }) => {
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
+    const [menuStyle, setMenuStyle] = useState<React.CSSProperties>({});
 
-    // Cierra el menú al hacer clic fuera del componente
+    const toggleMenu = () => {
+        if (!isOpen && dropdownRef.current) {
+            const rect = dropdownRef.current.getBoundingClientRect();
+            if (dropUp) {
+                setMenuStyle({
+                    position: 'absolute',
+                    bottom: window.innerHeight - rect.top + 8,
+                    left: rect.left + window.scrollX,
+                    width: rect.width,
+                    zIndex: 999999
+                });
+            } else {
+                setMenuStyle({
+                    position: 'absolute',
+                    top: rect.bottom + window.scrollY + 8,
+                    left: rect.left + window.scrollX,
+                    width: rect.width,
+                    zIndex: 999999
+                });
+            }
+        }
+        setIsOpen(!isOpen);
+    };
+
+    
+    // Cerrar al hacer click fuera o al hacer scroll (para que no quede flotando raro)
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                // Truco: también checar que el clic no sea dentro del portal
+                const menuEl = document.querySelector('.dropdown-menu-portal');
+                if (menuEl && menuEl.contains(event.target as Node)) return;
                 setIsOpen(false);
             }
         };
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, []);
 
+        const handleScroll = (event: Event) => {
+            const menuEl = document.querySelector('.dropdown-menu-portal');
+            // Si el elemento que está haciendo scroll es el menú mismo o algo adentro de él, lo ignoramos
+            if (menuEl && (event.target === menuEl || menuEl.contains(event.target as Node))) {
+                return; 
+            }
+            // Si el scroll es en la tabla, el modal o la página de fondo, lo cerramos
+            setIsOpen(false);
+        };
+
+        if (isOpen) {
+            document.addEventListener('mousedown', handleClickOutside);
+            window.addEventListener('scroll', handleScroll, true); 
+            window.addEventListener('resize', () => setIsOpen(false));
+        }
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+            window.removeEventListener('scroll', handleScroll, true);
+            window.removeEventListener('resize', () => setIsOpen(false));
+        };
+    }, [isOpen]);
+
+    
     const selectedOption = options.find(opt => opt.id === value);
 
-    // === ESTILOS MÁGICOS A PRUEBA DE FALLOS ===
     const triggerStyle = { backgroundColor: 'var(--color-background)', color: 'var(--color-text)' };
-    const menuStyle = { backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-border)' };
+    const menuColors = { backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-border)' };
 
     return (
-        <div className="custom-dropdown" ref={dropdownRef}>
+        <div className={`custom-dropdown ${className}`} ref={dropdownRef}>
             {/* DISPARADOR BLINDADO */}
             <div 
                 className="dropdown-trigger" 
-                onClick={() => setIsOpen(!isOpen)}
+                onClick={toggleMenu}
                 aria-expanded={isOpen}
                 style={triggerStyle}
             >
@@ -75,11 +125,10 @@ export const ActionDropdown: React.FC<ActionDropdownProps> = ({
                 <ChevronDown size={18} color="var(--color-text-secondary)" />
             </div>
 
-            {/* MENÚ DESPLEGABLE BLINDADO */}
-            {isOpen && (
-                <div className="dropdown-menu" style={menuStyle}>
+            {/* MENÚ DESPLEGABLE EN PORTAL */}
+            {isOpen && createPortal(
+                <div className="dropdown-menu dropdown-menu-portal" style={{ ...menuStyle, ...menuColors }}>
                     
-                    {/* Lista de opciones iteradas */}
                     {options.map(opt => (
                         <div 
                             key={opt.id} 
@@ -92,7 +141,6 @@ export const ActionDropdown: React.FC<ActionDropdownProps> = ({
                         >
                             <span className="dropdown-item-text">{opt.nombre}</span>
                             
-                            {/* Acciones de Editar y Eliminar */}
                             <div className="item-actions">
                                 {onEdit && (
                                     <button 
@@ -126,17 +174,14 @@ export const ActionDropdown: React.FC<ActionDropdownProps> = ({
                         </div>
                     ))}
 
-                    {/* Mensaje si no hay opciones activas */}
                     {options.length === 0 && (
                         <div style={{ padding: '10px', textAlign: 'center', fontSize: '13px', color: 'var(--color-text-secondary)' }}>
                             No hay opciones disponibles
                         </div>
                     )}
 
-                    {/* LÍNEA DIVISORA SI HAY BOTONES EXTRA */}
                     {(onAdd || onRecover) && <div className="dropdown-divider" style={{ backgroundColor: 'var(--color-border)' }}></div>}
 
-                    {/* BOTÓN: CREAR  */}
                     {onAdd && (
                         <button 
                             type="button" 
@@ -152,7 +197,6 @@ export const ActionDropdown: React.FC<ActionDropdownProps> = ({
                         </button>
                     )}
 
-                    {/* BOTÓN: RECUPERAR / PAPELERA */}
                     {onRecover && (
                         <button 
                             type="button" 
@@ -167,7 +211,8 @@ export const ActionDropdown: React.FC<ActionDropdownProps> = ({
                             {recoverLabel}
                         </button>
                     )}
-                </div>
+                </div>,
+                document.body
             )}
         </div>
     );

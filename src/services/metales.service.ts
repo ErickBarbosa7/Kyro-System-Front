@@ -16,9 +16,8 @@ export type UpdateMetalData = Partial<MetalData>;
 
 // ENDPOINTS DE METALES
 
-export const obtenerMetales = async () => {
-    // kyroApi ya sabe que la base es '/api', solo le pasamos el endpoint
-    const { data } = await kyroApi.get('/metales');
+export const obtenerMetales = async (estado: string = 'activos') => {
+    const { data } = await kyroApi.get('/metales', { params: { estado } });
     return data;
 };
 

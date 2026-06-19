@@ -4,8 +4,6 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
-    padding: 24px;
-    min-height: 100vh;
 }
 
 .module-header {
@@ -35,7 +33,7 @@
 }
 
 /* --- Barra de Herramientas --- */
-.toolbar-container {
+.module-container .toolbar-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -46,12 +44,12 @@
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
-.search-wrapper {
+.module-container .search-wrapper {
     flex: 1;
 }
 
 /* --- Tabla y Celdas Específicas --- */
-.table-container {
+.module-container .table-container {
     background-color: #ffffff;
     border-radius: 12px;
     border: 1px solid var(--color-border, #e2e8f0);
@@ -101,28 +99,28 @@
 }
 
 /* --- Formulario dentro del Modal --- */
-.modal-form {
+.module-container .modal-form {
     display: flex;
     flex-direction: column;
     gap: 20px;
     padding-top: 10px;
 }
 
-.form-group {
+.module-container .form-group {
     display: flex;
     flex-direction: column;
     gap: 8px;
 }
 
-.form-group label {
+.module-container .form-group label {
     font-size: 14px;
     font-weight: 600;
     color: var(--color-text-main, #334155);
 }
 
-.form-group input,
-.form-group select,
-.form-group textarea {
+.module-container .form-group input,
+.module-container .form-group select,
+.module-container .form-group textarea {
     padding: 10px 14px;
     border: 1px solid var(--color-border, #cbd5e1);
     border-radius: 8px;
@@ -132,69 +130,29 @@
     font-family: inherit;
 }
 
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
+.module-container .form-group input:focus,
+.module-container .form-group select:focus,
+.module-container .form-group textarea:focus {
     border-color: var(--color-primary, #0f172a);
     box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.1);
 }
 
-.form-group textarea {
+.module-container .form-group textarea {
     resize: vertical;
     min-height: 60px;
 }
 
-/* Layout de cuadrícula para inputs lado a lado */
-.form-row {
+.module-container .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 16px;
 }
 
-/* --- Footer del Modal --- */
-.modal-footer {
+.module-container .modal-footer {
     display: flex;
     justify-content: flex-end;
     gap: 12px;
     margin-top: 10px;
     padding-top: 20px;
     border-top: 1px solid var(--color-border, #e2e8f0);
-}
-
-/* Botones genéricos (Por si no están definidos globalmente) */
-.btn-primary {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background-color: var(--color-primary, #0f172a);
-    color: white;
-    padding: 10px 16px;
-    border-radius: 8px;
-    font-weight: 600;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-.btn-primary:hover {
-    background-color: #1e293b;
-}
-
-.btn-secondary {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background-color: #ffffff;
-    color: #475569;
-    padding: 10px 16px;
-    border-radius: 8px;
-    font-weight: 600;
-    border: 1px solid #cbd5e1;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.btn-secondary:hover {
-    background-color: #f8fafc;
-    color: #0f172a;
 }

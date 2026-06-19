@@ -1,20 +1,26 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { toast } from 'react-hot-toast';
-import { Plus, Pencil, Trash2, Receipt, Calendar, FileText } from 'lucide-react';
+import { Plus, Pencil, Trash2, Receipt, Calendar, FileText, RefreshCcw } from 'lucide-react';
 
 // IMPORTACIONES DE COMPONENTES
 import { SearchBar } from '../../components/ui/SearchBar/SearchBar';
 import { ConfirmModal } from '../../components/ConfirmModal';
+import { FilterGroup } from '../../components/ui/FilterGroup/FilterGroup';
 import { Modal } from '../../components/ui/Modal/Modal';
 import { DataTable, type ColumnConfig } from '../../components/ui/DataTable/DataTable';
+<<<<<<< HEAD
 import { Loading } from '../../components/Loading/Loading';
+=======
+import { FieldError } from '../../components/ui/FieldError/FieldError';
+>>>>>>> feature/metales
 
 // SERVICIOS
 import { 
     obtenerGastos, 
     crearGasto, 
     actualizarGasto, 
-    eliminarGasto, 
+    eliminarGasto,
+    reactivarGasto,
     type GastoOperativo 
 } from '../../services/gastos-operativos.service';
 
@@ -36,6 +42,7 @@ export const GastosOperativos = () => {
     const [gastos, setGastos] = useState<GastoOperativo[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
+    const [filtros, setFiltros] = useState({ estado: 'activos' });
 
     // === ESTADOS DEL MODAL Y FORMULARIO ===
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -49,6 +56,9 @@ export const GastosOperativos = () => {
         observaciones: ''
     });
 
+    const [errors, setErrors] = useState<Record<string, string>>({});
+    const [touched, setTouched] = useState<Record<string, boolean>>({});
+
     // === ESTILOS MÁGICOS A PRUEBA DE FALLOS ===
     const labelStyle = { color: 'var(--color-text)', fontWeight: 700 };
     const inputStyle = { backgroundColor: 'var(--color-background)', color: 'var(--color-text)' };
@@ -60,15 +70,19 @@ export const GastosOperativos = () => {
     // === EFECTOS ===
     useEffect(() => {
         cargarGastos();
-    }, []);
+    }, [filtros.estado]);
 
     const cargarGastos = async () => {
         setIsLoading(true);
         try {
+<<<<<<< HEAD
             const [data] = await Promise.all([
                 obtenerGastos(),
                 new Promise(resolve => setTimeout(resolve, 800))
             ]);
+=======
+            const data = await obtenerGastos(filtros.estado);
+>>>>>>> feature/metales
             setGastos(data);
             setIsLoading(false); // Solo se detiene el loader si tiene éxito
         } catch (error) {
@@ -81,7 +95,18 @@ export const GastosOperativos = () => {
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { name, value, type } = e.target;
         const parsedValue = type === 'number' ? (value === '' ? '' : Number(value)) : value;
-        setFormData(prev => ({ ...prev, [name]: parsedValue }));
+        const updated = { ...formData, [name]: parsedValue };
+        setFormData(updated);
+        if (touched[name]) {
+            const newErrors = validate(updated);
+            setErrors(prev => ({ ...prev, [name]: newErrors[name] }));
+        }
+    };
+
+    const handleBlur = (field: string) => {
+        setTouched(prev => ({ ...prev, [field]: true }));
+        const newErrors = validate(formData);
+        setErrors(prev => ({ ...prev, [field]: newErrors[field] }));
     };
 
     const abrirModal = (gasto?: GastoOperativo) => {
@@ -106,6 +131,8 @@ export const GastosOperativos = () => {
                 observaciones: ''
             });
         }
+        setErrors({});
+        setTouched({});
         setIsModalOpen(true);
     };
 
@@ -114,9 +141,22 @@ export const GastosOperativos = () => {
         setEditingId(null);
     };
 
+    const requiredMsg = (label: string) => `${label} es obligatorio`;
+    const validate = (data: FormState): Record<string, string> => {
+        const e: Record<string, string> = {};
+        if (!data.concepto?.trim()) e.concepto = requiredMsg('El concepto');
+        if (Number(data.monto) <= 0) e.monto = 'El monto debe ser mayor a 0';
+        if (!data.fecha) e.fecha = 'La fecha es obligatoria';
+        return e;
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        
+        const validationErrors = validate(formData);
+        setErrors(validationErrors);
+        setTouched({ concepto: true, monto: true, fecha: true });
+        if (Object.keys(validationErrors).length > 0) return;
+
         if (!formData.concepto.trim()) return toast.error('El concepto es obligatorio');
         if (Number(formData.monto) <= 0) return toast.error('El monto debe ser mayor a 0');
         if (!formData.fecha) return toast.error('La fecha es obligatoria');
@@ -154,6 +194,17 @@ export const GastosOperativos = () => {
         setIsConfirmOpen(true);
     };
 
+    const handleReactivar = async (id: string) => {
+        const loadingToast = toast.loading('Restaurando gasto...');
+        try {
+            await reactivarGasto(id);
+            toast.success('Gasto restaurado', { id: loadingToast });
+            cargarGastos();
+        } catch (error) {
+            toast.error('Error al restaurar', { id: loadingToast });
+        }
+    };
+
     const ejecutarEliminacion = async () => {
         if (!gastoAEliminar) return;
         const loadingToast = toast.loading('Eliminando...');
@@ -183,6 +234,7 @@ export const GastosOperativos = () => {
             render: (g: GastoOperativo) => (
                 <div>
                     <span className="font-medium" style={{ display: 'block' }}>{g.concepto}</span>
+                    {g.activo === false && <span className="badge-eliminado">Desactivado</span>}
                     {g.observaciones && <span className="text-muted" style={{ fontSize: '12px' }}>{g.observaciones}</span>}
                 </div>
             )
@@ -237,9 +289,15 @@ export const GastosOperativos = () => {
                     <button className="btn-icon edit" onClick={() => abrirModal(g)} title="Editar">
                         <Pencil size={18} />
                     </button>
-                    <button className="btn-icon delete" onClick={() => handleDeleteClick(g.id, g.concepto)} title="Eliminar">
-                        <Trash2 size={18} />
-                    </button>
+                    {g.activo === false ? (
+                        <button className="btn-icon reactivate" style={{ color: '#16a34a' }} onClick={() => handleReactivar(g.id)} title="Restaurar">
+                            <RefreshCcw size={18} />
+                        </button>
+                    ) : (
+                        <button className="btn-icon delete" onClick={() => handleDeleteClick(g.id, g.concepto)} title="Enviar a papelera">
+                            <Trash2 size={18} />
+                        </button>
+                    )}
                 </div>
             )
         }
@@ -281,6 +339,26 @@ export const GastosOperativos = () => {
                         onChange={setSearchTerm} 
                     />
                 </div>
+                <FilterGroup
+                    values={filtros}
+                    onChange={(name, value) => setFiltros(prev => ({ ...prev, [name]: value }))}
+                    onClear={() => {
+                        setFiltros({ estado: 'activos' });
+                        setSearchTerm('');
+                    }}
+                    filters={[
+                        {
+                            name: 'estado',
+                            placeholder: 'Ver Activos',
+                            hideEmptyOption: true,
+                            options: [
+                                { id: 'activos', nombre: 'Ver Activos' },
+                                { id: 'inactivos', nombre: 'Papelera' },
+                                { id: 'todos', nombre: 'Ver Todos' },
+                            ],
+                        },
+                    ]}
+                />
             </div>
 
             {/* TABLA LIMPIA: CARGANDO INFINITAMENTE SI HAY ERROR */}
@@ -292,6 +370,7 @@ export const GastosOperativos = () => {
                         data={gastosFiltrados}
                         columns={columns}
                         emptyMessage={searchTerm ? `No se encontraron gastos para "${searchTerm}"` : "No hay gastos registrados."}
+                        rowClassName={(g) => (g.activo === false ? 'row-inactiva' : '')}
                         defaultSort={{ key: 'fecha', direction: 'desc' }}
                     />
                 )}
@@ -306,7 +385,7 @@ export const GastosOperativos = () => {
             >
                 <form onSubmit={handleSubmit} className="modal-form">
                     
-                    <div className="form-group">
+                    <div className={`form-group ${errors.concepto && touched.concepto ? 'form-group--error' : ''}`}>
                         <label style={labelStyle}>Concepto del Gasto *</label>
                         <input 
                             style={inputStyle}
@@ -314,14 +393,15 @@ export const GastosOperativos = () => {
                             name="concepto" 
                             value={formData.concepto} 
                             onChange={handleInputChange}
+                            onBlur={() => handleBlur('concepto')}
                             placeholder="Ej. Renta del taller, Recibo de luz..."
                             autoFocus
-                            required
                         />
+                        <FieldError message={touched.concepto ? errors.concepto : undefined} />
                     </div>
 
                     <div className="form-row">
-                        <div className="form-group">
+                        <div className={`form-group ${errors.monto && touched.monto ? 'form-group--error' : ''}`}>
                             <label style={labelStyle}>Monto Total ($) *</label>
                             <input 
                                 style={inputStyle}
@@ -329,10 +409,11 @@ export const GastosOperativos = () => {
                                 name="monto" 
                                 value={formData.monto} 
                                 onChange={handleInputChange}
+                                onBlur={() => handleBlur('monto')}
                                 step="0.01"
                                 min="0"
-                                required
                             />
+                            <FieldError message={touched.monto ? errors.monto : undefined} />
                         </div>
 
                         <div className="form-group">
@@ -355,7 +436,7 @@ export const GastosOperativos = () => {
                             </select>
                         </div>
 
-                        <div className="form-group">
+                        <div className={`form-group ${errors.fecha && touched.fecha ? 'form-group--error' : ''}`}>
                             <label style={labelStyle}>Fecha del Gasto *</label>
                             <input 
                                 style={inputStyle}
@@ -363,8 +444,9 @@ export const GastosOperativos = () => {
                                 name="fecha" 
                                 value={formData.fecha} 
                                 onChange={handleInputChange}
-                                required
+                                onBlur={() => handleBlur('fecha')}
                             />
+                            <FieldError message={touched.fecha ? errors.fecha : undefined} />
                         </div>
                     </div>
 
@@ -392,11 +474,11 @@ export const GastosOperativos = () => {
             {/* MODAL ELIMINAR */}
             <ConfirmModal
                 isOpen={isConfirmOpen}
-                title="Eliminar Gasto"
-                message={`¿Estás seguro de eliminar el registro de "${gastoAEliminar?.concepto}"? Esta acción se reflejará en tus reportes financieros.`}
+                title="Enviar a Papelera"
+                message={`¿Estás seguro de desactivar el gasto "${gastoAEliminar?.concepto}"? Dejará de aparecer en los reportes.`}
                 onConfirm={ejecutarEliminacion}
                 onCancel={() => setIsConfirmOpen(false)}
-                confirmText="Sí, eliminar"
+                confirmText="Sí, desactivar"
             />
         </div>
     );

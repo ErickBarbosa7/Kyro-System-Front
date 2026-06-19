@@ -34,8 +34,8 @@ export const Modal: React.FC<ModalProps> = ({
     if (!isOpen) return null;
 
     return (
-        <div className="modal-overlay" style={{ zIndex }}>
-            <div className="modal-content" style={{ maxWidth }}>
+        <div className="modal-overlay" style={{ zIndex }} onClick={onClose}>
+            <div className="modal-content" style={{ maxWidth }} onClick={(e) => e.stopPropagation()}>
                 <div className="modal-header">
                     <div className="modal-title-wrapper">
                         {typeof title === 'string' ? <h3>{title}</h3> : title}

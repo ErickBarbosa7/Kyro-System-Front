@@ -1,74 +1,166 @@
-/* ==========================================
-   DASHBOARD (Theme-Aware)
-   ========================================== */
+/* Dashboard — usa el mismo design system que el resto de la app */
 
-.dashboard-container {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
+.dash-loading {
+    color: var(--color-text-secondary);
+    font-size: 0.85rem;
+    padding: 24px 0;
 }
 
-.dashboard-header h1 {
-    font-size: 1.8rem;
-    color: var(--color-text); /* 👈 Usamos la variable global */
-    margin: 0 0 8px 0;
-}
-
-.dashboard-header p {
-    color: var(--color-text-secondary); /* 👈 Usamos la variable global */
-    font-size: 1rem;
-    margin: 0;
-}
-
-/* ── Tarjetas (Stats Grid) ── */
-.stats-grid {
+/* ── Grid de dos columnas para los paneles ── */
+.dash-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: 1fr 1fr;
     gap: 20px;
 }
 
+@media (max-width: 900px) {
+    .dash-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ── Paneles (Actividad, Últimas piezas, Alertas) ── */
+.dash-card-module {
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    background: var(--color-surface);
+    overflow: hidden;
+}
+
+.dash-card-module--alert {
+    border-color: var(--color-danger);
+    background: color-mix(in srgb, var(--color-danger) 6%, var(--color-surface));
+}
+
+.dash-card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 16px 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-text);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.dash-card-module--alert .dash-card-header {
+    color: var(--color-danger);
+    border-bottom-color: color-mix(in srgb, var(--color-danger) 20%, var(--color-border));
+}
+
+.dash-card-content {
+    padding: 8px 14px;
+}
+
+/* ── Filas de actividad / piezas ── */
+.dash-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 6px;
+    border-bottom: 1px solid var(--color-border);
+    font-size: 0.82rem;
+    color: var(--color-text);
+}
+
+.dash-row:last-child {
+    border-bottom: none;
+}
+
+.dash-row-main {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.dash-row-meta {
+    font-size: 0.72rem;
+    color: var(--color-text-secondary);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* ── Badge de tipo de movimiento ── */
+.dash-badge {
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 5px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    flex-shrink: 0;
+}
+
+.dash-badge--entrada { background: #dcfce7; color: #16a34a; }
+.dash-badge--salida  { background: #fee2e2; color: #dc2626; }
+.dash-badge--merma   { background: #fce7f3; color: #db2777; }
+.dash-badge--ajuste  { background: #fef3c7; color: #d97706; }
+
+/* ── Código de pieza (monospace) ── */
+.dash-code {
+    font-weight: 700;
+    font-size: 0.78rem;
+    color: var(--color-primary);
+    font-family: monospace;
+    letter-spacing: 0.3px;
+    flex-shrink: 0;
+}
+
+/* ── Alertas ── */
+.dash-alert-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 4px;
+    font-size: 0.84rem;
+    color: var(--color-text);
+}
+
+.dash-alert-dot {
+    font-size: 10px;
+    flex-shrink: 0;
+}
+
+/* ── Estado vacío ── */
+.dash-empty {
+    text-align: center;
+    color: var(--color-text-secondary);
+    font-size: 0.84rem;
+    padding: 24px 8px;
+    margin: 0;
+    line-height: 1.6;
+}
+
+.dash-empty strong {
+    color: var(--color-text);
+}
+
+/* ── Tarjetas de métricas (usando .stat-card existente) ── */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 16px;
+}
+
 .stat-card {
-    background: var(--color-surface); /* Fondo adaptable */
-    border: 1px solid var(--color-border); /* Borde adaptable */
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
     border-radius: 12px;
     padding: 20px;
     display: flex;
     flex-direction: column;
     position: relative;
     box-shadow: var(--shadow-sm);
-    transition: transform 0.2s ease, border-color 0.2s ease;
+    transition: transform 0.2s ease;
 }
 
 .stat-card:hover {
     transform: translateY(-4px);
 }
 
-/* Tarjeta Activa (Toma el color principal elegido) */
 .active-card {
-    /* Le ponemos una línea superior del color del tema (Azul, Terracota, etc) */
-    border-top: 4px solid var(--color-primary); 
-}
-
-/* Tarjeta Pendiente */
-.pending-card {
-    background: color-mix(in srgb, var(--color-surface) 60%, transparent);
-    border: 1px dashed var(--color-border);
-}
-
-.badge-pronto {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    background: color-mix(in srgb, var(--color-warning) 15%, transparent);
-    color: var(--color-warning);
-    padding: 4px 10px;
-    border-radius: 20px;
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
+    border-top: 4px solid var(--color-primary);
 }
 
 .stat-title {
@@ -76,68 +168,19 @@
     align-items: center;
     gap: 8px;
     color: var(--color-text-secondary);
-    font-size: 14px;
+    font-size: 0.8rem;
     font-weight: 600;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
 }
 
 .stat-value {
-    font-size: 28px;
+    font-size: 1.5rem;
     font-weight: 700;
     color: var(--color-text);
     margin-bottom: 4px;
 }
 
-.blur-value {
-    filter: blur(4px);
-    opacity: 0.5;
-    user-select: none;
-}
-
 .stat-desc {
-    font-size: 13px;
+    font-size: 0.75rem;
     color: var(--color-text-secondary);
-}
-
-/* ── Sección de Construcción ── */
-.recent-activity-section {
-    margin-top: 16px;
-}
-
-.recent-activity-section h2 {
-    font-size: 1.2rem;
-    color: var(--color-text);
-    margin: 0 0 16px 0;
-}
-
-.construction-box {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 40px 20px;
-    background: var(--color-surface); /* Fondo adaptable */
-    border: 2px dashed var(--color-border); /* Borde adaptable */
-    border-radius: 12px;
-    color: var(--color-text-secondary);
-}
-
-.construction-icon-wrapper {
-    background: color-mix(in srgb, var(--color-primary) 10%, transparent);
-    color: var(--color-primary); /* Toma el color del tema */
-    padding: 16px;
-    border-radius: 50%;
-    margin-bottom: 16px;
-}
-
-.construction-box h3 {
-    color: var(--color-text);
-    margin: 0 0 8px 0;
-}
-
-.construction-box p {
-    max-width: 500px;
-    margin: 0;
-    line-height: 1.5;
 }

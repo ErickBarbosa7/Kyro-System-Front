@@ -1,0 +1,124 @@
+.pieza-card {
+    position: relative;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 14px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.pieza-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    border-color: var(--color-primary);
+}
+
+.card-image-wrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+    background: var(--color-background);
+    overflow: hidden;
+}
+
+.card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.card-image-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-size: 0.6rem;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.card-badge.discontinued {
+    background: #fef3c7;
+    color: #d97706;
+}
+
+.card-badge.draft {
+    background: #e0e7ff;
+    color: #4f46e5;
+}
+
+.card-body {
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.card-clave {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--color-primary);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.card-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-text);
+    margin: 0;
+    line-height: 1.3;
+}
+
+.card-tipo {
+    font-size: 0.75rem;
+    color: var(--color-text-secondary);
+}
+
+.card-actions {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    display: flex;
+    gap: 4px;
+    opacity: 0;
+    transition: opacity 0.15s;
+}
+
+.pieza-card:hover .card-actions {
+    opacity: 1;
+}
+
+.card-edit-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    color: var(--color-primary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.card-edit-btn:hover {
+    background: var(--color-primary);
+    color: white;
+    border-color: var(--color-primary);
+}

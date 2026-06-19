@@ -7,6 +7,7 @@ import { ActionDropdown } from '../../components/ui/ActionDropdown/ActionDropdow
 import { Modal } from '../../components/ui/Modal/Modal'; 
 import { FilterGroup } from '../../components/ui/FilterGroup/FilterGroup';
 import { DataTable, type ColumnConfig } from '../../components/ui/DataTable/DataTable';
+
 import { generarPDFMateriales } from '../../utils/reportes';
 
 // COMPONENTES EXTERNOS
@@ -19,6 +20,7 @@ import { obtenerUnidades, eliminarUnidad, reactivarUnidad } from '../../services
 import { obtenerMateriales, crearMaterial, actualizarMaterial, eliminarMaterial, reactivarMaterial, type Material } from '../../services/materiales.service';
 import { obtenerProveedores } from '../../services/proveedores.service';
 import { Loading } from '../../components/Loading/Loading';
+import { FieldError } from '../../components/ui/FieldError/FieldError';
 
 import './Materiales.css';
 
@@ -32,6 +34,7 @@ interface FormState {
     stockMinimo: string | number;
     stockMaximo: string | number;
     imagenUrl: string;
+    observaciones: string;
 }
 
 export const Materiales = () => {
@@ -60,8 +63,11 @@ export const Materiales = () => {
     const [editingId, setEditingId] = useState<string | null>(null);
     const [formData, setFormData] = useState<FormState>({
         nombre: '', categoriaId: '', proveedorId: '', unidadMedidaId: '', 
-        precioCompra: '', cantidadComprada: '', stockMinimo: 0, stockMaximo: '', imagenUrl: '',
+        precioCompra: '', cantidadComprada: '', stockMinimo: 0, stockMaximo: '', imagenUrl: '', observaciones: '',
     });
+
+    const [errors, setErrors] = useState<Record<string, string>>({});
+    const [touched, setTouched] = useState<Record<string, boolean>>({});
 
     // === ESTILOS MÁGICOS A PRUEBA DE FALLOS ===
     const labelStyle = { color: 'var(--color-text)', fontWeight: 700 };
@@ -87,35 +93,26 @@ export const Materiales = () => {
 
     // === EFECTOS ===
     useEffect(() => {
-        setIsLoading(true);
-        obtenerMateriales()
-            .then((data) => {
-                setMateriales(data);
-            })
-            .catch((error) => {
-                console.error("Error al cargar materiales:", error);
-                toast.error('Error al sincronizar el catálogo');
-            })
-            .finally(() => {
-                setIsLoading(false);
-            });
-    }, []);
+        cargarDatos();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [filtros.estado, filtros.categoriaId, filtros.proveedorId]);
 
     const cargarDatos = async () => {
         setIsLoading(true);
         try {
             const [materialesData, proveedoresData, categoriasData, unidadesData] = await Promise.all([
-                obtenerMateriales(filtros.estado),
+                obtenerMateriales(filtros.estado as any),
                 obtenerProveedores('activos'),
                 obtenerCategorias('activas'),
                 obtenerUnidades('activas')
             ]);
+
             setMateriales(materialesData);
             setProveedores(proveedoresData);
             setCategorias(categoriasData);
             setUnidades(unidadesData);
         } catch (error) {
-            toast.error('Error al cargar la información');
+            toast.error('Error al cargar los datos de materiales');
         } finally {
             setIsLoading(false);
         }
@@ -129,8 +126,24 @@ export const Materiales = () => {
         }
     };
 
+    const requiredMsg = (label: string) => `${label} es obligatorio`;
+    const validate = (data: FormState): Record<string, string> => {
+        const e: Record<string, string> = {};
+        if (!data.nombre?.trim()) e.nombre = requiredMsg('El nombre');
+        if (!data.categoriaId) e.categoriaId = 'La categoría es obligatoria';
+        if (!data.unidadMedidaId) e.unidadMedidaId = 'La unidad es obligatoria';
+        if (Number(data.precioCompra) <= 0) e.precioCompra = 'El precio debe ser mayor a 0';
+        if (!editingId && Number(data.cantidadComprada) <= 0) e.cantidadComprada = 'Ingresa una cantidad inicial';
+        return e;
+    };
+
     const handleMaterialSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        const validationErrors = validate(formData);
+        setErrors(validationErrors);
+        setTouched({ nombre: true, categoriaId: true, unidadMedidaId: true, precioCompra: true, cantidadComprada: true });
+        if (Object.keys(validationErrors).length > 0) return;
+
         if (!formData.nombre.trim()) return toast.error('El nombre es obligatorio');
         if (!formData.categoriaId) return toast.error('Debes seleccionar una categoría');
         if (!formData.unidadMedidaId) return toast.error('La unidad es obligatoria');
@@ -152,6 +165,10 @@ export const Materiales = () => {
                 dataToSend.append('proveedorId', formData.proveedorId);
             }
 
+            if (formData.observaciones) {
+                dataToSend.append('observaciones', formData.observaciones);
+            }
+
             if (imageFile) {
                 dataToSend.append('imagen', imageFile);
             }
@@ -166,7 +183,8 @@ export const Materiales = () => {
             cerrarModal();
             cargarDatos();
         } catch (error: any) {
-            toast.error(error.response?.data?.error || 'Error al guardar', { id: loadingToast });
+            const errorMsg = error.response?.data?.error || 'Ocurrió un error al guardar';
+            toast.error(errorMsg, { id: loadingToast });
         }
     };
 
@@ -183,14 +201,17 @@ export const Materiales = () => {
                 stockMinimo: material.stockMinimo ?? 0, 
                 stockMaximo: material.stockMaximo ?? '', 
                 imagenUrl: material.imagenUrl || '',
+                observaciones: material.observaciones || '',
             });
         } else {
             setEditingId(null);
             setFormData({
                 nombre: '', categoriaId: '', proveedorId: '', unidadMedidaId: '',
-                precioCompra: '', cantidadComprada: '', stockMinimo: 0, stockMaximo: '', imagenUrl: '',
+                precioCompra: '', cantidadComprada: '', stockMinimo: 0, stockMaximo: '', imagenUrl: '', observaciones: '',
             });
         }
+        setErrors({});
+        setTouched({});
         setIsModalOpen(true);
     };
 
@@ -201,10 +222,21 @@ export const Materiales = () => {
         setImagePreview('');
     };
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { name, value, type } = e.target;
         const parsedValue = type === 'number' ? (value === '' ? '' : Number(value)) : value;
-        setFormData(prev => ({ ...prev, [name]: parsedValue }));
+        const updated = { ...formData, [name]: parsedValue };
+        setFormData(updated);
+        if (touched[name]) {
+            const newErrors = validate(updated);
+            setErrors(prev => ({ ...prev, [name]: newErrors[name] }));
+        }
+    };
+
+    const handleBlur = (field: string) => {
+        setTouched(prev => ({ ...prev, [field]: true }));
+        const newErrors = validate(formData);
+        setErrors(prev => ({ ...prev, [field]: newErrors[field] }));
     };
 
     const abrirCategoriaModal = (id?: string) => {
@@ -230,17 +262,17 @@ export const Materiales = () => {
     };
 
     const ejecutarReactivacionCategoria = async (id: string) => {
-        const loadingToast = toast.loading('Restaurando...');
+        const loadingToast = toast.loading('Restaurando categoría...');
         try {
             await reactivarCategoria(id);
-            toast.success('Categoría restaurada', { id: loadingToast });
+            toast.success('Categoría restaurada exitosamente', { id: loadingToast });
             
             const inactivas = await obtenerCategorias('inactivas');
             setCategoriasInactivas(inactivas);
             cargarDatos(); 
             if (inactivas.length === 0) setIsPapeleraCategoriasOpen(false);
         } catch (error) {
-            toast.error('Error al restaurar', { id: loadingToast });
+            toast.error('Error al restaurar categoría', { id: loadingToast });
         }
     };
 
@@ -257,17 +289,17 @@ export const Materiales = () => {
     };
 
     const ejecutarReactivacionUnidad = async (id: string) => {
-        const loadingToast = toast.loading('Restaurando...');
+        const loadingToast = toast.loading('Restaurando unidad...');
         try {
             await reactivarUnidad(id);
-            toast.success('Unidad restaurada', { id: loadingToast });
+            toast.success('Unidad restaurada exitosamente', { id: loadingToast });
             
             const inactivas = await obtenerUnidades('inactivas');
             setUnidadesInactivas(inactivas);
             cargarDatos(); 
             if (inactivas.length === 0) setIsPapeleraUnidadesOpen(false);
         } catch (error) {
-            toast.error('Error al restaurar', { id: loadingToast });
+            toast.error('Error al restaurar unidad', { id: loadingToast });
         }
     };
 
@@ -305,7 +337,7 @@ export const Materiales = () => {
         const loadingToast = toast.loading('Reactivando material...');
         try {
             await reactivarMaterial(id);
-            toast.success('Material reactivado', { id: loadingToast });
+            toast.success('Material reactivado exitosamente', { id: loadingToast });
             cargarDatos();
         } catch (error) {
             toast.error('Error al reactivar', { id: loadingToast });
@@ -406,7 +438,7 @@ export const Materiales = () => {
                         <Pencil size={18} />
                     </button>
                     {mat.activo === false ? (
-                        <button className="btn-icon reactivate" style={{ color: '#16a34a' }} onClick={() => handleReactivar(mat.id)} title="Reactivar">
+                        <button className="btn-icon reactivate" onClick={() => handleReactivar(mat.id)} title="Reactivar">
                             <RefreshCcw size={18} />
                         </button>
                     ) : (
@@ -421,14 +453,12 @@ export const Materiales = () => {
 
     return (
         <div className="module-container">
-            {/* CABECERA PRINCIPAL CON COLOR FORZADO */}
             <div className="module-header">
                 <div className="module-title">
                     <Box size={28} color="var(--color-primary)" />
                     <h2 style={{ color: 'var(--color-primary)' }}>Catálogo de Materiales</h2>
                 </div>
-                
-                <div style={{ display: 'flex', gap: '12px' }}>
+                <div className="header-actions">
                     <button 
                         className="btn-secondary" 
                         style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
@@ -437,7 +467,6 @@ export const Materiales = () => {
                     >
                         <FileText size={20} /> Exportar PDF
                     </button>
-
                     <button className="btn-primary" onClick={() => abrirModal()}>
                         <Plus size={20} /> Nuevo Material
                     </button>
@@ -496,11 +525,12 @@ export const Materiales = () => {
                         emptyMessage={searchTerm ? `No se encontraron resultados para "${searchTerm}"` : "No hay materiales registrados."}
                         rowClassName={(mat) => (mat.activo === false ? 'row-inactiva' : '')}
                         defaultSort={{ key: 'nombre', direction: 'desc' }}
+                        itemsPerPageOptions={[5, 10, 25, 50]}
                     />
                 )}
             </div>
 
-            {/* MODAL PRINCIPAL: AHORA CON TITULO DE COLOR Y ESTILOS EN INPUTS */}
+            {/* MODAL PRINCIPAL: MATERIALES */}
             <Modal
                 isOpen={isModalOpen}
                 onClose={cerrarModal}
@@ -539,7 +569,7 @@ export const Materiales = () => {
                         </div>
 
                         <div className="header-fields-col">
-                            <div className="form-group">
+                            <div className={`form-group ${errors.nombre && touched.nombre ? 'form-group--error' : ''}`}>
                                 <label style={labelStyle}>Nombre del Material *</label>
                                 <input
                                     style={inputStyle}
@@ -547,18 +577,25 @@ export const Materiales = () => {
                                     name="nombre"
                                     value={formData.nombre}
                                     onChange={handleInputChange}
+                                    onBlur={() => handleBlur('nombre')}
                                     placeholder="Ej. Agata Verde"
-                                    required
                                 />
+                                <FieldError message={touched.nombre ? errors.nombre : undefined} />
                             </div>
 
-                            <div className="form-group">
+                            <div className={`form-group ${errors.categoriaId && touched.categoriaId ? 'form-group--error' : ''}`}>
                                 <label style={labelStyle}>Categoría *</label>
                                 <div className="input-group-actions">
                                     <ActionDropdown
                                         value={formData.categoriaId}
                                         options={categorias}
-                                        onChange={(val) => setFormData(prev => ({ ...prev, categoriaId: val }))}
+                                        onChange={(val) => {
+                                            setFormData(prev => ({ ...prev, categoriaId: val }));
+                                            if (touched.categoriaId) {
+                                                const newErrors = validate({ ...formData, categoriaId: val });
+                                                setErrors(prev => ({ ...prev, categoriaId: newErrors.categoriaId }));
+                                            }
+                                        }}
                                         placeholder="Selecciona una categoría"
                                         addLabel="Crear Categoría"
                                         onAdd={() => abrirCategoriaModal()}
@@ -568,6 +605,7 @@ export const Materiales = () => {
                                         recoverLabel="Papelera"
                                     />
                                 </div>
+                                <FieldError message={touched.categoriaId ? errors.categoriaId : undefined} />
                             </div>
                         </div>
                     </div>
@@ -583,13 +621,19 @@ export const Materiales = () => {
                     </div>
 
                     <div className="form-row">
-                        <div className="form-group">
+                        <div className={`form-group ${errors.unidadMedidaId && touched.unidadMedidaId ? 'form-group--error' : ''}`}>
                             <label style={labelStyle}>Unidad de Compra *</label>
                             <div className="input-group-actions">
                                 <ActionDropdown
                                     value={formData.unidadMedidaId}
                                     options={unidades}
-                                    onChange={(val) => setFormData(prev => ({ ...prev, unidadMedidaId: val }))}
+                                    onChange={(val) => {
+                                        setFormData(prev => ({ ...prev, unidadMedidaId: val }));
+                                        if (touched.unidadMedidaId) {
+                                            const newErrors = validate({ ...formData, unidadMedidaId: val });
+                                            setErrors(prev => ({ ...prev, unidadMedidaId: newErrors.unidadMedidaId }));
+                                        }
+                                    }}
                                     placeholder=" Unidad"
                                     addLabel="Crear Unidad"
                                     onAdd={() => {
@@ -608,9 +652,10 @@ export const Materiales = () => {
                                     recoverLabel="Papelera"
                                 />
                             </div>
+                            <FieldError message={touched.unidadMedidaId ? errors.unidadMedidaId : undefined} />
                         </div>
 
-                        <div className="form-group">
+                        <div className={`form-group ${errors.precioCompra && touched.precioCompra ? 'form-group--error' : ''}`}>
                             <label style={labelStyle}>Precio de Compra ($) *</label>
                             <input
                                 style={inputStyle}
@@ -618,13 +663,14 @@ export const Materiales = () => {
                                 name="precioCompra"
                                 value={formData.precioCompra}
                                 onChange={handleInputChange}
+                                onBlur={() => handleBlur('precioCompra')}
                                 step="0.01"
                                 min="0"
-                                required
                             />
+                            <FieldError message={touched.precioCompra ? errors.precioCompra : undefined} />
                         </div>
 
-                        <div className="form-group">
+                        <div className={`form-group ${errors.cantidadComprada && touched.cantidadComprada ? 'form-group--error' : ''}`}>
                             <label style={labelStyle}>
                                 {editingId ? 'Cantidad' : 'Cantidad Comprada *'}
                             </label>
@@ -634,11 +680,12 @@ export const Materiales = () => {
                                 name="cantidadComprada"
                                 value={formData.cantidadComprada}
                                 onChange={handleInputChange}
+                                onBlur={() => handleBlur('cantidadComprada')}
                                 step="0.01"
                                 min="0"
                                 placeholder="Ej. 10 o 2.5"
-                                required
                             />
+                            <FieldError message={touched.cantidadComprada ? errors.cantidadComprada : undefined} />
                         </div>
                     </div>
 
@@ -653,6 +700,18 @@ export const Materiales = () => {
                         </div>
                     </div>
 
+                    <div className="form-group">
+                        <label style={labelStyle}>Observaciones</label>
+                        <textarea
+                            style={inputStyle}
+                            name="observaciones"
+                            value={formData.observaciones}
+                            onChange={handleInputChange}
+                            placeholder="Notas adicionales sobre el material..."
+                            rows={2}
+                        />
+                    </div>
+
                     <div className="modal-footer" style={{ marginTop: '24px', paddingTop: '20px', borderTop: '1px solid var(--color-border)', display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
                         <button type="button" className="btn-secondary" onClick={cerrarModal}>Cancelar</button>
                         <button type="submit" className="btn-primary">Guardar Material</button>
@@ -660,7 +719,6 @@ export const Materiales = () => {
                 </form>
             </Modal>
 
-            {/* MODAL SECUNDARIO: CATEGORÍA */}
             <CategoriaModal
                 isOpen={isCategoriaModalOpen}
                 onClose={() => setIsCategoriaModalOpen(false)}
@@ -671,7 +729,6 @@ export const Materiales = () => {
                 }}
             />
 
-            {/* MODAL SECUNDARIO: UNIDAD DE MEDIDA */}
             <UnidadMedidaModal 
                 isOpen={isUnidadModalOpen}
                 onClose={() => setIsUnidadModalOpen(false)}
@@ -682,7 +739,6 @@ export const Materiales = () => {
                 }}
             />
 
-            {/* MODAL: PAPELERA DE CATEGORÍAS */}
             <Modal
                 isOpen={isPapeleraCategoriasOpen}
                 onClose={() => setIsPapeleraCategoriasOpen(false)}
@@ -719,7 +775,6 @@ export const Materiales = () => {
                 </div>
             </Modal>
 
-            {/* MODAL: PAPELERA DE UNIDADES */}
             <Modal
                 isOpen={isPapeleraUnidadesOpen}
                 onClose={() => setIsPapeleraUnidadesOpen(false)}
@@ -755,7 +810,6 @@ export const Materiales = () => {
                 </div>
             </Modal>
 
-            {/* MODAL GLOBAL DE CONFIRMACIÓN */}
             <ConfirmModal
                 isOpen={isConfirmOpen}
                 title={`Eliminar ${itemAEliminar?.tipo === 'categoria' ? 'Categoría' : itemAEliminar?.tipo === 'unidad' ? 'Unidad' : 'Material'}`}

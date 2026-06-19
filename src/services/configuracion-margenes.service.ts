@@ -6,16 +6,14 @@ export interface ConfiguracionMargen {
     margenTaller: number;
     margenMayorista: number;
     margenPublico: number;
-    descuentoMaximo?: number; 
+    descuentoMaximo?: number;
     activo: boolean;
 }
 
-// 2. Definimos lo que enviamos al crear/editar (excluimos id y activo)
 export type MargenFormData = Omit<ConfiguracionMargen, 'id' | 'activo'>;
 
-// 3. Funciones de conexión a tu backend
-export const obtenerConfiguraciones = async (): Promise<ConfiguracionMargen[]> => {
-    const { data } = await kyroApi.get('/configuracion-margenes');
+export const obtenerConfiguraciones = async (estado: string = 'activos'): Promise<ConfiguracionMargen[]> => {
+    const { data } = await kyroApi.get('/configuracion-margenes', { params: { estado } });
     return data;
 };
 
@@ -31,5 +29,10 @@ export const actualizarConfiguracion = async (id: string, configData: Partial<Ma
 
 export const eliminarConfiguracion = async (id: string): Promise<{ mensaje: string }> => {
     const { data } = await kyroApi.delete(`/configuracion-margenes/${id}`);
+    return data;
+};
+
+export const reactivarConfiguracion = async (id: string): Promise<{ mensaje: string }> => {
+    const { data } = await kyroApi.put(`/configuracion-margenes/${id}/reactivar`);
     return data;
 };

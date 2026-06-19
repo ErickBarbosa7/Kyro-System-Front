@@ -1,0 +1,100 @@
+.inventario-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+}
+
+.inv-stat-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 18px;
+    border-radius: 12px;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+}
+
+.inv-stat-card div {
+    display: flex;
+    flex-direction: column;
+}
+
+.inv-stat-value {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--color-text);
+}
+
+.inv-stat-label {
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    font-weight: 500;
+}
+
+.badge-tipo {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.badge-tipo--material {
+    background-color: #dbeafe;
+    color: #2563eb;
+}
+
+.badge-tipo--metal {
+    background-color: #fef3c7;
+    color: #d97706;
+}
+
+.badge-estado {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.badge-estado--disponible {
+    background-color: #dcfce7;
+    color: #16a34a;
+}
+
+.badge-estado--bajo {
+    background-color: #fef3c7;
+    color: #d97706;
+}
+
+.badge-estado--critico {
+    background-color: #fee2e2;
+    color: #dc2626;
+}
+
+.badge-estado--agotado {
+    background-color: #fce7f3;
+    color: #db2777;
+}
+
+.stock-valor {
+    font-weight: 600;
+}
+
+.stock-agotado {
+    color: #db2777;
+}
+
+.stock-critico {
+    color: #dc2626;
+}
+
+.stock-bajo {
+    color: #d97706;
+}
+
+.stock-unidad {
+    font-weight: 400;
+    font-size: 12px;
+    color: var(--color-text-secondary);
+}

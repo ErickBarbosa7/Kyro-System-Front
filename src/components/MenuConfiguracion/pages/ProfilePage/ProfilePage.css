@@ -1,18 +1,18 @@
 
 /* ── Títulos de Sección ── */
 .config-section .section-title {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
 }
 
 .config-section h2 {
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     color: var(--color-text);
-    margin: 0 0 0.5rem 0;
+    margin: 0 0 0.3rem 0;
 }
 
 .config-section .section-title p {
     color: var(--color-text-secondary);
-    font-size: 0.95rem;
+    font-size: 0.85rem;
     margin: 0;
 }
 
@@ -20,45 +20,45 @@
 .profile-identity-card {
     display: flex;
     align-items: center;
-    gap: 16px;
-    padding: 16px 20px;
+    gap: 14px;
+    padding: 12px 16px;
     background: var(--color-background);
     border: 1px solid var(--color-border);
     border-radius: 12px;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
     flex-shrink: 0;
 }
 
 .profile-avatar-lg {
-    width: 52px;
-    height: 52px;
-    min-width: 52px;
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
     border-radius: 50%;
     background: var(--color-primary);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 18px;
+    font-size: 15px;
     font-weight: 700;
     color: white;
     letter-spacing: 0.5px;
 }
 
 .profile-identity-name {
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 600;
     color: var(--color-text);
-    margin: 0 0 4px 0;
+    margin: 0 0 2px 0;
 }
 
 .profile-identity-role {
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 600;
     color: var(--color-text-secondary);
     background: var(--color-surface);
     border: 1px solid var(--color-border);
     border-radius: 20px;
-    padding: 3px 10px;
+    padding: 2px 8px;
 }
 
 /* ── Contenedor General de Campos ── */
@@ -75,8 +75,8 @@
 .profile-field {
     display: flex;
     align-items: center;
-    gap: 16px;
-    padding: 14px 20px;
+    gap: 14px;
+    padding: 10px 16px;
     border-bottom: 1px solid var(--color-border);
     transition: background 0.15s;
     position: relative; 
@@ -91,8 +91,8 @@
 }
 
 .profile-field-icon {
-    width: 36px;
-    height: 36px;
+    width: 32px;
+    height: 32px;
     border-radius: 8px;
     background: var(--color-surface);
     border: 1px solid var(--color-border);
@@ -105,15 +105,15 @@
 
 /* ── Contenedor de Texto (Limita el ancho para que el lápiz quede cerca) ── */
 .profile-field-content {
-    min-width: 225px; /* Ancho perfecto para que quede alineado y cerca */
+    min-width: 200px;
     display: flex;
     flex-direction: column;
 }
 
 .profile-field-content label {
-    font-size: 11px;
+    font-size: 10px;
     color: var(--color-text-secondary);
-    margin-bottom: 2px;
+    margin-bottom: 1px;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     font-weight: 700;
@@ -121,12 +121,12 @@
 
 /* ── Textos e Inputs (Inline Edit) ── */
 .field-value-text {
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 500;
     color: var(--color-text);
     margin: 0;
     line-height: 1.2;
-    padding: 4px 0;
+    padding: 3px 0;
 }
 
 .field-placeholder-text {
@@ -138,8 +138,8 @@
 .profile-field-content input {
     border: none;
     background: transparent;
-    padding: 4px 0;
-    font-size: 15px;
+    padding: 3px 0;
+    font-size: 14px;
     font-weight: 500;
     color: var(--color-text);
     font-family: inherit;
@@ -228,19 +228,19 @@
 .profile-action-container {
     display: flex;
     justify-content: flex-end;
-    margin-top: 1.5rem;
+    margin-top: 1rem;
 }
 
 .profile-save-btn {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 12px 24px;
+    padding: 10px 20px;
     background: var(--color-primary);
     border: none;
     border-radius: 12px;
     color: white;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 600;
     cursor: pointer;
     box-shadow: 0 4px 12px color-mix(in srgb, var(--color-primary) 20%, transparent);

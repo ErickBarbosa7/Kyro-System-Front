@@ -5,7 +5,6 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
-    height: 100%;
 }
 
 .module-header {
@@ -42,115 +41,15 @@
     gap: 15px;
 }
 
-/* ========================================== */
-/* BOTONES GLOBALES                           */
-/* ========================================== */
-.btn-primary {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background-color: var(--color-primary);
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 10px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: transform 0.15s, opacity 0.15s;
-}
-
-.btn-primary:hover {
-    opacity: 0.9;
-    transform: scale(0.98);
-}
-
-.btn-secondary {
-    background-color: transparent;
-    color: var(--color-text-secondary);
-    border: 1px solid var(--color-border);
-    padding: 10px 20px;
-    border-radius: 10px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.15s;
-}
-
-.btn-secondary:hover {
-    background-color: var(--color-background-2);
-}
-
-/* ========================================== */
-/* BARRA DE HERRAMIENTAS (Buscador y Filtros) */
-/* ========================================== */
-.toolbar-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 20px;
-    background: var(--color-toolbar) !important;
-    padding: 16px;
-    border-radius: 12px;
-}
-
-.search-wrapper {
-    flex: 1; 
-    min-width: 250px; 
-    max-width: 450px; 
-}
-
-@media (max-width: 600px) {
-    .toolbar-container {
-        flex-direction: column;
-        align-items: stretch;
-        padding: 1rem;
-    }
-    
-    .search-wrapper {
-        max-width: 100%; 
-    }
-}
 
 /* ========================================== */
 /* TABLA PRINCIPAL                            */
 /* ========================================== */
-.table-container {
+.module-container .table-container {
     background-color: transparent; 
     border: none;
     border-radius: 0;
     overflow: hidden;
-}
-
-.kyro-table {
-    width: 100%;
-    border-collapse: collapse;
-    text-align: left;
-}
-
-.kyro-table th {
-    background-color: var(--color-background);
-    padding: 14px 20px;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--color-text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    border-bottom: 1px solid var(--color-border);
-}
-
-.kyro-table td {
-    padding: 16px 20px;
-    font-size: 14px;
-    color: var(--color-text);
-    border-bottom: 1px solid var(--color-border);
-    transition: background-color 0.2s;
-}
-
-.kyro-table tbody tr:hover td {
-    background-color: var(--color-background);
-}
-
-.kyro-table tbody tr.expanded-detail-row:hover td {
-    background-color: var(--color-surface);
 }
 
 .font-medium {
@@ -392,22 +291,20 @@
     flex: 1;
 }
 
-.form-row {
+.module-container .form-row {
     display: flex;
     gap: 16px;
 }
 
-/* 1. Etiquetas más brillantes y legibles */
-.form-group label {
+.module-container .form-group label {
     font-size: 13px;
     font-weight: 700; 
-    color: var(--color-text); /* Evita que se queden grises en modo oscuro */
+    color: var(--color-text);
     letter-spacing: 0.3px;
 }
 
-/* 2. Cajas de texto con mejor contraste */
-.form-group input,
-.form-group textarea {
+.module-container .form-group input,
+.module-container .form-group textarea {
     padding: 12px 14px;
     border: 1px solid var(--color-border);
     border-radius: 10px;
@@ -419,21 +316,19 @@
     transition: all 0.2s ease;
 }
 
-.form-group textarea {
+.module-container .form-group textarea {
     resize: vertical;
 }
 
-/* 3. Arreglar los placeholders "fantasma" */
-.form-group input::placeholder,
-.form-group textarea::placeholder {
+.module-container .form-group input::placeholder,
+.module-container .form-group textarea::placeholder {
     color: var(--color-text-secondary);
     opacity: 0.8; 
     font-weight: 400;
 }
 
-/* 4. Efecto Premium al hacer clic (Focus) */
-.form-group input:focus,
-.form-group textarea:focus {
+.module-container .form-group input:focus,
+.module-container .form-group textarea:focus {
     border-color: var(--color-primary);
     box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 15%, transparent);
 }
@@ -441,7 +336,7 @@
 /* ========================================== */
 /* FOOTER DEL MODAL Y BOTONES EXTRA           */
 /* ========================================== */
-.modal-footer {
+.module-container .modal-footer {
     display: flex;
     justify-content: flex-end;
     gap: 12px;
@@ -450,7 +345,7 @@
     border-top: 1px solid var(--color-border);
 }
 
-.btn-add-item {
+.module-container .btn-add-item {
     color: var(--color-primary);
     background: transparent;
     border: none;
@@ -462,6 +357,6 @@
     width: fit-content;
 }
 
-.btn-add-item:hover {
+.module-container .btn-add-item:hover {
     text-decoration: underline;
 }

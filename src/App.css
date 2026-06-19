@@ -9,7 +9,6 @@ body {
     background-color: var(--color-background); 
     font-family: var(--font-main);
     color: var(--color-text);
-    overflow: hidden; /* Corta el scroll fantasma del navegador */
 }
 
 *, *::before, *::after {
@@ -36,37 +35,86 @@ body {
     overflow: hidden;
 }
 
-/* 4. El "Lienzo" blanco/claro donde viven las pantallas (Dashboard, Settings, etc.) */
+/* 4. El "Lienzo" donde viven las pantallas */
 .kyro-main-content {
     flex: 1;
     min-height: 0;
     background-color: var(--color-surface);
-    border-radius: 20px; /* Las curvas perfectas */
-    padding: 24px; /* Padding interno más compacto */
-    
-    /* EL ÚNICO SCROLL PERMITIDO EN TODA LA APP */
-    overflow-y: auto; 
+    border-radius: 20px;
+    overflow-y: auto;
     overflow-x: hidden;
-    
+    padding: 52px;
     border: 1px solid var(--color-border);
     box-shadow: var(--shadow-sm);
 }
 
-/* 5. Scrollbar flotante para que no tape tus bordes curvos de 20px */
+/* 5. Scrollbar flotante */
 .kyro-main-content::-webkit-scrollbar {
-    width: 6px; /* Más delgado y sutil */
+    width: 6px;
 }
 
 .kyro-main-content::-webkit-scrollbar-track {
     background: transparent;
-    margin: 20px; /* Empuja el inicio y fin del scroll lejos de tus esquinas curvas */
+    margin: 20px;
 }
 
 .kyro-main-content::-webkit-scrollbar-thumb {
     background-color: color-mix(in srgb, var(--color-border) 80%, transparent);
-    border-radius: 10px; /* Barra redondeada */
+    border-radius: 10px;
 }
 
 .kyro-main-content::-webkit-scrollbar-thumb:hover {
     background-color: var(--color-text-secondary);
+}
+
+/* ==========================================
+   BOTONES GLOBALES
+   ========================================== */
+.btn-primary {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: var(--color-primary);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+    white-space: nowrap;
+}
+
+.btn-primary:hover {
+    background-color: var(--color-primary-hover);
+    transform: translateY(-1px);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-secondary {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: transparent;
+    color: var(--color-text-secondary);
+    border: 1px solid var(--color-border);
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+    white-space: nowrap;
+}
+
+.btn-secondary:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+    background-color: var(--color-background-2);
 }
