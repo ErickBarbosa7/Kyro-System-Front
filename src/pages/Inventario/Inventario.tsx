@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { toast } from 'react-hot-toast';
 import { Package, AlertTriangle, Archive, BarChart3 } from 'lucide-react';
 import { FilterGroup } from '../../components/ui/FilterGroup/FilterGroup';

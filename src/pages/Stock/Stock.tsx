@@ -8,7 +8,7 @@ import { FilterGroup } from '../../components/ui/FilterGroup/FilterGroup';
 import { DataTable, type ColumnConfig } from '../../components/ui/DataTable/DataTable';
 import { Loading } from '../../components/Loading/Loading';
 import { FieldError } from '../../components/ui/FieldError/FieldError';
-import { obtenerMovimientos, crearMovimiento, type CrearMovimientoData } from '../../services/stock.service';
+import { obtenerMovimientos, crearMovimiento, type CrearMovimientoData, type MovimientoData } from '../../services/stock.service';
 import { obtenerMateriales } from '../../services/materiales.service';
 import { obtenerMetales } from '../../services/metales.service';
 import { obtenerAcabados } from '../../services/acabados.service';

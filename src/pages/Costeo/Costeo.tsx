@@ -77,6 +77,9 @@ export const Costeo = () => {
             precioTaller: number;
             precioMayorista: number;
             precioPublico: number;
+            margenTaller: number;
+            margenMayorista: number;
+            margenPublico: number;
         } | null;
     } | null>(null);
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pencil, Image as ImageIcon, Gem } from 'lucide-react';
+import { Pencil, Gem } from 'lucide-react';
 import type { PiezaSummary } from '../types';
 import './PiezaCard.css';
 

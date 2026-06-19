@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { X, Edit3, Gem, Clock, Weight, Image as ImageIcon, Package, Layers, Wrench, DollarSign } from 'lucide-react';
+import { X, Edit3, Gem, Clock, Weight, Image as ImageIcon, Package, Layers, DollarSign } from 'lucide-react';
 import { Loading } from '../../../components/Loading/Loading';
 import { obtenerPiezaPorId } from '../../../services/piezas.service';
 import { calcularTotales } from '../../../services/costeo.service';

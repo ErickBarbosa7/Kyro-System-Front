@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { toast } from 'react-hot-toast';
-import { ArrowLeft, Save, Image as ImageIcon, Check, X } from 'lucide-react';
+import { ArrowLeft, Save, Image as ImageIcon } from 'lucide-react';
 import { ActionDropdown } from '../../../components/ui/ActionDropdown/ActionDropdown';
 import { FieldError } from '../../../components/ui/FieldError/FieldError';
 import { Loading } from '../../../components/Loading/Loading';

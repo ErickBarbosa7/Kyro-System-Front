@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { toast } from 'react-hot-toast';
 import { Plus, Pencil, Trash2, Gem, RefreshCcw, LayoutGrid, List, Image as ImageIcon } from 'lucide-react';
 import { SearchBar } from '../../components/ui/SearchBar/SearchBar';
@@ -7,8 +7,6 @@ import { FilterGroup } from '../../components/ui/FilterGroup/FilterGroup';
 import { DataTable, type ColumnConfig } from '../../components/ui/DataTable/DataTable';
 import { Loading } from '../../components/Loading/Loading';
 import { obtenerPiezas, eliminarPieza, reactivarPieza } from '../../services/piezas.service';
-import { obtenerColecciones, type ColeccionData } from '../../services/colecciones.service';
-import { obtenerTiposPieza, type TipoPiezaData } from '../../services/tipos-pieza.service';
 import { PiezaCard } from './components/PiezaCard';
 import { PiezaSlideOver } from './components/PiezaSlideOver';
 import { PiezaCreator } from './components/PiezaCreator';
@@ -22,8 +20,6 @@ interface Pieza extends PiezaSummary {
 
 export const Piezas = () => {
     const [piezas, setPiezas] = useState<Pieza[]>([]);
-    const [colecciones, setColecciones] = useState<ColeccionData[]>([]);
-    const [tipos, setTipos] = useState<TipoPiezaData[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [filtros, setFiltros] = useState({ estado: 'activos' });
@@ -40,14 +36,8 @@ export const Piezas = () => {
     const cargarDatos = async () => {
         setIsLoading(true);
         try {
-            const [piezasData, coleccionesData, tiposData] = await Promise.all([
-                obtenerPiezas(filtros.estado),
-                obtenerColecciones('activos'),
-                obtenerTiposPieza(),
-            ]);
+            const piezasData = await obtenerPiezas(filtros.estado);
             setPiezas(piezasData);
-            setColecciones(coleccionesData);
-            setTipos(tiposData);
         } catch (error) {
             toast.error('Error al cargar los datos de piezas');
         } finally {

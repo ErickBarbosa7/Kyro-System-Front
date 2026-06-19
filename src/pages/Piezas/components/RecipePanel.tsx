@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Plus, X, UserCircle } from 'lucide-react';
 import { SearchBar } from '../../../components/ui/SearchBar/SearchBar';
-import type { PiezaDraft, DraftMetal, DraftMaterial, DraftAcabado, DraftManoObra } from '../types';
+import type { PiezaDraft } from '../types';
 import './RecipePanel.css';
 
 interface CatalogItem {
