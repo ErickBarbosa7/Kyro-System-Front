@@ -8,12 +8,8 @@ import { ConfirmModal } from '../../components/ConfirmModal';
 import { FilterGroup } from '../../components/ui/FilterGroup/FilterGroup';
 import { Modal } from '../../components/ui/Modal/Modal';
 import { DataTable, type ColumnConfig } from '../../components/ui/DataTable/DataTable';
-<<<<<<< HEAD
 import { Loading } from '../../components/Loading/Loading';
-=======
 import { FieldError } from '../../components/ui/FieldError/FieldError';
->>>>>>> feature/metales
-
 // SERVICIOS
 import { 
     obtenerGastos, 
@@ -75,14 +71,11 @@ export const GastosOperativos = () => {
     const cargarGastos = async () => {
         setIsLoading(true);
         try {
-<<<<<<< HEAD
             const [data] = await Promise.all([
-                obtenerGastos(),
+                obtenerGastos(filtros.estado),
                 new Promise(resolve => setTimeout(resolve, 800))
             ]);
-=======
-            const data = await obtenerGastos(filtros.estado);
->>>>>>> feature/metales
+
             setGastos(data);
             setIsLoading(false); // Solo se detiene el loader si tiene éxito
         } catch (error) {
