@@ -4,21 +4,21 @@
 .search-bar-container {
     display: flex;
     align-items: center;
-    background-color: var(--color-surface); /* Beige oscuro en lugar del claro */
-    border: 1px solid var(--color-border);
+    background-color: var(--color-surface);
+    border: 1px solid transparent;
     border-radius: var(--radius);
     padding: 0.5rem 1rem;
     height: 42px; 
     transition: var(--transition);
     width: 100%;
-    max-width: 400px; 
+    max-width: 400px;
+    box-shadow: var(--shadow-sm);
 }
 
-/* 🌟 Efecto Focus: Cuando el usuario da clic para escribir */
 .search-bar-container:focus-within {
-    border-color: var(--color-primary); /* Se pinta del terracota */
-    background-color: var(--color-surface); /* Cambia sutilmente el fondo */
-    box-shadow: 0 0 0 3px rgba(166, 77, 63, 0.15); /* Anillo de luz terracota */
+    border-color: var(--color-primary);
+    background-color: var(--color-surface);
+    box-shadow: 0 0 0 3px rgba(166, 77, 63, 0.15);
 }
 
 /* ==========================================

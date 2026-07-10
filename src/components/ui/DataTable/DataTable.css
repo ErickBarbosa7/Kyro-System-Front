@@ -2,14 +2,9 @@
    Estado Vacío (Cuando no hay registros)
    ========================================== */
 .empty-state {
-    text-align: center;
-    padding: 3rem 1rem;
-    color: var(--color-text-secondary);
-    background-color: transparent;
+    padding: 0;
     border: none;
-    border-radius: 0;
-    font-style: italic;
-    width: 100%;
+    background: transparent;
 }
 
 
@@ -34,7 +29,8 @@
     background-color: var(--color-surface); 
     color: var(--color-text);
     font-weight: 700;
-    padding: 1rem 1.2rem;
+    font-size: var(--text-sm);
+    padding: 0.85rem 1.2rem;
     border-bottom: 2px solid var(--color-primary); 
     white-space: nowrap;
     user-select: none;
@@ -97,8 +93,9 @@
 
 /* Celdas individuales */
 .kyro-table tbody td {
-    padding: 1rem 1.2rem;
+    padding: 0.85rem 1.2rem;
     color: var(--color-text);
+    font-size: var(--text-sm);
     vertical-align: middle;
     border-bottom: 1px solid var(--color-border);
 }
@@ -126,7 +123,7 @@
    ========================================== */
 .datatable-container {
     border-radius: var(--radius);
-    box-shadow: 0 4px 15px rgba(46, 38, 35, 0.08);
+    box-shadow: var(--shadow-card);
     background-color: var(--color-background);
     display: flex;
     flex-direction: column;
@@ -147,7 +144,7 @@
 }
 
 .page-info {
-    font-size: 0.82rem;
+    font-size: var(--text-xs);
     color: var(--color-text-secondary);
 }
 
@@ -159,7 +156,7 @@
 }
 
 .pagination-controls select {
-    font-size: 0.82rem;
+    font-size: var(--text-xs);
     color: var(--color-text);
     background-color: var(--color-background);
     border: 1px solid var(--color-border);
@@ -216,7 +213,7 @@
 }
 
 .pagination-controls .page-counter {
-    font-size: 0.82rem;
+    font-size: var(--text-xs);
     color: var(--color-text-secondary);
     padding: 0 0.3rem;
     min-width: 44px;
@@ -235,7 +232,7 @@
     border-radius: calc(var(--radius) - 2px);
     cursor: pointer;
     color: var(--color-text);
-    font-size: 0.8rem;
+    font-size: var(--text-xs);
     font-family: inherit;
     transition: var(--transition);
 }
@@ -260,7 +257,7 @@
     min-width: 24px;
     height: 30px;
     color: var(--color-text-secondary);
-    font-size: 0.8rem;
+    font-size: var(--text-xs);
     letter-spacing: 1px;
     user-select: none;
 }

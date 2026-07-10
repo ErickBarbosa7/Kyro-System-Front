@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
-import { Calculator, Plus, Pencil, Trash2, Weight, Box, Sparkles, Clock, DollarSign, TrendingUp } from 'lucide-react';
+import { Calculator, Plus, Pencil, Trash2, Weight, Box, Sparkles, Clock, DollarSign, TrendingUp, Search } from 'lucide-react';
 import { ActionDropdown } from '../../components/ui/ActionDropdown/ActionDropdown';
 import { Modal } from '../../components/ui/Modal/Modal';
 import { ConfirmModal } from '../../components/ConfirmModal';
 import { Loading } from '../../components/Loading/Loading';
 
-import { obtenerPiezas, type PiezaData } from '../../services/piezas.service';
 import { obtenerMetales } from '../../services/metales.service';
 import { obtenerMateriales } from '../../services/materiales.service';
 import { obtenerAcabados } from '../../services/acabados.service';
 import { obtenerGastos } from '../../services/gastos-operativos.service';
+import { obtenerConfiguraciones } from '../../services/configuracion-margenes.service';
 import {
     obtenerCosteoPieza,
     calcularTotales,
@@ -30,6 +30,7 @@ import {
     eliminarManoObra,
     eliminarGasto,
 } from '../../services/costeo.service';
+import { SelectorPiezasModal } from './SelectorPiezasModal';
 
 import './Costeo.css';
 
@@ -50,11 +51,10 @@ interface CosteoSection {
 }
 
 export const Costeo = () => {
-    const [piezas, setPiezas] = useState<(PiezaData & { id: string })[]>([]);
     const [piezaSeleccionada, setPiezaSeleccionada] = useState<string>('');
     const [piezaInfo, setPiezaInfo] = useState<{ clave: string; nombreComercial: string } | null>(null);
     const [isLoading, setIsLoading] = useState(false);
-    const [isLoadingPiezas, setIsLoadingPiezas] = useState(true);
+    const [isSelectorOpen, setIsSelectorOpen] = useState(false);
 
     const [metalesCatalog, setMetalesCatalog] = useState<{ id: string; nombre: string }[]>([]);
     const [materialesCatalog, setMaterialesCatalog] = useState<{ id: string; nombre: string }[]>([]);
@@ -88,6 +88,8 @@ export const Costeo = () => {
     const [modalData, setModalData] = useState<any>({});
     const [isModalOpen, setIsModalOpen] = useState(false);
 
+    const [margenActivo, setMargenActivo] = useState<{ nombre: string; margenTaller: number; margenMayorista: number; margenPublico: number } | null>(null);
+
     const [deleteTarget, setDeleteTarget] = useState<{ id: string; section: CosteoSection['tipo'] } | null>(null);
     const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
@@ -99,44 +101,58 @@ export const Costeo = () => {
     }, []);
 
     const cargarCatalogos = async () => {
-        setIsLoadingPiezas(true);
         try {
-            const [piezasData, metalesData, materialesData, acabadosData, gastosData] = await Promise.all([
-                obtenerPiezas('activos'),
+            const [metalesData, materialesData, acabadosData, gastosData] = await Promise.all([
                 obtenerMetales(),
                 obtenerMateriales('activos'),
                 obtenerAcabados('activos'),
                 obtenerGastos(),
             ]);
-            setPiezas(piezasData);
             setMetalesCatalog(metalesData);
             setMaterialesCatalog(materialesData);
             setAcabadosCatalog(acabadosData);
             setGastosCatalog(gastosData.map((g: any) => ({ id: g.id, nombre: g.concepto })));
-        } catch (error) {
+        } catch {
             toast.error('Error al cargar catálogos');
-        } finally {
-            setIsLoadingPiezas(false);
         }
     };
 
     const cargarCosteo = async (piezaId: string) => {
         setIsLoading(true);
         try {
-            const [costeoData, totalesData] = await Promise.all([
+            const [costeoData, totalesData, configuraciones] = await Promise.all([
                 obtenerCosteoPieza(piezaId),
                 calcularTotales(piezaId),
+                obtenerConfiguraciones('activos'),
             ]);
+
+            if (!costeoData?.pieza) {
+                throw new Error('Pieza no encontrada');
+            }
 
             setPiezaInfo(costeoData.pieza);
 
-            const mapItems = (arr: any[], nombreKey: string, cantidadKey: string, precioKey: string): CosteoItem[] =>
-                arr.map((item: any) => ({
+            const activo = configuraciones.find((m: any) => m.activo) || configuraciones[0] || null;
+            if (activo) {
+                setMargenActivo({
+                    nombre: activo.nombre,
+                    margenTaller: Number(activo.margenTaller),
+                    margenMayorista: Number(activo.margenMayorista),
+                    margenPublico: Number(activo.margenPublico),
+                });
+            } else {
+                setMargenActivo(null);
+            }
+
+            const safeArray = (arr: any) => Array.isArray(arr) ? arr : [];
+
+            const mapItems = (arr: any[], nombreKey: string, cantidadKey: string, precioKey: string, nombreSubKey: string = 'nombre'): CosteoItem[] =>
+                safeArray(arr).map((item: any) => ({
                     id: item.id,
-                    nombre: item[nombreKey]?.nombre || item[nombreKey] || '—',
-                    cantidad: Number(item[cantidadKey]),
-                    costoUnitario: Number(item[precioKey]),
-                    subtotal: Number(item.subtotal),
+                    nombre: item[nombreKey]?.[nombreSubKey] || item[nombreKey] || '—',
+                    cantidad: Number(item[cantidadKey]) || 0,
+                    costoUnitario: Number(item[precioKey]) || 0,
+                    subtotal: Number(item.subtotal) || 0,
                 }));
 
             setSections([
@@ -144,16 +160,19 @@ export const Costeo = () => {
                 { titulo: 'Materiales', icono: <Box size={18} />, items: mapItems(costeoData.materiales, 'material', 'cantidadUtilizada', 'costoUnitarioSnapshot'), tipo: 'material', color: '#3b82f6' },
                 { titulo: 'Acabados', icono: <Sparkles size={18} />, items: mapItems(costeoData.acabados, 'acabado', 'cantidad', 'costoUnitarioSnapshot'), tipo: 'acabado', color: '#8b5cf6' },
                 { titulo: 'Mano de Obra', icono: <Clock size={18} />, items: mapItems(costeoData.manoObra, 'actividad', 'tiempoHrs', 'costoPorHora'), tipo: 'manoObra', color: '#10b981' },
-                { titulo: 'Gastos Aplicados', icono: <DollarSign size={18} />, items: mapItems(costeoData.gastos, 'gastoOperativo', 'importeAplicado', 'importeAplicado'), tipo: 'gasto', color: '#ef4444' },
+                { titulo: 'Gastos Aplicados', icono: <DollarSign size={18} />, items: mapItems(costeoData.gastos, 'gastoOperativo', 'importeAplicado', 'importeAplicado', 'concepto'), tipo: 'gasto', color: '#ef4444' },
             ]);
 
-            setTotales(totalesData);
+            setTotales(totalesData || null);
         } catch (error) {
             toast.error('Error al cargar el costeo de la pieza');
         } finally {
             setIsLoading(false);
         }
     };
+
+    const calcularPrecio = (costeTotal: number, margen: number) =>
+        Number((costeTotal * (1 + margen / 100)).toFixed(2));
 
     const handlePiezaChange = (value: string) => {
         setPiezaSeleccionada(value);
@@ -162,6 +181,7 @@ export const Costeo = () => {
         } else {
             setPiezaInfo(null);
             setTotales(null);
+            setMargenActivo(null);
             setSections(prev => prev.map(s => ({ ...s, items: [] })));
         }
     };
@@ -258,7 +278,7 @@ export const Costeo = () => {
                 <>
                     {!editItemId && (
                         <div className="form-group">
-                            <label style={labelStyle}>Metal</label>
+                            <label style={labelStyle}>Metal *</label>
                             <ActionDropdown
                                 value={modalData.metalId || ''}
                                 options={metalesCatalog}
@@ -280,7 +300,7 @@ export const Costeo = () => {
                 <>
                     {!editItemId && (
                         <div className="form-group">
-                            <label style={labelStyle}>Material</label>
+                            <label style={labelStyle}>Material *</label>
                             <ActionDropdown
                                 value={modalData.materialId || ''}
                                 options={materialesCatalog}
@@ -302,7 +322,7 @@ export const Costeo = () => {
                 <>
                     {!editItemId && (
                         <div className="form-group">
-                            <label style={labelStyle}>Acabado</label>
+                            <label style={labelStyle}>Acabado *</label>
                             <ActionDropdown
                                 value={modalData.acabadoId || ''}
                                 options={acabadosCatalog}
@@ -345,7 +365,7 @@ export const Costeo = () => {
                 <>
                     {!editItemId && (
                         <div className="form-group">
-                            <label style={labelStyle}>Gasto Operativo</label>
+                            <label style={labelStyle}>Gasto Operativo *</label>
                             <ActionDropdown
                                 value={modalData.gastoId || ''}
                                 options={gastosCatalog}
@@ -375,22 +395,18 @@ export const Costeo = () => {
             </div>
 
             <div className="module-description">
-                <p>Calcula y administra los costos de producción de cada pieza: metales, materiales, acabados, mano de obra y gastos.</p>
+                <p>Elige una pieza para ver cuánto cuesta fabricarla.</p>
             </div>
 
-            <div className="costeo-selector">
-                <div className="costeo-selector-label">
-                    <label style={labelStyle}>Selecciona una Pieza</label>
-                </div>
-                <div className="costeo-selector-input">
-                    <ActionDropdown
-                        value={piezaSeleccionada}
-                        options={piezas.map(p => ({ id: p.id, nombre: `${p.clave} — ${p.nombreComercial}` }))}
-                        onChange={handlePiezaChange}
-                        placeholder="Buscar y seleccionar pieza..."
-                    />
-                </div>
-            </div>
+            <button className={`costeo-search-trigger${piezaSeleccionada ? ' costeo-search-trigger--selected' : ''}`} onClick={() => setIsSelectorOpen(true)}>
+                <Search size={20} />
+                <span>
+                    {piezaSeleccionada && piezaInfo
+                        ? `${piezaInfo.clave} — ${piezaInfo.nombreComercial}`
+                        : 'Buscar pieza para costear...'
+                    }
+                </span>
+            </button>
 
             {piezaInfo && (
                 <div className="costeo-info-card">
@@ -472,19 +488,19 @@ export const Costeo = () => {
                                     <span className="costeo-total-label">Coste Total</span>
                                     <span className="costeo-total-value costeo-total-value--grande">${totales.costeTotal.toFixed(2)}</span>
                                 </div>
-                                {totales.margenes && (
+                                {margenActivo && (
                                     <>
                                         <div className="costeo-total-item">
-                                            <span className="costeo-total-label">Margen Taller ({((totales.margenes.margenTaller - 1) * 100).toFixed(0)}%)</span>
-                                            <span className="costeo-total-value">${totales.margenes.precioTaller.toFixed(2)}</span>
+                                            <span className="costeo-total-label">Margen Taller ({margenActivo.margenTaller}%)</span>
+                                            <span className="costeo-total-value">${calcularPrecio(totales.costeTotal, margenActivo.margenTaller)}</span>
                                         </div>
                                         <div className="costeo-total-item">
-                                            <span className="costeo-total-label">Margen Mayorista ({((totales.margenes.margenMayorista - 1) * 100).toFixed(0)}%)</span>
-                                            <span className="costeo-total-value">${totales.margenes.precioMayorista.toFixed(2)}</span>
+                                            <span className="costeo-total-label">Margen Mayorista ({margenActivo.margenMayorista}%)</span>
+                                            <span className="costeo-total-value">${calcularPrecio(totales.costeTotal, margenActivo.margenMayorista)}</span>
                                         </div>
                                         <div className="costeo-total-item">
-                                            <span className="costeo-total-label">Margen Público ({((totales.margenes.margenPublico - 1) * 100).toFixed(0)}%)</span>
-                                            <span className="costeo-total-value costeo-total-value--precio">${totales.margenes.precioPublico.toFixed(2)}</span>
+                                            <span className="costeo-total-label">Margen Público ({margenActivo.margenPublico}%)</span>
+                                            <span className="costeo-total-value costeo-total-value--precio">${calcularPrecio(totales.costeTotal, margenActivo.margenPublico)}</span>
                                         </div>
                                     </>
                                 )}
@@ -492,12 +508,12 @@ export const Costeo = () => {
                         </div>
                     )}
                 </>
-            ) : !isLoadingPiezas ? (
+            ) : (
                 <div className="costeo-empty">
                     <Calculator size={48} color="var(--color-text-secondary)" opacity={0.4} />
                     <p>Selecciona una pieza para ver su desglose de costos</p>
                 </div>
-            ) : null}
+            )}
 
             <Modal
                 isOpen={isModalOpen}
@@ -514,6 +530,12 @@ export const Costeo = () => {
                     </div>
                 </form>
             </Modal>
+
+            <SelectorPiezasModal
+                isOpen={isSelectorOpen}
+                onClose={() => setIsSelectorOpen(false)}
+                onSelect={handlePiezaChange}
+            />
 
             <ConfirmModal
                 isOpen={isConfirmOpen}

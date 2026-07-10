@@ -21,14 +21,14 @@
 
 /* ── Paneles (Actividad, Últimas piezas, Alertas) ── */
 .dash-card-module {
-    border: 1px solid var(--color-border);
     border-radius: 12px;
     background: var(--color-surface);
     overflow: hidden;
+    box-shadow: var(--shadow-card);
 }
 
 .dash-card-module--alert {
-    border-color: var(--color-danger);
+    border-left: 3px solid var(--color-danger);
     background: color-mix(in srgb, var(--color-danger) 6%, var(--color-surface));
 }
 
@@ -136,6 +136,25 @@
     color: var(--color-text);
 }
 
+.dash-view-all {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 8px;
+    margin-top: 4px;
+    font-size: var(--text-sm);
+    font-weight: var(--font-weight-label);
+    color: var(--color-primary);
+    text-decoration: none;
+    border-top: 1px solid var(--color-border);
+    transition: all 0.2s;
+}
+
+.dash-view-all:hover {
+    background-color: var(--color-background-2);
+}
+
 /* ── Tarjetas de métricas (usando .stat-card existente) ── */
 .stats-grid {
     display: grid;
@@ -145,13 +164,12 @@
 
 .stat-card {
     background: var(--color-surface);
-    border: 1px solid var(--color-border);
     border-radius: 12px;
     padding: 20px;
     display: flex;
     flex-direction: column;
     position: relative;
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--shadow-card);
     transition: transform 0.2s ease;
 }
 

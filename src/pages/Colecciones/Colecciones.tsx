@@ -3,12 +3,13 @@ import { DataTable, type ColumnConfig } from '../../components/ui/DataTable/Data
 import { toast } from 'react-hot-toast';
 import { Modal } from '../../components/ui/Modal/Modal'; 
 import { ConfirmModal } from '../../components/ConfirmModal';
-import { Plus, Box, Pencil, Trash2, RefreshCcw } from 'lucide-react';
+import { Plus, Box } from 'lucide-react';
 
 import './Colecciones.css';
 import { actualizarColeccion, crearColeccion, eliminarColeccion, obtenerColecciones, reactivarColeccion, type ColeccionData } from '../../services/colecciones.service';
 import { SearchBar } from '../../components/ui/SearchBar/SearchBar';
 import { FilterGroup } from '../../components/ui/FilterGroup/FilterGroup';
+import { ActionDropdown } from '../../components/ui/ActionDropdown/ActionDropdown';
 import { Loading } from '../../components/Loading/Loading';
 import { FieldError } from '../../components/ui/FieldError/FieldError';
 
@@ -237,34 +238,19 @@ export const Colecciones = () => {
         },
         {
             key: 'acciones',
-            label: 'Acciones',
-            width: '120px',
+            label: '',
+            width: '50px',
             align: 'center',
             render: (col: ColeccionData) => (
-                <div className="actions-cell">
-                    <button className="btn-icon edit" onClick={() => abrirModal(col)} title="Editar">
-                        <Pencil size={18} />
-                    </button>
-                    
-                    {col.activa === false ? (
-                        <button 
-                            className="btn-icon reactivate" 
-                            style={{ color: '#16a34a' }} 
-                            onClick={() => ejecutarReactivacionColeccion(col.id!)} 
-                            title="Restaurar de la papelera"
-                        >
-                            <RefreshCcw size={18} />
-                        </button>
-                    ) : (
-                        <button 
-                            className="btn-icon delete" 
-                            onClick={() => handleDeleteClick(col.id!, col.nombre)} 
-                            title="Enviar a papelera"
-                        >
-                            <Trash2 size={18} />
-                        </button>
-                    )}
-                </div>
+                <ActionDropdown
+                    variant="contextual"
+                    contextualId={col.id!}
+                    contextualName={col.nombre}
+                    onEdit={() => abrirModal(col)}
+                    onDelete={col.activa !== false ? (id, nombre) => handleDeleteClick(id!, nombre!) : undefined}
+                    onRecover={col.activa === false ? () => ejecutarReactivacionColeccion(col.id!) : undefined}
+                    recoverLabel="Reactivar"
+                />
             )
         }
     ], []);

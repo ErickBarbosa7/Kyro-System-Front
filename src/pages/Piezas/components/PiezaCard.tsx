@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pencil, Gem } from 'lucide-react';
+import { Pencil, Trash2, Gem } from 'lucide-react';
 import type { PiezaSummary } from '../types';
 import './PiezaCard.css';
 
@@ -7,9 +7,10 @@ interface PiezaCardProps {
     pieza: PiezaSummary;
     onSelect: (pieza: PiezaSummary) => void;
     onEdit: (id: string) => void;
+    onDelete: (id: string, nombre: string) => void;
 }
 
-export const PiezaCard: React.FC<PiezaCardProps> = ({ pieza, onSelect, onEdit }) => {
+export const PiezaCard: React.FC<PiezaCardProps> = ({ pieza, onSelect, onEdit, onDelete }) => {
     const getStatusBadge = () => {
         if (pieza.estado === 'DESCONTINUADO') return <span className="card-badge discontinued">Descontinuado</span>;
         if (pieza.estado === 'BORRADOR') return <span className="card-badge draft">Borrador</span>;
@@ -37,6 +38,11 @@ export const PiezaCard: React.FC<PiezaCardProps> = ({ pieza, onSelect, onEdit })
                 <button className="card-edit-btn" onClick={() => onEdit(pieza.id)} title="Editar">
                     <Pencil size={14} />
                 </button>
+                {pieza.estado !== 'DESCONTINUADO' && (
+                    <button className="card-delete-btn" onClick={() => onDelete(pieza.id, pieza.nombreComercial)} title="Descontinuar">
+                        <Trash2 size={14} />
+                    </button>
+                )}
             </div>
         </div>
     );

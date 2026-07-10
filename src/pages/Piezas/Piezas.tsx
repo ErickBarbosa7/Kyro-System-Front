@@ -253,6 +253,7 @@ export const Piezas = () => {
                                     pieza={pieza}
                                     onSelect={(p) => { setSelectedPiezaId(p.id); setVista('slideover'); }}
                                     onEdit={(id) => { setSelectedPiezaId(id); setVista('creador'); }}
+                                    onDelete={(id, nombre) => handleDeleteClick(id, nombre)}
                                 />
                             ))
                         )}
@@ -288,8 +289,9 @@ export const Piezas = () => {
                 <PiezaSlideOver
                     isOpen={true}
                     piezaId={selectedPiezaId}
-                    onClose={() => setVista('lista')}
+                    onClose={() => { setSelectedPiezaId(null); setVista('lista'); }}
                     onEdit={(id) => { setSelectedPiezaId(id); setVista('creador'); }}
+                    onDeleted={() => { setSelectedPiezaId(null); cargarDatos(); }}
                 />
             )}
         </>

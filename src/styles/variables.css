@@ -4,6 +4,19 @@
 :root {
   --font-main: "Cascadia Code", monospace;
 
+  /* Tipografía */
+  --text-xs:   0.75rem;
+  --text-sm:   0.8125rem;
+  --text-base: 0.875rem;
+  --text-lg:   1rem;
+  --text-xl:   1.125rem;
+  --text-2xl:  2rem;
+
+  --font-weight-data: 700;
+  --font-weight-label: 600;
+  --font-weight-meta: 400;
+  --font-size-meta: 0.72rem;
+
   /* Primarios */
   --color-primary: #A64D3F;         
   --color-primary-hover: #8C3D31;
@@ -24,13 +37,28 @@
   --color-warning: #C98A3D;
   --color-danger: #B04A4A;
 
+  /* Badges semánticos */
+  --bg-success: #dcfce7;
+  --text-success: #16a34a;
+  --bg-warning: #fef3c7;
+  --text-warning: #b45309;
+  --bg-danger: #fee2e2;
+  --text-danger: #dc2626;
+  --bg-info: #dbeafe;
+  --text-info: #2563eb;
+
   /* Bordes */
   --color-border: #D8CCBC;
+
+  /* Sombras */
+  --shadow-sm: 0 4px 12px rgba(40,30,20,.08);
+  --shadow-md: 0 8px 24px rgba(40,30,20,.10);
+  --shadow-lg: 0 4px 15px rgba(46,38,35,0.08);
+  --shadow-card: 0 4px 15px rgba(40,30,20,.06);
 
   /* Extras */
   --radius: 12px;
   --transition: 0.3s ease;
-  --shadow-sm: 0 4px 12px rgba(40,30,20,.08);
 }
 
 /* ==========================================
@@ -53,8 +81,19 @@
 
   /* Bordes (Sutiles pero visibles) */
   --color-border: #374151;
-  
+
+  --bg-success: #166534;
+  --text-success: #bbf7d0;
+  --bg-warning: #78350f;
+  --text-warning: #fde68a;
+  --bg-danger: #991b1b;
+  --text-danger: #fecaca;
+  --bg-info: #1e3a5f;
+  --text-info: #bfdbfe;
+
   --shadow-sm: 0 4px 12px rgba(0,0,0, 0.4);
+  --shadow-md: 0 8px 24px rgba(0,0,0, 0.5);
+  --shadow-card: 0 4px 15px rgba(0,0,0, 0.3);
 }
 
 /* ==========================================
@@ -74,6 +113,19 @@
   --color-text-secondary: #667085;
 
   --color-border: #D6DEE8;
+
+  --bg-success: #dcfce7;
+  --text-success: #16a34a;
+  --bg-warning: #fef3c7;
+  --text-warning: #b45309;
+  --bg-danger: #fee2e2;
+  --text-danger: #dc2626;
+  --bg-info: #dbeafe;
+  --text-info: #2563eb;
+
+  --shadow-sm: 0 4px 12px rgba(34,48,74,.08);
+  --shadow-md: 0 8px 24px rgba(34,48,74,.10);
+  --shadow-card: 0 4px 15px rgba(34,48,74,.06);
 }
 
 /* ==========================================
@@ -93,6 +145,19 @@
   --color-text-secondary: #6B7280;
 
   --color-border: #D8DCE1;
+
+  --bg-success: #dcfce7;
+  --text-success: #16a34a;
+  --bg-warning: #fef3c7;
+  --text-warning: #b45309;
+  --bg-danger: #fee2e2;
+  --text-danger: #dc2626;
+  --bg-info: #dbeafe;
+  --text-info: #2563eb;
+
+  --shadow-sm: 0 4px 12px rgba(31,41,55,.06);
+  --shadow-md: 0 8px 24px rgba(31,41,55,.08);
+  --shadow-card: 0 4px 15px rgba(31,41,55,.05);
 }
 
 *,
@@ -104,8 +169,24 @@
 
 body, button, input, textarea, select {
   font-family: var(--font-main);
-  /* Es vital poner esto para que el body adopte el color global al cambiar */
   background-color: var(--color-background);
   color: var(--color-text);
   transition: background-color var(--transition), color var(--transition);
 }
+
+/* ==========================================
+   BADGES SEMÁNTICOS GLOBALES
+   ========================================== */
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.badge--success { background-color: var(--bg-success); color: var(--text-success); }
+.badge--warning { background-color: var(--bg-warning); color: var(--text-warning); }
+.badge--danger  { background-color: var(--bg-danger); color: var(--text-danger); }
+.badge--info    { background-color: var(--bg-info); color: var(--text-info); }

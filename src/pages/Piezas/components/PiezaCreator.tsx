@@ -14,8 +14,8 @@ import { obtenerMateriales } from '../../../services/materiales.service';
 import { obtenerAcabados } from '../../../services/acabados.service';
 import { obtenerConfiguraciones } from '../../../services/configuracion-margenes.service';
 import { subirImagen } from '../../../services/upload.service';
-import { obtenerTiposPieza, crearTipoPieza } from '../../../services/tipos-pieza.service';
-import { obtenerColecciones, crearColeccion, actualizarColeccion, eliminarColeccion } from '../../../services/colecciones.service';
+import { obtenerTiposPieza, crearTipoPieza, actualizarTipoPieza, eliminarTipoPieza } from '../../../services/tipos-pieza.service';
+import { obtenerColecciones, crearColeccion, actualizarColeccion, eliminarColeccion, reactivarColeccion } from '../../../services/colecciones.service';
 import './PiezaCreator.css';
 
 interface PiezaCreatorProps {
@@ -59,6 +59,11 @@ export const PiezaCreator: React.FC<PiezaCreatorProps> = ({ isOpen, piezaId, onC
         type: 'tipo' | 'coleccion';
         id: string;
         nombre: string;
+    } | null>(null);
+
+    const [papelera, setPapelera] = useState<{
+        type: 'tipo' | 'coleccion';
+        items: CatalogOption[];
     } | null>(null);
 
     const costeo = useCosteoCalculator(draft, margen);
@@ -272,10 +277,16 @@ export const PiezaCreator: React.FC<PiezaCreatorProps> = ({ isOpen, piezaId, onC
 
         try {
             if (type === 'tipo') {
-                const result = await crearTipoPieza({ nombre: nombre.trim(), codigo: codigo.trim() });
-                const newItem: CatalogOption = { id: result.id || result._id, nombre: result.nombre, codigo: result.codigo };
-                setTipos(prev => [...prev, newItem]);
-                setDraft(prev => ({ ...prev, tipoId: newItem.id }));
+                if (action === 'add') {
+                    const result = await crearTipoPieza({ nombre: nombre.trim(), codigo: codigo.trim() });
+                    const newItem: CatalogOption = { id: result.id || result._id, nombre: result.nombre, codigo: result.codigo };
+                    setTipos(prev => [...prev, newItem]);
+                    setDraft(prev => ({ ...prev, tipoId: newItem.id }));
+                } else if (editId) {
+                    await actualizarTipoPieza(editId, { nombre: nombre.trim(), codigo: codigo.trim() });
+                    setTipos(prev => prev.map(t => t.id === editId ? { ...t, nombre: nombre.trim(), codigo: codigo.trim() } : t));
+                    toast.success('Tipo actualizado');
+                }
             } else {
                 if (action === 'add') {
                     const result = await crearColeccion({ nombre: nombre.trim(), codigo: codigo.trim() });
@@ -300,7 +311,14 @@ export const PiezaCreator: React.FC<PiezaCreatorProps> = ({ isOpen, piezaId, onC
         const { type, id } = confirmDelete;
 
         try {
-            if (type === 'coleccion') {
+            if (type === 'tipo') {
+                await eliminarTipoPieza(id);
+                setTipos(prev => prev.filter(t => t.id !== id));
+                if (draft.tipoId === id) {
+                    setDraft(prev => ({ ...prev, tipoId: '' }));
+                }
+                toast.success('Tipo eliminado');
+            } else if (type === 'coleccion') {
                 await eliminarColeccion(id);
                 setColecciones(prev => prev.filter(c => c.id !== id));
                 if (draft.coleccionId === id) {
@@ -312,6 +330,39 @@ export const PiezaCreator: React.FC<PiezaCreatorProps> = ({ isOpen, piezaId, onC
         } catch (error: any) {
             const errorMsg = error.response?.data?.error || 'Error al eliminar';
             toast.error(errorMsg);
+        }
+    };
+
+    const abrirPapelera = async (type: 'tipo' | 'coleccion') => {
+        try {
+            const items = type === 'tipo'
+                ? await obtenerTiposPieza('inactivos')
+                : await obtenerColecciones('inactivos');
+            setPapelera({ type, items });
+        } catch {
+            toast.error('Error al cargar elementos inactivos');
+        }
+    };
+
+    const handleReactivarPapelera = async (id: string) => {
+        if (!papelera) return;
+        try {
+            if (papelera.type === 'tipo') {
+                await actualizarTipoPieza(id, { nombre: '', codigo: '' });
+            } else {
+                await reactivarColeccion(id);
+            }
+            setPapelera(prev => prev ? { ...prev, items: prev.items.filter(i => i.id !== id) } : null);
+            toast.success('Elemento reactivado');
+            if (papelera.type === 'tipo') {
+                const activos = await obtenerTiposPieza('activos');
+                setTipos(activos);
+            } else {
+                const activos = await obtenerColecciones('activos');
+                setColecciones(activos);
+            }
+        } catch {
+            toast.error('Error al reactivar');
         }
     };
 
@@ -365,56 +416,66 @@ export const PiezaCreator: React.FC<PiezaCreatorProps> = ({ isOpen, piezaId, onC
                                 />
                             </div>
 
-                            <div className="creator-field" data-field="clave">
-                                <label>Clave *</label>
-                                <input
-                                    className={errors.clave && touched.clave ? 'input-error' : ''}
-                                    value={draft.clave}
-                                    onChange={(e) => handleFieldChange('clave', e.target.value)}
-                                    onBlur={() => handleBlur('clave')}
-                                    placeholder="Ej. ANL-001"
-                                />
-                                <FieldError message={touched.clave ? errors.clave : undefined} />
+                            <div className="creator-row">
+                                <div className="creator-field" data-field="clave">
+                                    <label>Clave *</label>
+                                    <input
+                                        className={errors.clave && touched.clave ? 'input-error' : ''}
+                                        value={draft.clave}
+                                        onChange={(e) => handleFieldChange('clave', e.target.value)}
+                                        onBlur={() => handleBlur('clave')}
+                                        placeholder="Ej. ANL-001"
+                                    />
+                                    <FieldError message={touched.clave ? errors.clave : undefined} />
+                                </div>
+
+                                <div className="creator-field" data-field="nombreComercial">
+                                    <label>Nombre Comercial *</label>
+                                    <input
+                                        className={errors.nombreComercial && touched.nombreComercial ? 'input-error' : ''}
+                                        value={draft.nombreComercial}
+                                        onChange={(e) => handleFieldChange('nombreComercial', e.target.value)}
+                                        onBlur={() => handleBlur('nombreComercial')}
+                                        placeholder="Ej. Anillo Luna"
+                                    />
+                                    <FieldError message={touched.nombreComercial ? errors.nombreComercial : undefined} />
+                                </div>
                             </div>
 
-                            <div className="creator-field" data-field="nombreComercial">
-                                <label>Nombre Comercial *</label>
-                                <input
-                                    className={errors.nombreComercial && touched.nombreComercial ? 'input-error' : ''}
-                                    value={draft.nombreComercial}
-                                    onChange={(e) => handleFieldChange('nombreComercial', e.target.value)}
-                                    onBlur={() => handleBlur('nombreComercial')}
-                                    placeholder="Ej. Anillo Luna"
-                                />
-                                <FieldError message={touched.nombreComercial ? errors.nombreComercial : undefined} />
-                            </div>
+                            <div className="creator-row">
+                                <div className="creator-field" data-field="tipoId">
+                                    <label>Tipo de Pieza *</label>
+                                    <ActionDropdown
+                                        value={draft.tipoId}
+                                        options={tipos}
+                                        onChange={(val) => handleFieldChange('tipoId', val)}
+                                        placeholder="Selecciona tipo"
+                                        onAdd={() => openCrudAdd('tipo')}
+                                        addLabel="Crear tipo"
+                                        onEdit={(id) => openCrudEdit('tipo', id)}
+                                        onDelete={(id, nombre) => setConfirmDelete({ type: 'tipo', id, nombre })}
+                                        onRecover={() => abrirPapelera('tipo')}
+                                        recoverLabel="Papelera"
+                                    />
+                                    <FieldError message={touched.tipoId ? errors.tipoId : undefined} />
+                                </div>
 
-                            <div className="creator-field" data-field="tipoId">
-                                <label>Tipo de Pieza *</label>
-                                <ActionDropdown
-                                    value={draft.tipoId}
-                                    options={tipos}
-                                    onChange={(val) => handleFieldChange('tipoId', val)}
-                                    placeholder="Selecciona tipo"
-                                    onAdd={() => openCrudAdd('tipo')}
-                                    addLabel="Crear tipo"
-                                />
-                                <FieldError message={touched.tipoId ? errors.tipoId : undefined} />
-                            </div>
-
-                            <div className="creator-field" data-field="coleccionId">
-                                <label>Colección *</label>
-                                <ActionDropdown
-                                    value={draft.coleccionId}
-                                    options={colecciones}
-                                    onChange={(val) => handleFieldChange('coleccionId', val)}
-                                    placeholder="Selecciona colección"
-                                    onAdd={() => openCrudAdd('coleccion')}
-                                    addLabel="Crear colección"
-                                    onEdit={(id) => openCrudEdit('coleccion', id)}
-                                    onDelete={(id, nombre) => setConfirmDelete({ type: 'coleccion', id, nombre })}
-                                />
-                                <FieldError message={touched.coleccionId ? errors.coleccionId : undefined} />
+                                <div className="creator-field" data-field="coleccionId">
+                                    <label>Colección *</label>
+                                    <ActionDropdown
+                                        value={draft.coleccionId}
+                                        options={colecciones}
+                                        onChange={(val) => handleFieldChange('coleccionId', val)}
+                                        placeholder="Selecciona colección"
+                                        onAdd={() => openCrudAdd('coleccion')}
+                                        addLabel="Crear colección"
+                                        onEdit={(id) => openCrudEdit('coleccion', id)}
+                                        onDelete={(id, nombre) => setConfirmDelete({ type: 'coleccion', id, nombre })}
+                                        onRecover={() => abrirPapelera('coleccion')}
+                                        recoverLabel="Papelera"
+                                    />
+                                    <FieldError message={touched.coleccionId ? errors.coleccionId : undefined} />
+                                </div>
                             </div>
 
                             <div className="creator-field">
@@ -426,28 +487,30 @@ export const PiezaCreator: React.FC<PiezaCreatorProps> = ({ isOpen, piezaId, onC
                                 />
                             </div>
 
-                            <div className="creator-field">
-                                <label>Peso Total (gr)</label>
-                                <input
-                                    type="number"
-                                    step="0.01"
-                                    min="0"
-                                    value={draft.pesoTotal}
-                                    onChange={(e) => handleFieldChange('pesoTotal', e.target.value === '' ? '' : Number(e.target.value))}
-                                    placeholder="0.00"
-                                />
-                            </div>
+                            <div className="creator-row">
+                                <div className="creator-field">
+                                    <label>Peso Total (gr)</label>
+                                    <input
+                                        type="number"
+                                        step="0.01"
+                                        min="0"
+                                        value={draft.pesoTotal}
+                                        onChange={(e) => handleFieldChange('pesoTotal', e.target.value === '' ? '' : Number(e.target.value))}
+                                        placeholder="0.00"
+                                    />
+                                </div>
 
-                            <div className="creator-field">
-                                <label>Tiempo Fabricación (hrs)</label>
-                                <input
-                                    type="number"
-                                    step="0.5"
-                                    min="0"
-                                    value={draft.tiempoFabricacionHrs}
-                                    onChange={(e) => handleFieldChange('tiempoFabricacionHrs', e.target.value === '' ? '' : Number(e.target.value))}
-                                    placeholder="0.00"
-                                />
+                                <div className="creator-field">
+                                    <label>Tiempo Fabricación (hrs)</label>
+                                    <input
+                                        type="number"
+                                        step="0.5"
+                                        min="0"
+                                        value={draft.tiempoFabricacionHrs}
+                                        onChange={(e) => handleFieldChange('tiempoFabricacionHrs', e.target.value === '' ? '' : Number(e.target.value))}
+                                        placeholder="0.00"
+                                    />
+                                </div>
                             </div>
                         </div>
 
@@ -539,6 +602,41 @@ export const PiezaCreator: React.FC<PiezaCreatorProps> = ({ isOpen, piezaId, onC
                             </button>
                             <button className="btn-crud-danger" onClick={handleDeleteConfirm}>
                                 Eliminar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {papelera && (
+                <div className="creator-crud-overlay" onClick={() => setPapelera(null)}>
+                    <div className="creator-crud-modal" onClick={(e) => e.stopPropagation()} style={{ width: '400px', maxHeight: '70vh', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+                        <h3>Papelera — {papelera.type === 'tipo' ? 'Tipos' : 'Colecciones'}</h3>
+                        <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                            {papelera.items.length === 0 ? (
+                                <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.85rem', textAlign: 'center', padding: '20px 0' }}>
+                                    No hay elementos inactivos.
+                                </p>
+                            ) : (
+                                papelera.items.map(item => (
+                                    <div key={item.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 10px', background: 'var(--color-background)', borderRadius: '8px' }}>
+                                        <div>
+                                            <span style={{ fontWeight: 600, fontSize: '0.85rem', color: 'var(--color-text)' }}>{item.nombre}</span>
+                                            {item.codigo && <span style={{ marginLeft: '8px', fontSize: '0.75rem', color: 'var(--color-text-secondary)' }}>({item.codigo})</span>}
+                                        </div>
+                                        <button
+                                            style={{ padding: '5px 12px', border: 'none', borderRadius: '6px', background: 'var(--color-primary)', color: 'white', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer' }}
+                                            onClick={() => handleReactivarPapelera(item.id)}
+                                        >
+                                            Reactivar
+                                        </button>
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                        <div className="creator-crud-modal-actions" style={{ borderTop: '1px solid var(--color-border)', paddingTop: '12px', marginTop: '8px' }}>
+                            <button className="btn-crud-cancel" onClick={() => setPapelera(null)}>
+                                Cerrar
                             </button>
                         </div>
                     </div>

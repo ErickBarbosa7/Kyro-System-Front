@@ -15,7 +15,7 @@
     justify-content: space-between;
     width: 100%;
     padding: 12px 14px;
-    border: 1px solid var(--color-border);
+    border: 1px solid transparent;
     border-radius: 10px;
     font-size: 14px;
     background-color: var(--color-surface);
@@ -24,6 +24,7 @@
     transition: all 0.2s ease;
     user-select: none;
     box-sizing: border-box;
+    box-shadow: var(--shadow-sm);
 }
 
 .dropdown-trigger:focus,
@@ -187,4 +188,68 @@
 .custom-dropdown.compact .dropdown-menu {
     font-size: 0.82rem;
     min-width: 130px;
+}
+
+/* ========================================== */
+/* VARIANTE CONTEXTUAL (tres puntos ⋮)        */
+/* ========================================== */
+.contextual-dropdown {
+    display: inline-flex;
+    width: auto;
+}
+
+.contextual-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.contextual-trigger:hover,
+.contextual-trigger[aria-expanded="true"] {
+    background-color: var(--color-background-2);
+    color: var(--color-text);
+    border-color: var(--color-border);
+}
+
+.contextual-menu {
+    min-width: 160px;
+}
+
+.dropdown-action-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px 14px;
+    border: none;
+    background: transparent;
+    color: var(--color-text);
+    font-size: var(--text-sm);
+    font-family: inherit;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.15s;
+    white-space: nowrap;
+}
+
+.dropdown-action-item:hover {
+    background-color: var(--color-background);
+}
+
+.dropdown-action-item.danger {
+    color: var(--color-danger);
+}
+
+.dropdown-action-item.danger:hover {
+    background-color: var(--bg-danger);
+    color: var(--text-danger);
 }

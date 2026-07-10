@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { toast } from 'react-hot-toast';
-import { Plus, Pencil, Trash2, Sparkles, RefreshCcw } from 'lucide-react';
+import { Plus, Sparkles } from 'lucide-react';
 
 import { SearchBar } from '../../components/ui/SearchBar/SearchBar';
 import { Modal } from '../../components/ui/Modal/Modal';
@@ -243,24 +243,19 @@ export const Acabados = () => {
         },
         {
             key: 'acciones',
-            label: 'Acciones',
-            width: '110px',
+            label: '',
+            width: '50px',
             align: 'center',
             render: (a: Acabado) => (
-                <div className="actions-cell">
-                    <button className="btn-icon edit" onClick={() => abrirModal(a)} title="Editar">
-                        <Pencil size={18} />
-                    </button>
-                    {a.activo === false ? (
-                        <button className="btn-icon reactivate" style={{ color: '#16a34a' }} onClick={() => handleReactivar(a.id)} title="Restaurar">
-                            <RefreshCcw size={18} />
-                        </button>
-                    ) : (
-                        <button className="btn-icon delete" onClick={() => handleDeleteClick(a.id, a.nombre)} title="Enviar a papelera">
-                            <Trash2 size={18} />
-                        </button>
-                    )}
-                </div>
+                <ActionDropdown
+                    variant="contextual"
+                    contextualId={a.id}
+                    contextualName={a.nombre}
+                    onEdit={() => abrirModal(a)}
+                    onDelete={a.activo !== false ? (id, nombre) => handleDeleteClick(id!, nombre!) : undefined}
+                    onRecover={a.activo === false ? () => handleReactivar(a.id) : undefined}
+                    recoverLabel="Reactivar"
+                />
             ),
         },
     ], [proveedores]);

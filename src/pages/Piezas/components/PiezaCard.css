@@ -122,3 +122,24 @@
     color: white;
     border-color: var(--color-primary);
 }
+
+.card-delete-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    color: var(--color-danger);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.card-delete-btn:hover {
+    background: var(--color-danger);
+    color: white;
+    border-color: var(--color-danger);
+}

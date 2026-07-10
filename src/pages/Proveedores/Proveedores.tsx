@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { toast } from 'react-hot-toast';
-import { Plus, Pencil, Trash2, Package, X, ChevronDown, ChevronUp, RefreshCcw, Copy, ExternalLink } from 'lucide-react';
+import { Plus, Package, X, ChevronDown, ChevronUp, Copy, ExternalLink } from 'lucide-react';
 import { 
     obtenerProveedores, 
     crearProveedor, 
@@ -12,6 +12,7 @@ import {
 import { SearchBar } from '../../components/ui/SearchBar/SearchBar';
 import { ConfirmModal } from '../../components/ConfirmModal';
 import { FilterGroup } from '../../components/ui/FilterGroup/FilterGroup';
+import { ActionDropdown } from '../../components/ui/ActionDropdown/ActionDropdown';
 import { DataTable, type ColumnConfig } from '../../components/ui/DataTable/DataTable';
 import { formatPhone, formatPhoneInput } from '../../utils/formatters';
 import { Loading } from '../../components/Loading/Loading';
@@ -270,7 +271,8 @@ export const Proveedores = () => {
             render: (prov: Proveedor) => (
                 <span className="font-medium">
                     {prov.nombre}
-                    {prov.activo === false && <span className="badge-inactivo">Inactivo</span>}
+                    {prov.activo === false && <span className="badge badge--danger">Inactivo</span>}
+                    {prov.activo !== false && <span className="badge badge--success">Activo</span>}
                 </span>
             )
         },
@@ -314,24 +316,19 @@ export const Proveedores = () => {
         },
         {
             key: 'acciones',
-            label: 'Acciones',
+            label: '',
             align: 'center',
-            width: '120px',
+            width: '50px',
             render: (prov: Proveedor) => (
-                <div className="actions-cell">
-                    <button className="btn-icon edit" onClick={() => abrirModal(prov)} title="Editar">
-                        <Pencil size={18} />
-                    </button>
-                    {prov.activo === false ? (
-                        <button className="btn-icon reactivate" onClick={() => handleReactivar(prov.id)} title="Reactivar">
-                            <RefreshCcw size={18} />
-                        </button>
-                    ) : (
-                        <button className="btn-icon delete" onClick={() => handleDeleteClick(prov.id, prov.nombre)} title="Eliminar">
-                            <Trash2 size={18} />
-                        </button>
-                    )}
-                </div>
+                <ActionDropdown
+                    variant="contextual"
+                    contextualId={prov.id}
+                    contextualName={prov.nombre}
+                    onEdit={() => abrirModal(prov)}
+                    onDelete={prov.activo !== false ? (id, nombre) => handleDeleteClick(id!, nombre!) : undefined}
+                    onRecover={prov.activo === false ? () => handleReactivar(prov.id) : undefined}
+                    recoverLabel="Reactivar"
+                />
             )
         }
     ], [expandedRowId]);

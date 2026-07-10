@@ -9,6 +9,7 @@ body {
     background-color: var(--color-background); 
     font-family: var(--font-main);
     color: var(--color-text);
+    font-size: var(--text-base);
 }
 
 *, *::before, *::after {
@@ -80,7 +81,7 @@ body {
     padding: 10px 20px;
     border-radius: 10px;
     font-weight: 600;
-    font-size: 14px;
+    font-size: var(--text-base);
     cursor: pointer;
     transition: all 0.2s ease;
     font-family: inherit;
@@ -106,7 +107,7 @@ body {
     padding: 10px 20px;
     border-radius: 10px;
     font-weight: 600;
-    font-size: 14px;
+    font-size: var(--text-base);
     cursor: pointer;
     transition: all 0.2s ease;
     font-family: inherit;

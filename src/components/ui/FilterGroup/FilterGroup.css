@@ -2,7 +2,7 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    flex-wrap: wrap; /* Para que en pantallas pequeñas se acomoden abajo */
+    flex-wrap: wrap;
 }
 
 .filter-item {
@@ -16,15 +16,80 @@
     width: 40px;
     height: 40px;
     border-radius: 10px;
-    border: 1px solid var(--color-border);
+    border: 1px solid transparent;
     background-color: var(--color-surface);
     color: var(--color-text-secondary);
     cursor: pointer;
     transition: all 0.2s ease;
+    box-shadow: var(--shadow-sm);
 }
 
 .btn-clear-filters:hover {
-    background-color: #fee2e2;
-    border-color: #dc2626;
-    color: #dc2626;
+    background-color: var(--bg-danger);
+    border-color: var(--color-danger);
+    color: var(--text-danger);
+}
+
+.filter-group-collapsible {
+    display: flex;
+    align-items: center;
+}
+
+.btn-advanced-filters {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    background-color: var(--color-surface);
+    color: var(--color-text-secondary);
+    font-size: var(--text-sm);
+    font-weight: var(--font-weight-label);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+    box-shadow: var(--shadow-sm);
+    position: relative;
+}
+
+.btn-advanced-filters:hover {
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+.btn-advanced-filters.has-active {
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+    background-color: color-mix(in srgb, var(--color-primary) 8%, var(--color-surface));
+}
+
+.advanced-active-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: var(--color-primary);
+    position: absolute;
+    top: 6px;
+    right: 6px;
+}
+
+.filter-group-popover {
+    min-width: 280px;
+    background-color: var(--color-surface);
+    border-radius: 12px;
+    box-shadow: var(--shadow-md);
+    padding: 12px;
+    animation: fadeInMenu 0.15s ease-out;
+}
+
+.filter-group-popover-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+@keyframes fadeInMenu {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
 }

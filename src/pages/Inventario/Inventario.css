@@ -1,3 +1,55 @@
+/* ========================================== */
+/* INVENTARIO UNIFICADO                       */
+/* ========================================== */
+
+.inventario-tabs {
+    display: flex;
+    gap: 4px;
+    border-bottom: 2px solid var(--color-border);
+    margin-bottom: 20px;
+}
+
+.inventario-tab {
+    padding: 10px 20px;
+    border: none;
+    background: transparent;
+    color: var(--color-text-secondary);
+    font-size: var(--text-sm);
+    font-weight: var(--font-weight-label);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.2s;
+    font-family: inherit;
+}
+
+.inventario-tab:hover {
+    color: var(--color-text);
+}
+
+.inventario-tab--active {
+    color: var(--color-primary);
+    border-bottom-color: var(--color-primary);
+}
+
+.tab-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.slideover-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid var(--color-border);
+}
+
+/* ========================================== */
+/* STATS CARDS (desde inventario anterior)    */
+/* ========================================== */
 .inventario-stats {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -10,8 +62,8 @@
     gap: 14px;
     padding: 18px;
     border-radius: 12px;
-    border: 1px solid var(--color-border);
     background: var(--color-surface);
+    box-shadow: var(--shadow-card);
 }
 
 .inv-stat-card div {
@@ -31,6 +83,9 @@
     font-weight: 500;
 }
 
+/* ========================================== */
+/* BADGES DE TIPO                             */
+/* ========================================== */
 .badge-tipo {
     display: inline-block;
     padding: 4px 10px;
@@ -40,13 +95,13 @@
 }
 
 .badge-tipo--material {
-    background-color: #dbeafe;
-    color: #2563eb;
+    background-color: var(--bg-info);
+    color: var(--text-info);
 }
 
 .badge-tipo--metal {
-    background-color: #fef3c7;
-    color: #d97706;
+    background-color: var(--bg-warning);
+    color: var(--text-warning);
 }
 
 .badge-estado {
@@ -58,25 +113,28 @@
 }
 
 .badge-estado--disponible {
-    background-color: #dcfce7;
-    color: #16a34a;
+    background-color: var(--bg-success);
+    color: var(--text-success);
 }
 
 .badge-estado--bajo {
-    background-color: #fef3c7;
-    color: #d97706;
+    background-color: var(--bg-warning);
+    color: var(--text-warning);
 }
 
 .badge-estado--critico {
-    background-color: #fee2e2;
-    color: #dc2626;
+    background-color: var(--bg-danger);
+    color: var(--text-danger);
 }
 
 .badge-estado--agotado {
-    background-color: #fce7f3;
-    color: #db2777;
+    background-color: var(--bg-danger);
+    color: var(--text-danger);
 }
 
+/* ========================================== */
+/* VALORES DE STOCK                           */
+/* ========================================== */
 .stock-valor {
     font-weight: 600;
 }
@@ -97,4 +155,90 @@
     font-weight: 400;
     font-size: 12px;
     color: var(--color-text-secondary);
+}
+
+/* ========================================== */
+/* BADGES DE MOVIMIENTO (desde Stock)         */
+/* ========================================== */
+.mov-tipo {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.mov-tipo--entrada {
+    background-color: var(--bg-success);
+    color: var(--text-success);
+}
+
+.mov-tipo--salida {
+    background-color: var(--bg-danger);
+    color: var(--text-danger);
+}
+
+.mov-tipo--ajuste {
+    background-color: var(--bg-warning);
+    color: var(--text-warning);
+}
+
+.mov-tipo--merma {
+    background-color: var(--bg-danger);
+    color: var(--text-danger);
+}
+
+.mov-cantidad {
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.mov-cantidad--entrada {
+    color: var(--text-success);
+}
+
+.mov-cantidad--salida {
+    color: var(--text-danger);
+}
+
+.mov-cantidad--ajuste {
+    color: var(--text-warning);
+}
+
+/* ========================================== */
+/* TOOLBAR (sobreescribe el global)           */
+/* ========================================== */
+.module-container .toolbar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    background: var(--color-toolbar) !important;
+    padding: 16px;
+    border-radius: 12px;
+}
+
+.module-container .search-wrapper {
+    flex: 1;
+    min-width: 250px;
+    max-width: 450px;
+}
+
+.module-container .table-container {
+    background-color: transparent;
+    border: none;
+    border-radius: 0;
+}
+
+@media (max-width: 600px) {
+    .module-container .toolbar-container {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 1rem;
+    }
+    .module-container .search-wrapper {
+        max-width: 100%;
+    }
 }

@@ -9,7 +9,6 @@ import { Proveedores } from '../pages/Proveedores/Proveedores';
 import { Materiales } from '../pages/Materiales/Materiales';
 import { Piezas } from '../pages/Piezas/Piezas';
 import { Costeo } from '../pages/Costeo/Costeo';
-import { Stock } from '../pages/Stock/Stock';
 import { GastosOperativos } from '../pages/GastosOperativos/GastosOperativos';
 import { ConfiguracionMargenes } from '../pages/ConfiguracionMargenes/ConfiguracionMargenes';
 import { Inventario } from '../pages/Inventario/Inventario';
@@ -48,7 +47,7 @@ export const AppRouter = () => {
                 <Route path="/costeo"      element={<Costeo />} />
 
                 {/* Inventario */}
-                <Route path="/stock" element={<Stock />} />
+                <Route path="/stock" element={<Navigate to="/inventario" replace />} />
                 <Route path="/inventario" element={<Inventario />} />
 
                 {/* Finanzas */}

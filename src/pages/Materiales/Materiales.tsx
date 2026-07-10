@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { toast } from 'react-hot-toast';
-import { Plus, Pencil, Trash2, Box, Image as ImageIcon, AlertTriangle, RefreshCcw, FileText } from 'lucide-react';
+import { Plus, Box, Image as ImageIcon, AlertTriangle, FileText, Trash2, RefreshCcw } from 'lucide-react';
 import { SearchBar } from '../../components/ui/SearchBar/SearchBar';
 import { ConfirmModal } from '../../components/ConfirmModal';
 import { ActionDropdown } from '../../components/ui/ActionDropdown/ActionDropdown';
@@ -429,24 +429,19 @@ export const Materiales = () => {
         },
         {
             key: 'acciones',
-            label: 'Acciones',
-            width: '120px',
+            label: '',
+            width: '50px',
             align: 'center',
             render: (mat: Material) => (
-                <div className="actions-cell">
-                    <button className="btn-icon edit" onClick={() => abrirModal(mat)} title="Editar">
-                        <Pencil size={18} />
-                    </button>
-                    {mat.activo === false ? (
-                        <button className="btn-icon reactivate" onClick={() => handleReactivar(mat.id)} title="Reactivar">
-                            <RefreshCcw size={18} />
-                        </button>
-                    ) : (
-                        <button className="btn-icon delete" onClick={() => handleDeleteClick(mat.id, mat.nombre, 'material')} title="Eliminar">
-                            <Trash2 size={18} />
-                        </button>
-                    )}
-                </div>
+                <ActionDropdown
+                    variant="contextual"
+                    contextualId={mat.id}
+                    contextualName={mat.nombre}
+                    onEdit={() => abrirModal(mat)}
+                    onDelete={mat.activo !== false ? (id, nombre) => handleDeleteClick(id!, nombre!, 'material') : undefined}
+                    onRecover={mat.activo === false ? () => handleReactivar(mat.id) : undefined}
+                    recoverLabel="Reactivar"
+                />
             )
         }
     ], [categorias, proveedores, unidades]);

@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import './Sidebar.css';
 import { SidebarProfile } from '../MenuConfiguracion/SidebarProfile/SidebarProfile';
+import { getEmpresaFromStorage } from '../../services/empresa.service';
 
 const sections = [
   {
@@ -22,12 +23,12 @@ const sections = [
       { to: '/materiales',  Icon: Box,      label: 'Materiales' },
       { to: '/metales',     Icon: Gem,      label: 'Metales' },
       { to: '/acabados',    Icon: Sparkles, label: 'Acabados' },
+      { to: '/colecciones', Icon: Palette,  label: 'Colecciones' },
     ],
   },
   {
     label: 'Producción',
     links: [
-      { to: '/colecciones', Icon: Palette,    label: 'Colecciones' },
       { to: '/piezas',      Icon: Crown,      label: 'Piezas' },
       { to: '/costeo',      Icon: Calculator, label: 'Costeo' },
     ],
@@ -35,7 +36,7 @@ const sections = [
   {
     label: 'Inventario',
     links: [
-      { to: '/stock', Icon: PackageSearch, label: 'Stock y movimientos' },
+      { to: '/inventario', Icon: PackageSearch, label: 'Inventario' },
     ],
   },
   {
@@ -50,12 +51,21 @@ const sections = [
 export const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [usuario, setUsuario] = useState<any>(null);
+  const [empresaNombre, setEmpresaNombre] = useState('');
 
   useEffect(() => {
     const usuarioGuardado = localStorage.getItem('kyro_usuario');
     if (usuarioGuardado) {
       setUsuario(JSON.parse(usuarioGuardado));
     }
+    setEmpresaNombre(getEmpresaFromStorage().nombre);
+
+    const handleEmpresaChange = (e: Event) => {
+      const detail = (e as CustomEvent).detail;
+      setEmpresaNombre(detail?.nombre || '');
+    };
+    window.addEventListener('kyro:empresa-changed', handleEmpresaChange);
+    return () => window.removeEventListener('kyro:empresa-changed', handleEmpresaChange);
   }, []);
 
   return (
@@ -65,6 +75,7 @@ export const Sidebar = () => {
       <div className="sidebar-logo">
         <div className="logo-left">
           <span className="logo-text">Menu</span>
+          {empresaNombre && <span className="empresa-subtitle">{empresaNombre}</span>}
         </div>
         <button
           className="menu-button"

@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { ArrowUpDown, ArrowUp, ArrowDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import { ActionDropdown } from '../ActionDropdown/ActionDropdown';
+import { EmptyState } from '../EmptyState/EmptyState';
 import './DataTable.css';
 
 export interface SortConfig {
@@ -23,6 +24,11 @@ interface DataTableProps<T> {
     columns: ColumnConfig<T>[];
     className?: string;
     emptyMessage?: string;
+    emptyIcon?: React.ReactNode;
+    emptyTitle?: string;
+    emptyDescription?: string;
+    emptyActionLabel?: string;
+    onEmptyAction?: () => void;
     rowClassName?: (item: T) => string;
     onRowClick?: (item: T) => void;
     renderDetailRow?: (item: T) => React.ReactNode;
@@ -56,6 +62,11 @@ export const DataTable = <T,>({
     columns,
     className = '',
     emptyMessage = 'No se encontraron registros.',
+    emptyIcon,
+    emptyTitle,
+    emptyDescription,
+    emptyActionLabel,
+    onEmptyAction,
     rowClassName,
     onRowClick,
     renderDetailRow,
@@ -230,7 +241,15 @@ export const DataTable = <T,>({
                                 </React.Fragment>
                             ))
                         ) : (
-                            <tr><td colSpan={columns.length} className="empty-state">{emptyMessage}</td></tr>
+                            <tr><td colSpan={columns.length} className="empty-state">
+                                <EmptyState
+                                    icon={emptyIcon}
+                                    title={emptyTitle || emptyMessage}
+                                    description={emptyDescription}
+                                    actionLabel={emptyActionLabel}
+                                    onAction={onEmptyAction}
+                                />
+                            </td></tr>
                         )}
                     </tbody>
                 </table>
