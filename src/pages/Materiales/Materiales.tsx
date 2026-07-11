@@ -595,7 +595,7 @@ export const Materiales = () => {
                                         addLabel="Crear Categoría"
                                         onAdd={() => abrirCategoriaModal()}
                                         onEdit={(id) => abrirCategoriaModal(id)}
-                                        onDelete={(id, nombre) => handleDeleteClick(id, nombre, 'categoria')}
+                                        onDelete={(id, nombre) => handleDeleteClick(id!, nombre!, 'categoria')}
                                         onRecover={() => abrirPapeleraCategorias()}
                                         recoverLabel="Papelera"
                                     />
@@ -642,7 +642,7 @@ export const Materiales = () => {
                                             setIsUnidadModalOpen(true);
                                         }
                                     }}
-                                    onDelete={(id, nombre) => handleDeleteClick(id, nombre, 'unidad')}
+                                    onDelete={(id, nombre) => handleDeleteClick(id!, nombre!, 'unidad')}
                                     onRecover={() => abrirPapeleraUnidades()}
                                     recoverLabel="Papelera"
                                 />

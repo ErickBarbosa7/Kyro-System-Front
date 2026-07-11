@@ -3,7 +3,6 @@ import { SearchBar } from '../../components/ui/SearchBar/SearchBar';
 import { FilterGroup } from '../../components/ui/FilterGroup/FilterGroup';
 import { DataTable, type ColumnConfig } from '../../components/ui/DataTable/DataTable';
 import { Loading } from '../../components/Loading/Loading';
-import type { MovimientoData } from '../../services/stock.service';
 import './Inventario.css';
 
 interface MovimientoStock {

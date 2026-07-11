@@ -38,7 +38,6 @@ export const ConfigGeneralPage = () => {
     const [empresa, setEmpresa] = useState<EmpresaData>({ ...defaultEmpresa });
     const [preferences, setPreferences] = useState<Preferences>(loadPreferences());
     const [loadingEmpresa, setLoadingEmpresa] = useState(false);
-    const [loadingPrefs, setLoadingPrefs] = useState(false);
 
     useEffect(() => {
         cargarEmpresa();

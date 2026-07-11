@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
 import { Warehouse, Plus } from 'lucide-react';
-import { Loading } from '../../components/Loading/Loading';
 import { obtenerResumenInventario, type ItemInventario } from '../../services/inventario.service';
 import { obtenerMovimientos, type MovimientoData } from '../../services/stock.service';
 import { obtenerMateriales } from '../../services/materiales.service';
