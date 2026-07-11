@@ -452,8 +452,8 @@ export const PiezaCreator: React.FC<PiezaCreatorProps> = ({ isOpen, piezaId, onC
                                         placeholder="Selecciona tipo"
                                         onAdd={() => openCrudAdd('tipo')}
                                         addLabel="Crear tipo"
-                                        onEdit={(id) => openCrudEdit('tipo', id)}
-                                        onDelete={(id, nombre) => setConfirmDelete({ type: 'tipo', id, nombre })}
+                                        onEdit={(id) => openCrudEdit('tipo', id!)}
+                                        onDelete={(id, nombre) => setConfirmDelete({ type: 'tipo', id: id!, nombre: nombre! })}
                                         onRecover={() => abrirPapelera('tipo')}
                                         recoverLabel="Papelera"
                                     />
@@ -469,8 +469,8 @@ export const PiezaCreator: React.FC<PiezaCreatorProps> = ({ isOpen, piezaId, onC
                                         placeholder="Selecciona colección"
                                         onAdd={() => openCrudAdd('coleccion')}
                                         addLabel="Crear colección"
-                                        onEdit={(id) => openCrudEdit('coleccion', id)}
-                                        onDelete={(id, nombre) => setConfirmDelete({ type: 'coleccion', id, nombre })}
+                                        onEdit={(id) => openCrudEdit('coleccion', id!)}
+                                        onDelete={(id, nombre) => setConfirmDelete({ type: 'coleccion', id: id!, nombre: nombre! })}
                                         onRecover={() => abrirPapelera('coleccion')}
                                         recoverLabel="Papelera"
                                     />

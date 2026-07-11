@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { toast } from 'react-hot-toast';
-import { Plus, Package, X, ChevronDown, ChevronUp, Copy, ExternalLink } from 'lucide-react';
+import { Plus, Package, X, ChevronDown, ChevronUp, Copy, ExternalLink, Trash2 } from 'lucide-react';
 import { 
     obtenerProveedores, 
     crearProveedor, 
